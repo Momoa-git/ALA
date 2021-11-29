@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ALA</string>
+    <string name="login">Login to branch office</string>
+    <string name="hint_office">Branch office</string>
+    <string name="registration">Registration office</string>
+    <string name="hint_name_office">Name office</string>
+    <string name="hint_address_office">Address</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_registration">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register_activity">Register new branch office</string>
+    <string name="btn_login_activity">Login In to branch office</string>
+</resources>

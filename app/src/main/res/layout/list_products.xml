@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="3dp"
+    app:contentPadding="5dp"
+    app:cardUseCompatPadding="true"
+    android:backgroundTint="@color/primary"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:background="@color/white"
+        >
+        <TextView
+            android:id="@+id/txt_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:text="Název:" />
+
+
+
+
+        <TextView
+            android:id="@+id/txt_price_title"
+          android:layout_below="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:text="Cena:" />
+
+
+
+
+        <TextView
+            android:id="@+id/txt_piece_title"
+            android:layout_below="@id/txt_price_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:text="Počet kusů:" />
+
+
+        <TextView
+            android:id="@+id/txt_bar_code_title"
+            android:layout_below="@id/txt_piece_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:text="Čárový kód:" />
+
+        <TextView
+            android:id="@+id/txt_place_title"
+            android:layout_below="@id/txt_bar_code_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:text="Řada/místo:" />
+
+
+
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="10dp"
+            android:text="TextView"
+            android:textColor="@color/primary" />
+
+
+        <TextView
+            android:id="@+id/txt_price"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/txt_name"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="10dp"
+            android:text="TextView"
+            android:textColor="@color/primary" />
+
+
+        <TextView
+            android:id="@+id/txt_piece"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/txt_price"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="10dp"
+            android:text="TextView"
+            android:textColor="@color/red" />
+
+
+        <TextView
+            android:id="@+id/txt_bar_code"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/txt_piece_title"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="10dp"
+            android:text="TextView"
+            android:textColor="@color/primary" />
+
+        <TextView
+            android:id="@+id/txt_place"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/txt_bar_code"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="10dp"
+            android:text="TextView"
+            android:textColor="@color/primary" />
+
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

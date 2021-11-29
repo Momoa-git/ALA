@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "441771200396",
+    "project_id": "ala-bk",
+    "storage_bucket": "ala-bk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441771200396:android:2472b580396420cbb5d0a9",
+        "android_client_info": {
+          "package_name": "com.example.ala"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441771200396-pdvnhldeep05964s9v7h9qd06qi59p4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDENB17ck5V4FESI83-z3vDtMrmcm95icA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441771200396-pdvnhldeep05964s9v7h9qd06qi59p4s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
