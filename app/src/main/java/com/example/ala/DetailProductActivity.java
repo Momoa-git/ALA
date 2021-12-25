@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-
+//asd
 public class DetailProductActivity extends AppCompatActivity {
 
     TextView txt_bar_code;
