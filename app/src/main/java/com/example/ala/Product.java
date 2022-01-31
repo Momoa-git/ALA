@@ -2,6 +2,7 @@ package com.example.ala;
 
 public class Product {
     private int id;
+    private int id_list_product;
     private String name;
     private String price;
     private String bar_code;
@@ -12,8 +13,9 @@ public class Product {
 
     }
 
-    public Product(int id, String name, String price, String bar_code, String line, String place) {
+    public Product(int id, int id_list_product, String name, String price, String bar_code, String line, String place) {
         this.id = id;
+        this.id_list_product = id_list_product;
         this.name = name;
         this.price = price;
         this.bar_code = bar_code;

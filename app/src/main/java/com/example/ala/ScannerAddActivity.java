@@ -1,6 +1,7 @@
 package com.example.ala;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -80,7 +81,13 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
                         int id = Integer.valueOf( dataSnapshot.child("id").getValue().toString());
                         NewProductActivity.edT_name_product.setText(name);
                         NewProductActivity.edT_price.setText(price + ".00 Kč");
-                        NewProductActivity.txt_id.setText(id);
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyPref", MODE_PRIVATE);
+                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+                        myEdit.putInt("sp_id", id);
+                        myEdit.commit();
+
 
                         NewProductActivity.edT_ks.setVisibility(View.VISIBLE);
                         NewProductActivity.edT_line.setVisibility(View.VISIBLE);

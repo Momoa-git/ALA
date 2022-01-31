@@ -1,9 +1,11 @@
 package com.example.ala;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -54,7 +56,7 @@ public class NewProductActivity extends AppCompatActivity {
         edT_ks = findViewById(R.id.edT_ks);
         edT_line = findViewById(R.id.edT_line);
         edT_place = findViewById(R.id.edT_place);
-        txt_id = findViewById(R.id.id);
+       // txt_id = findViewById(R.id.id);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -107,22 +109,38 @@ public class NewProductActivity extends AppCompatActivity {
                 String bar_code = edT_bar.getText().toString();
                 String line = edT_line.getText().toString();
                 String place = edT_place.getText().toString();
-                int id = Integer.valueOf(txt_id.getText().toString());
+
+                SharedPreferences sh = getSharedPreferences("MyPref", MODE_PRIVATE);
+
+
+                int id_list_product = sh.getInt("sp_id",0);
 
                 Boolean valid_input = checkValidValues(piece, line, place);
 
                 if(valid_input) {
-
-                    Product product = new Product(id,name, price, bar_code, line, place);
+                    Log.i("outline","[LIST:] ID: "+ id_list_product  + " Name: " + name + " Pieces: "+ piece + "x");
+                  //  Product product = new Product(id,name, price, bar_code, line, place);
 
                     //  databaseReference.child(String.valueOf(id+1)).setValue(product);
                     for (int i = 0; i < piece; i++) {
+                        int id = randomnumberID();
+                        Product product = new Product(id,id_list_product, name, price, bar_code, line, place);
                         databaseReference.push().setValue(product);
+                        Log.i("outline","[WAREHOUSE:] ID: "+ id  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line - place: " + line + " - " + place);
+                       // databaseReference.push().setValue(product);
                     }
-                    Toast.makeText(NewProductActivity.this, "Product was added!" + id, Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewProductActivity.this, piece + " Product(s) added!" , Toast.LENGTH_LONG).show();
 
                 }
 
+            }
+
+            private int randomnumberID() {
+                int min = 1000000;
+                int max = 9000000;
+
+                int id = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                return id;
             }
 
             private Boolean checkValidValues(int piece, String line, String place) {
