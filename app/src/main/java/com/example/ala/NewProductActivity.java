@@ -123,10 +123,10 @@ public class NewProductActivity extends AppCompatActivity {
 
                     //  databaseReference.child(String.valueOf(id+1)).setValue(product);
                     for (int i = 0; i < piece; i++) {
-                        int id = randomnumberID();
+                        int id = randomNumberID();
                         Product product = new Product(id,id_list_product, name, price, bar_code, line, place);
                         databaseReference.push().setValue(product);
-                        Log.i("outline","[WAREHOUSE:] ID: "+ id  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line - place: " + line + " - " + place);
+                        Log.i("outline","[WAREHOUSE:] ID: "+ id  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
                        // databaseReference.push().setValue(product);
                     }
                     Toast.makeText(NewProductActivity.this, piece + " Product(s) added!" , Toast.LENGTH_LONG).show();
@@ -135,7 +135,7 @@ public class NewProductActivity extends AppCompatActivity {
 
             }
 
-            private int randomnumberID() {
+            private int randomNumberID() {
                 int min = 1000000;
                 int max = 9000000;
 
