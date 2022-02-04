@@ -138,6 +138,17 @@
                     android:layout_marginTop="5dp"
                     />
 
+                <TextView
+                    android:id="@+id/txt_desc_title"
+                    android:layout_below="@id/image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:text="Popis:"
+                    android:layout_marginTop="5dp"
+                    />
+
 
                 <TextView
                     android:id="@+id/txt_name"
@@ -220,9 +231,22 @@
                     android:layout_below="@+id/txt_place"
                     android:layout_marginStart="120dp"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/common_google_signin_btn_icon_dark_normal_background"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/image"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/primary"
                     android:layout_marginTop="5dp"/>
-
-
 
 
 

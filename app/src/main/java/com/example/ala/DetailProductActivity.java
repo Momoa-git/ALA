@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 //asdasdasdasdasd
 public class DetailProductActivity extends AppCompatActivity {
 
-    TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place;
+    TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place, txt_desc;
     ImageView image;
 
     @Override
@@ -30,6 +30,7 @@ public class DetailProductActivity extends AppCompatActivity {
         txt_line = findViewById(R.id.txt_line);
         txt_place = findViewById(R.id.txt_place);
         image = findViewById(R.id.image);
+        txt_desc = findViewById(R.id.txt_desc);
 
 
        Intent intent = getIntent();
@@ -44,7 +45,7 @@ public class DetailProductActivity extends AppCompatActivity {
         String line = sh.getString("product_line","");
         String place = sh.getString("product_place","");
         String imageRes = sh.getString("fr_image","");
-        String desc = sh.getString("product_desc","");
+        String desc = sh.getString("fr_desc","");
 
 
         Log.i("getFirebase", "From Detail: " + imageRes);
@@ -58,6 +59,7 @@ public class DetailProductActivity extends AppCompatActivity {
        txt_bar_code.setText(bar_code);
        txt_line.setText(line);
        txt_place.setText(place);
+       txt_desc.setText(desc);
 
     }
 }
