@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class NewProductActivity extends AppCompatActivity {
 
@@ -140,6 +141,7 @@ public class NewProductActivity extends AppCompatActivity {
                 int max = 9000000;
 
                 int id = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                //TODO Změnit na unikátní ID!
                 return id;
             }
 

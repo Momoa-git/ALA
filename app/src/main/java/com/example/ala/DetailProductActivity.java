@@ -18,6 +18,8 @@ public class DetailProductActivity extends AppCompatActivity {
     TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place, txt_desc;
     ImageView image;
 
+    //TODO pridani progress baru
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
