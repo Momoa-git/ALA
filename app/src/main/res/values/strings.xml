@@ -4,6 +4,7 @@
     <string name="hint_office">Prodejna</string>
     <string name="registration">Registrace prodejny</string>
     <string name="hint_name_office">Název prodejny</string>
+    <string name="hint_search_order">Vyhledat...</string>
     <string name="hint_address_office">Adresa</string>
     <string name="hint_password">Heslo</string>
     <string name="btn_registration">Registrovat</string>

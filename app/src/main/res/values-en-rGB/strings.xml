@@ -5,6 +5,7 @@
     <string name="hint_office">Branch office</string>
     <string name="registration">Registration office</string>
     <string name="hint_name_office">Name office</string>
+    <string name="hint_search_order">Search</string>
     <string name="hint_address_office">Address</string>
     <string name="hint_password">Password</string>
     <string name="btn_registration">Register</string>
