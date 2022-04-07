@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.ala.Inventory.Status;
 import com.example.ala.Inventory.StatusData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder> {
 
@@ -43,9 +46,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
       holder.order_number.setText(String.valueOf(order.getOrder_number()));
       holder.id_customer.setText(String.valueOf(order.getId_customer()));
-      holder.date.setText(order.getDate());
 
-      String status = order.getStatus();
+      parseDateFromDatabase(order, holder);
+
+
+        SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
+        SimpleDateFormat output_format = new SimpleDateFormat("dd.MM.yyyy");
+
+        try {
+            Date date = database_format.parse(order.getDate());
+            holder.date.setText(output_format.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        String status = order.getStatus();
 
         switch (status) {
             case "PE":
@@ -67,6 +83,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
         }
 
+
+    }
+
+    private void parseDateFromDatabase(Order order, MyViewHolder holder) {
+        SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
+        SimpleDateFormat output_format = new SimpleDateFormat("dd.MM.yyyy");
+
+        try {
+            Date date = database_format.parse(order.getDate());
+            holder.date.setText(output_format.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
 
