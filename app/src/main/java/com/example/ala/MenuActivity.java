@@ -84,6 +84,13 @@ private ProgressBar progress_bar;
             }
         });
 
+        crd_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MenuActivity.this, OrderActivity .class));
+            }
+        });
+
         crd_log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

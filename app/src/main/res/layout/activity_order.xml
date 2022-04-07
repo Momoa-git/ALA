@@ -16,7 +16,7 @@
 
        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="220dp"
+            android:layout_height="190dp"
             android:background="@drawable/bg_menu_s"
 
             >
@@ -110,7 +110,6 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginBottom="28dp"
                     android:layout_marginTop="5dp"
                     android:layout_below="@+id/spinner_filter"></RelativeLayout>
 
@@ -125,10 +124,10 @@
                 >
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view"
+                    android:id="@+id/recycler_view2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+
 
                     />
 
