@@ -3,9 +3,11 @@ package com.example.ala;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowId;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -15,6 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ala.Inventory.Status;
 import com.example.ala.Inventory.StatusData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +32,7 @@ import java.util.Date;
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder> {
 
     Context context;
-
+    private DatabaseReference databaseReference;
     ArrayList<Order> list;
 
     public OrderAdapter(Context context, ArrayList<Order> list) {
@@ -45,7 +53,37 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
       //String orderNum = String.valueOf(order.getOrder_number());
 
       holder.order_number.setText(String.valueOf(order.getOrder_number()));
-      holder.id_customer.setText(String.valueOf(order.getId_customer()));
+     //holder.id_customer.setText(String.valueOf(order.getId_customer()));
+
+      // SELECT name FROM customers WHERE id = 1
+
+
+      int id_customer = order.getId_customer();
+    //  Query query;
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Customer").child("Customers");
+     //   query = FirebaseDatabase.getInstance().getReference("Customer").child("Customers").orderByChild("id").equalTo(1);
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
+                    Customer customer = dataSnapshot.getValue(Customer.class);
+                    if(customer.getId() == id_customer)
+                        holder.id_customer.setText(customer.getFname() + " " + customer.getLname());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+       // Log.i("query", "ID: " + id_customer + "Query: " + query.toString());
 
       parseDateFromDatabase(order, holder);
 
