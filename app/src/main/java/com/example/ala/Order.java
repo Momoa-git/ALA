@@ -4,14 +4,14 @@ import java.util.Date;
 
 public class Order {
 
-    int order_number, id_product, id_order, id_list_product, id_customer;
-    String date, time, status, office;
+    int order_number, id_product, id_order, id_customer;
+    String date, time, status, office, id_list_product;
 
     public Order() {
 
     }
 
-    public Order(int order_number, int id_product, int id_order, int id_list_product, int id_customer, String date, String time, String status, String office) {
+    public Order(int order_number, int id_product, int id_order, String id_list_product, int id_customer, String date, String time, String status, String office) {
         this.order_number = order_number;
         this.id_product = id_product;
         this.id_order = id_order;
@@ -35,7 +35,7 @@ public class Order {
         this.id_order = id_order;
     }
 
-    public void setId_list_product(int id_list_product) {
+    public void setId_list_product(String id_list_product) {
         this.id_list_product = id_list_product;
     }
 
@@ -71,7 +71,7 @@ public class Order {
         return id_order;
     }
 
-    public int getId_list_product() {
+    public String getId_list_product() {
         return id_list_product;
     }
 

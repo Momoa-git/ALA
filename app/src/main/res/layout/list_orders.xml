@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="140dp"
             android:layout_marginLeft="10dp"
             android:text="TextView"
             android:textColor="@color/primary" />
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="140dp"
             android:layout_marginLeft="10dp"
             android:text="TextView"
             android:textColor="@color/primary" />
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="140dp"
             android:layout_marginLeft="10dp"
             android:text="TextView"
             android:textColor="@color/primary" />
@@ -120,8 +120,9 @@
             android:layout_height="12dp"
             android:layout_below="@id/txt_date"
             android:layout_marginTop="4dp"
-            android:layout_marginStart="120dp"
-            android:src="@drawable/status_bar_ip" />
+            android:layout_marginStart="140dp"
+            android:src="@drawable/status_bar_ip"
+            android:layout_marginLeft="140dp" />
 
 
     </RelativeLayout>

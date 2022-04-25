@@ -34,17 +34,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
     Context context;
     private DatabaseReference databaseReference;
     ArrayList<Order> list;
+    private OnDetailListener onDetailListener;
 
-    public OrderAdapter(Context context, ArrayList<Order> list) {
+    public OrderAdapter(Context context, ArrayList<Order> list, OnDetailListener onDetailListener) {
         this.context = context;
         this.list = list;
+        this.onDetailListener = onDetailListener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.list_orders, parent, false);
-        return new MyViewHolder(v);
+        return new MyViewHolder(v, onDetailListener);
     }
 
     @Override
@@ -142,12 +144,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         return list.size();
     }
 
-    public static class MyViewHolder extends  RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView order_number, id_customer, date, status;
         ImageView statusImg;
+        OnDetailListener onDetailListener;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, OnDetailListener onDetailListener) {
             super(itemView);
 
             order_number = itemView.findViewById(R.id.txt_number_order);
@@ -155,6 +158,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
             date = itemView.findViewById(R.id.txt_date);
             status = itemView.findViewById(R.id.txt_status);
             statusImg = itemView.findViewById(R.id.img_status_bar);
+            this.onDetailListener = onDetailListener;
+
+            itemView.setOnClickListener(this);
+
         }
+
+        @Override
+        public void onClick(View v) {
+            onDetailListener.onDetailClick(getAdapterPosition());
+        }
+    }
+    public interface OnDetailListener{
+        void onDetailClick(int position);
     }
 }

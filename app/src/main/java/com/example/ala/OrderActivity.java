@@ -2,13 +2,20 @@ package com.example.ala;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ala.Inventory.StatusData;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class OrderActivity extends AppCompatActivity {
+public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnDetailListener {
 
     private Spinner spinner_status;
     private StatusAdapter statAdapter;
@@ -30,6 +37,9 @@ public class OrderActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     OrderAdapter adapter;
     ArrayList<Order> list;
+
+
+    //TODO fce filter orders by word search or status
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +62,7 @@ public class OrderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         list = new ArrayList<>();
-        adapter = new OrderAdapter(this, list);
+        adapter = new OrderAdapter(this, list, this);
         recyclerView.setAdapter(adapter);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -78,4 +88,21 @@ public class OrderActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onDetailClick(int position)
+    {
+      //  String title = ((TextView) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.txt_email_customer)).getText().toString();
+        Toast.makeText(this, "Position" + position, Toast.LENGTH_SHORT).show();
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(OrderActivity.this, R.style.BottomSheetDialogTheme);
+        View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sheet_detail_order,(LinearLayout)findViewById(R.id.sheet_container));
+        bottomSheetDialog.setContentView(bottomSheetView);
+         TextView numberOrder = bottomSheetDialog.findViewById(R.id.number_order);
+      //  Toast.makeText(this, "Position " + numberOrder.getText().toString(), Toast.LENGTH_SHORT).show();
+        numberOrder.setText("Objednávka 60534701");
+
+        bottomSheetDialog.show();
+    }
+
 }
