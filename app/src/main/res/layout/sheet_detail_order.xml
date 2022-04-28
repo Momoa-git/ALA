@@ -351,7 +351,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginStart="140dp"
             android:layout_marginLeft="140dp"
-            android:text="Ostrava - centrum"
+            android:text="11.4.2022 10:15:58"
             android:textColor="@color/primary" />
 
     </RelativeLayout>
@@ -634,6 +634,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:text="ČEKÁNÍ NA NASKLADNĚNÍ"
             android:gravity="center"
             />

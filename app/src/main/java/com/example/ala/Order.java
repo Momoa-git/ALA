@@ -4,8 +4,9 @@ import java.util.Date;
 
 public class Order {
 
-    int order_number, id_product, id_order, id_customer;
-    String date, time, status, office, id_list_product;
+    int order_number, id_product, id_order, id_customer, discount, price;
+    String date, time, status, office, id_list_product, date_pay, time_pay, type_pay;
+    boolean paid;
 
     public Order() {
 
@@ -21,6 +22,54 @@ public class Order {
         this.time = time;
         this.status = status;
         this.office = office;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setDate_pay(String date_pay) {
+        this.date_pay = date_pay;
+    }
+
+    public void setTime_pay(String time_pay) {
+        this.time_pay = time_pay;
+    }
+
+    public void setType_pay(String type_pay) {
+        this.type_pay = type_pay;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getDate_pay() {
+        return date_pay;
+    }
+
+    public String getTime_pay() {
+        return time_pay;
+    }
+
+    public String getType_pay() {
+        return type_pay;
+    }
+
+    public boolean isPaid() {
+        return paid;
     }
 
     public void setOrder_number(int order_number) {

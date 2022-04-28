@@ -56,6 +56,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
       holder.order_number.setText(String.valueOf(order.getOrder_number()));
      //holder.id_customer.setText(String.valueOf(order.getId_customer()));
+        holder.id_order = order.getId_order();
 
       // SELECT name FROM customers WHERE id = 1
 
@@ -128,7 +129,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     private void parseDateFromDatabase(Order order, MyViewHolder holder) {
         SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
-        SimpleDateFormat output_format = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat output_format = new SimpleDateFormat("dd.M.yyyy");
 
         try {
             Date date = database_format.parse(order.getDate());
@@ -146,6 +147,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+        Integer id_order;
         TextView order_number, id_customer, date, status;
         ImageView statusImg;
         OnDetailListener onDetailListener;
@@ -153,6 +155,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         public MyViewHolder(@NonNull View itemView, OnDetailListener onDetailListener) {
             super(itemView);
 
+            id_order = 0;
             order_number = itemView.findViewById(R.id.txt_number_order);
             id_customer = itemView.findViewById(R.id.txt_customer);
             date = itemView.findViewById(R.id.txt_date);
