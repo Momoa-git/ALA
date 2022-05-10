@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +31,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -50,8 +54,11 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
     Order order = new Order();
     Customer customer = new Customer();
     Office office = new Office();
+    Product product = new Product();
     private FirebaseUser officeF;
-
+    ArrayList<String> names_product = new ArrayList<String>(2);
+  //  String name[] = new String[2];
+    int count = 0;
 
     //TODO fce filter orders by word search or status
 
@@ -159,16 +166,23 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
                         String status = dataSnapshot.child("status").getValue().toString();
                         String office = dataSnapshot.child("office").getValue().toString();
                         String id_list_product = dataSnapshot.child("id_list_product").getValue().toString();
+
+                        String[] str = id_list_product.split(",");
+                        String[] arr = new String[str.length];
+                        for(int i = 0; i < str.length; i++)
+                            arr[i] = str[i];
+
                         String id_customer = dataSnapshot.child("id_customer").getValue().toString();
                         //Payment detail
                         String type_pay = dataSnapshot.child("Payment").child("type").getValue().toString();
                         boolean paid = Boolean.parseBoolean(dataSnapshot.child("Payment").child("paid").getValue().toString());
+                        String price = dataSnapshot.child("Payment").child("price").getValue().toString();
 
 
 
 
 
-                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay:" + type_pay);
+                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: "+ paid +", ListProd.: " + arr[0]);
 
                         order.setOrder_number(Integer.parseInt(order_number));
                         order.setDate(date_order);
@@ -176,9 +190,10 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
                         order.setStatus(status);
                         order.setType_pay(type_pay);
                         order.setPaid(paid);
+                        order.setPrice(Integer.parseInt(price));
                         order.setId_customer(Integer.parseInt(id_customer));
 
-                        getCustomerFirebaseResources(Integer.parseInt(id_customer), office);
+                        getCustomerFirebaseResources(Integer.parseInt(id_customer), office, arr);
 
 
 
@@ -197,7 +212,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         });
     }
 
-    private void getCustomerFirebaseResources(int id_customer, String office) {
+    private void getCustomerFirebaseResources(int id_customer, String office, String[] arr) {
 
         firebaseDatabase3 = FirebaseDatabase.getInstance();
         databaseReference3 = firebaseDatabase3.getReference().child("Customer").child("Customers");
@@ -226,7 +241,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
                         customer.setPhone(phone);
 
 
-                        getOfficeFirebaseResources(office);
+                        getOfficeFirebaseResources(office, arr);
 
 
                     }
@@ -245,7 +260,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
 
     }
 
-    private void getOfficeFirebaseResources(String officeS) {
+    private void getOfficeFirebaseResources(String officeS, String[] arr) {
 
        //officeF = FirebaseAuth.getInstance().getCurrentUser();
        referenceOffice = FirebaseDatabase.getInstance().getReference("Office");
@@ -265,7 +280,8 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
 
                 Log.i("getOfficeFirebaseRes", "office: " + officeS);
 
-                createBottomSheet();
+                getProductListFirebaseResources(arr);
+               // createBottomSheet();
             }
 
             @Override
@@ -278,6 +294,59 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
 
 
     }
+
+    private void getProductListFirebaseResources(String[]arr) {
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Product").child("Products");
+
+
+
+        count = 0;
+
+        for(int i = 0; i < arr.length; i++) {
+
+            databaseReference3.child(arr[i]).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                   product = snapshot.getValue(Product.class);
+                    //  if (officeProfile != null){
+                    String name_product = snapshot.child("name").getValue().toString();
+
+                    names_product.add(name_product);
+                   // name[count] = name_product;
+
+                 //   product.setName(name_product);
+
+                    Log.i("getProductListFirebRes", "product name: " + name_product);
+
+
+                    Log.i("getProductListFirebRes", "product names: " + names_product);
+
+                    if(count == arr.length -1) {
+                        String out = Arrays.toString(names_product.toArray()).replace("[","").replace("]","").replace(",",",\n");
+                        product.setName(out);
+                        names_product.clear();
+                        createBottomSheet();
+                    }
+
+                    count++;
+
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        //Log.i("getProductListFirebRes", "product names: " + names_product);
+      //  product.setName(names_product);
+
+    }
+
 
 
     private void createBottomSheet() {
@@ -293,11 +362,13 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         ImageView img_status_bar = bottomSheetDialog.findViewById(R.id.img_status_bar);
         TextView txt_type_payment = bottomSheetDialog.findViewById(R.id.txt_type_payment);
         TextView txt_paid = bottomSheetDialog.findViewById(R.id.txt_paid);
+        TextView txt_price = bottomSheetDialog.findViewById(R.id.txt_price);
         TextView txt_name_customer = bottomSheetDialog.findViewById(R.id.txt_name_customer);
         TextView txt_email_customer = bottomSheetDialog.findViewById(R.id.txt_email_customer);
         TextView txt_phone_customer = bottomSheetDialog.findViewById(R.id.txt_phone_customer);
         TextView txt_offic_address = bottomSheetDialog.findViewById(R.id.txt_offic_address);
         TextView txt_office_name = bottomSheetDialog.findViewById(R.id.txt_office_name);
+        TextView txt_name_product = bottomSheetDialog.findViewById(R.id.txt_name_product);
 
         numberOrder.setText("Objednávka " + order.getOrder_number());
         txt_date_order.setText(parseDateFromDatabase(order) + " "+ order.getTime());
@@ -305,9 +376,11 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         String typePay = order.getType_pay();
         int id_customer = order.getId_customer();
         boolean paid = order.isPaid();
+        Log.i("getOrderFirebaseRes", String.valueOf(paid));
         setStatus(status, txt_status, img_status_bar);
         setTypePayTitle(typePay, txt_type_payment);
         setPaidTitle(paid, txt_paid);
+        txt_price.setText(order.getPrice() + ",00 Kč s DPH ");
 
         //customer
         txt_name_customer.setText(customer.getFname() + " " + customer.getLname());
@@ -318,7 +391,8 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         txt_offic_address.setText(office.getAddress());
         txt_office_name.setText(office.getName());
 
-
+        //list product
+        txt_name_product.setText(product.getName());
 
         title_registr_num.setVisibility(View.GONE);
         register_num.setVisibility(View.GONE);
@@ -333,9 +407,9 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
 
 
     private void setPaidTitle(boolean paid, TextView txt_paid) {
-        if(paid = true)
+        if(paid == true)
             txt_paid.setText("ANO");
-        if(paid = false)
+        else
             txt_paid.setText("NE");
     }
 

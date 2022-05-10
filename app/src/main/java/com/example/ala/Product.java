@@ -30,6 +30,34 @@ public class Product {
 
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setId_list_product(int id_list_product) {
+        this.id_list_product = id_list_product;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public void setBar_code(String bar_code) {
+        this.bar_code = bar_code;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
     public int getId(){return id;}
 
     public String getName() {
