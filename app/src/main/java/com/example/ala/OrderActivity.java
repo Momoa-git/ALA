@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.WindowId;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ala.Inventory.StatusData;
+import com.example.ala.controller.OrderActivityController;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,15 +44,23 @@ import java.util.concurrent.TimeUnit;
 
 public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnDetailListener {
 
+    OrderActivityController controller;
+
     private Spinner spinner_status;
     private StatusAdapter statAdapter;
+    private ProgressBar progressBar;
 
     private FirebaseDatabase firebaseDatabase, firebaseDatabase2, firebaseDatabase3;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference, databaseReference2, databaseReference3, referenceOffice;
     private RecyclerView recyclerView;
-    OrderAdapter adapter;
-    ArrayList<Order> list;
+    public OrderAdapter adapter;
+    public ArrayList<Order> list;
+    public TextView numberOrder, register_num, txt_date_order, txt_status, txt_type_payment, txt_paid, txt_price, txt_name_customer,txt_email_customer,
+            txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay ;
+    public ImageView img_status_bar;
+
+
     Order order = new Order();
     Customer customer = new Customer();
     Office office = new Office();
@@ -61,24 +71,28 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
     int count = 0;
 
     //TODO fce filter orders by word search or status
+    //TODO adding count  product
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        controller = new OrderActivityController(this);
+
         recyclerView = findViewById(R.id.recycler_view2);
+        progressBar = findViewById(R.id.progress_bar);
         spinner_status = findViewById(R.id.spinner_filter);
         statAdapter = new StatusAdapter(OrderActivity.this, StatusData.getStatusList());
         spinner_status.setAdapter(statAdapter);
 
-        mAuth = FirebaseAuth.getInstance();
+     //   mAuth = FirebaseAuth.getInstance();
 
-        final FirebaseUser office = mAuth.getCurrentUser();
-        String id = office.getUid();
+     //   final FirebaseUser office = mAuth.getCurrentUser();
+      //  String id = office.getUid();
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
+      //  firebaseDatabase = FirebaseDatabase.getInstance();
+       // databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -86,6 +100,11 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         adapter = new OrderAdapter(this, list, this);
         recyclerView.setAdapter(adapter);
 
+        progressBar.setVisibility(View.VISIBLE);
+        controller.setRecViewContent();
+        progressBar.setVisibility(View.INVISIBLE);
+
+/*
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,7 +125,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
     }
 
@@ -118,10 +137,16 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
 
 
       //  Toast.makeText(this, "Position " + numberOrder.getText().toString(), Toast.LENGTH_SHORT).show();
-        int id_order = list.get(position).getId_order();
-        Toast.makeText(this, "ID order " + id_order, Toast.LENGTH_SHORT).show();
+       // int id_order = list.get(position).getId_order();
+        //Toast.makeText(this, "ID order " + id_order, Toast.LENGTH_SHORT).show();
 
-        getOrderFirebaseResources(id_order);
+        //controller.getOrderID(position);
+
+        controller.getOrderFirebaseResources(controller.getOrderID(position));
+
+        createBottomSheet();
+
+        //getOrderFirebaseResources(controller.getOrderID(position));
 
        // SharedPreferences sharedPreferences = getSharedPreferences("MyOrderPref", MODE_PRIVATE);
 
@@ -323,7 +348,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
                     Log.i("getProductListFirebRes", "product names: " + names_product);
 
                     if(count == arr.length -1) {
-                        String out = Arrays.toString(names_product.toArray()).replace("[","").replace("]","").replace(",",",\n");
+                        String out = Arrays.toString(names_product.toArray()).replace("[","").replace("]","").replace(",","\n");
                         product.setName(out);
                         names_product.clear();
                         createBottomSheet();
@@ -354,7 +379,24 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sheet_detail_order,(LinearLayout)findViewById(R.id.sheet_container));
         bottomSheetDialog.setContentView(bottomSheetView);
 
-        TextView numberOrder = bottomSheetDialog.findViewById(R.id.number_order);
+        numberOrder = bottomSheetDialog.findViewById(R.id.number_order);
+        register_num = bottomSheetDialog.findViewById(R.id.register_num);
+        txt_date_order = bottomSheetDialog.findViewById(R.id.txt_date_order);
+        txt_status = bottomSheetDialog.findViewById(R.id.txt_status);
+        img_status_bar = bottomSheetDialog.findViewById(R.id.img_status_bar);
+        txt_type_payment = bottomSheetDialog.findViewById(R.id.txt_type_payment);
+        txt_paid = bottomSheetDialog.findViewById(R.id.txt_paid);
+        txt_price = bottomSheetDialog.findViewById(R.id.txt_price);
+        txt_name_customer = bottomSheetDialog.findViewById(R.id.txt_name_customer);
+        txt_email_customer = bottomSheetDialog.findViewById(R.id.txt_email_customer);
+        txt_phone_customer = bottomSheetDialog.findViewById(R.id.txt_phone_customer);
+        txt_offic_address = bottomSheetDialog.findViewById(R.id.txt_offic_address);
+        txt_office_name = bottomSheetDialog.findViewById(R.id.txt_office_name);
+        txt_name_product = bottomSheetDialog.findViewById(R.id.txt_name_product);
+        txt_discount = bottomSheetDialog.findViewById(R.id.txt_discount);
+        txt_date_pay = bottomSheetDialog.findViewById(R.id.txt_date_pay);
+        title_date_pay = bottomSheetDialog.findViewById(R.id.title_date_pay);
+        /*
         TextView title_registr_num = bottomSheetDialog.findViewById(R.id.title_registr_num);
         TextView register_num = bottomSheetDialog.findViewById(R.id.register_num);
         TextView txt_date_order = bottomSheetDialog.findViewById(R.id.txt_date_order);
@@ -363,11 +405,14 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         TextView txt_type_payment = bottomSheetDialog.findViewById(R.id.txt_type_payment);
         TextView txt_paid = bottomSheetDialog.findViewById(R.id.txt_paid);
         TextView txt_price = bottomSheetDialog.findViewById(R.id.txt_price);
+
         TextView txt_name_customer = bottomSheetDialog.findViewById(R.id.txt_name_customer);
         TextView txt_email_customer = bottomSheetDialog.findViewById(R.id.txt_email_customer);
         TextView txt_phone_customer = bottomSheetDialog.findViewById(R.id.txt_phone_customer);
+
         TextView txt_offic_address = bottomSheetDialog.findViewById(R.id.txt_offic_address);
         TextView txt_office_name = bottomSheetDialog.findViewById(R.id.txt_office_name);
+
         TextView txt_name_product = bottomSheetDialog.findViewById(R.id.txt_name_product);
 
         numberOrder.setText("Objednávka " + order.getOrder_number());
@@ -377,6 +422,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         int id_customer = order.getId_customer();
         boolean paid = order.isPaid();
         Log.i("getOrderFirebaseRes", String.valueOf(paid));
+
         setStatus(status, txt_status, img_status_bar);
         setTypePayTitle(typePay, txt_type_payment);
         setPaidTitle(paid, txt_paid);
@@ -397,7 +443,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
         title_registr_num.setVisibility(View.GONE);
         register_num.setVisibility(View.GONE);
 
-
+*/
 
 
         bottomSheetDialog.show();
@@ -446,6 +492,7 @@ public class OrderActivity extends AppCompatActivity implements OrderAdapter.OnD
     }
 
     private String parseDateFromDatabase(Order order) {
+
         SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
         SimpleDateFormat output_format = new SimpleDateFormat("dd.M.yyyy");
 
