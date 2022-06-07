@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ala.view.OrderActivityView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -87,7 +88,7 @@ private ProgressBar progress_bar;
         crd_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MenuActivity.this, OrderActivity .class));
+                startActivity(new Intent(MenuActivity.this, OrderActivityView.class));
             }
         });
 

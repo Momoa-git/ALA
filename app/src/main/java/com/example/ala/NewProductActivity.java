@@ -3,29 +3,19 @@ package com.example.ala;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ala.view.ScannerAddActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class NewProductActivity extends AppCompatActivity {
 
@@ -125,9 +115,9 @@ public class NewProductActivity extends AppCompatActivity {
                     //  databaseReference.child(String.valueOf(id+1)).setValue(product);
                     for (int i = 0; i < piece; i++) {
                         int id = randomNumberID();
-                        Product product = new Product(id,id_list_product, name, price, bar_code, line, place);
+                        Product product = new Product(id, id_list_product, name, price, bar_code, line, place);
                         databaseReference.push().setValue(product);
-                        Log.i("outline","[WAREHOUSE:] ID: "+ id  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
+                        Log.i("outline","[WAREHOUSE:] ID: "+ id_list_product  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
                        // databaseReference.push().setValue(product);
                     }
                     Toast.makeText(NewProductActivity.this, piece + " Product(s) added!" , Toast.LENGTH_LONG).show();
@@ -139,6 +129,8 @@ public class NewProductActivity extends AppCompatActivity {
             private int randomNumberID() {
                 int min = 1000000;
                 int max = 9000000;
+
+
 
                 int id = (int)Math.floor(Math.random() * (max - min + 1) + min);
                 //TODO Změnit na unikátní ID!

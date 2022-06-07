@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.view;
 
 import android.Manifest;
 import android.content.SharedPreferences;
@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ala.NewProductActivity;
+import com.example.ala.controller.ScannerAddActivityController;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,16 +28,19 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
 
     int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     ZXingScannerView scannerView;
+    ScannerAddActivityController controller;
 
     ArrayList<String> arrayList = new ArrayList<>();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    public SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
+        controller = new ScannerAddActivityController(this, this);
 
     }
 
@@ -44,17 +49,18 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
 
 
         NewProductActivity.edT_ks.setText("");
-        NewProductActivity.edT_bar.setText(result.getText());
+       // NewProductActivity.edT_bar.setText(result.getText());
 
 
-        getProductByCode(result.getText());
+        //getProductByCode(result.getText());
 
+        controller.getProductByCode(result.getText());
 
 
         onBackPressed();
 
     }
-
+/*
     private void getProductByCode(String bar_code) {
 
 
@@ -110,7 +116,7 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
 
 
     }
-
+*/
     @Override
     protected void onPause() {
         super.onPause();

@@ -60,6 +60,8 @@ public class Product {
 
     public int getId(){return id;}
 
+    public int getId_list_product(){return id_list_product;}
+
     public String getName() {
         return name;
     }

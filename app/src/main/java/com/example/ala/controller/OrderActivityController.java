@@ -3,16 +3,16 @@ package com.example.ala.controller;
 import android.view.View;
 
 import com.example.ala.Order;
-import com.example.ala.OrderActivity;
 import com.example.ala.R;
 import com.example.ala.model.OrderActivityModel;
+import com.example.ala.view.OrderActivityView;
 
 public class OrderActivityController {
   private OrderActivityModel model;
-  private OrderActivity view;
+  private OrderActivityView view;
 
 
-   public OrderActivityController(OrderActivity view){
+   public OrderActivityController(OrderActivityView view){
        this.view = view;
        model = new OrderActivityModel(this);
    }
@@ -62,6 +62,11 @@ public class OrderActivityController {
             case "PE":
                 this.view.txt_status.setText("Čekající");
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_pe);
+                this.view.title_locate.setVisibility(View.GONE);
+                this.view.txt_locate.setVisibility(View.GONE);
+                this.view.txt_date_locate.setVisibility(View.GONE);
+                this.view.title_registr_num.setVisibility(View.GONE);
+                this.view.txt_register_num.setVisibility(View.GONE);
                 break;
             case "IP":
                 this.view.txt_status.setText("Vyřizuje se");
