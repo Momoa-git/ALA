@@ -1,7 +1,7 @@
 package com.example.ala;
 
 public class Product {
-    private int id;
+    private int register_number;
     private int id_list_product;
     private String name;
     private String price;
@@ -13,8 +13,8 @@ public class Product {
 
     }
 
-    public Product(int id, int id_list_product, String name, String price, String bar_code, String line, String place) {
-        this.id = id;
+    public Product(int register_number, int id_list_product, String name, String price, String bar_code, String line, String place) {
+        this.register_number = register_number;
         this.id_list_product = id_list_product;
         this.name = name;
         this.price = price;
@@ -30,8 +30,8 @@ public class Product {
 
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setRegister_number(int register_number) {
+        this.register_number = register_number;
     }
 
     public void setId_list_product(int id_list_product) {
@@ -58,7 +58,7 @@ public class Product {
         this.place = place;
     }
 
-    public int getId(){return id;}
+    public int getRegister_number(){return register_number;}
 
     public int getId_list_product(){return id_list_product;}
 

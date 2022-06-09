@@ -10,12 +10,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.ScannerAddActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.TimeUnit;
 
 public class NewProductActivity extends AppCompatActivity {
 
@@ -23,11 +30,14 @@ public class NewProductActivity extends AppCompatActivity {
     private Button btn_scan;
     public static Button btn_add_item;
     private FirebaseAuth mAuth;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    FirebaseDatabase firebaseDatabase, firebaseDatabase2;
+    DatabaseReference databaseReference, databaseReference2;
     public static TextView txt_id;
   // public int id;
     Integer piece;
+    Integer reg_number, register_number;
+    Integer semaphore;
+    Integer counter;
 
     //TODO ošetřit, když dostanu nevalidní ean kod
     //TODO ošetřit, když počet kusů nebo umístění bude null
@@ -69,7 +79,7 @@ public class NewProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
+             //   searchOrder();
                 addNewProduct();
                 fillEmptyAll();
 
@@ -93,6 +103,9 @@ public class NewProductActivity extends AppCompatActivity {
                 firebaseDatabase = FirebaseDatabase.getInstance();
                 databaseReference = firebaseDatabase.getReference().child("Office").child(mAuth.getUid()).child("Product");
 
+                firebaseDatabase2 = FirebaseDatabase.getInstance();
+                databaseReference2 = firebaseDatabase2.getReference().child("Product").child("register_number");
+
                 piece = Integer.valueOf(edT_ks.getText().toString());
 
                 String name = edT_name_product.getText().toString();
@@ -114,11 +127,22 @@ public class NewProductActivity extends AppCompatActivity {
 
                     //  databaseReference.child(String.valueOf(id+1)).setValue(product);
                     for (int i = 0; i < piece; i++) {
-                        int id = randomNumberID();
-                        Product product = new Product(id, id_list_product, name, price, bar_code, line, place);
-                        databaseReference.push().setValue(product);
-                        Log.i("outline","[WAREHOUSE:] ID: "+ id_list_product  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
-                       // databaseReference.push().setValue(product);
+                        counter = 0;
+                        readRegisterNumberData(new FirebaseCallback() {
+                            @Override
+                            public void onCallBack(int reg_num) {
+                                register_number = reg_num + counter;
+                                Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place);
+                                databaseReference.push().setValue(product);
+                                int new_reg_number = register_number + 1;
+                                databaseReference2.setValue(new_reg_number);
+                                counter++;
+                             //  databaseReference2.setValue(id + 1);
+                                Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
+                            }
+                        });
+
+
                     }
                     Toast.makeText(NewProductActivity.this, piece + " Product(s) added!" , Toast.LENGTH_LONG).show();
 
@@ -126,16 +150,8 @@ public class NewProductActivity extends AppCompatActivity {
 
             }
 
-            private int randomNumberID() {
-                int min = 1000000;
-                int max = 9000000;
 
 
-
-                int id = (int)Math.floor(Math.random() * (max - min + 1) + min);
-                //TODO Změnit na unikátní ID!
-                return id;
-            }
 
             private Boolean checkValidValues(int piece, String line, String place) {
 
@@ -160,10 +176,42 @@ public class NewProductActivity extends AppCompatActivity {
         });
 
 
+
+    }
+/*
+    private boolean searchOrder() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("Order").child("Orders");
+    }*/
+
+    private void readRegisterNumberData(FirebaseCallback firebaseCallback){
+
+        semaphore = 0;
+        firebaseDatabase2 = FirebaseDatabase.getInstance();
+        databaseReference2 = firebaseDatabase2.getReference().child("Product").child("register_number");
+        databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                reg_number = Integer.valueOf(String.valueOf(snapshot.getValue()));
+                    firebaseCallback.onCallBack(reg_number);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+    }
+
+
+    private interface FirebaseCallback{
+       void onCallBack(int reg_num);
     }
 
 
 
-    }
+}
 
 
