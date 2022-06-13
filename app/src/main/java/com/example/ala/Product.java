@@ -8,12 +8,14 @@ public class Product {
     private String bar_code;
     private String line;
     private String place;
+    private String date_time_arrivals;
+    private boolean order_assigned;
 
     public Product() {
 
     }
 
-    public Product(int register_number, int id_list_product, String name, String price, String bar_code, String line, String place) {
+    public Product(int register_number, int id_list_product, String name, String price, String bar_code, String line, String place, String date_time_arrivals,  boolean order_assigned) {
         this.register_number = register_number;
         this.id_list_product = id_list_product;
         this.name = name;
@@ -21,6 +23,8 @@ public class Product {
         this.bar_code = bar_code;
         this.line = line;
         this.place = place;
+        this.date_time_arrivals = date_time_arrivals;
+        this.order_assigned = order_assigned;
     }
 
     public Product(String name, String price, String bar_code) {
@@ -28,6 +32,22 @@ public class Product {
         this.price = price;
         this.bar_code = bar_code;
 
+    }
+
+    public void setDate_time_arrivals(String date_time_arrivals) {
+        this.date_time_arrivals = date_time_arrivals;
+    }
+
+    public String getDate_time_arrivals() {
+        return date_time_arrivals;
+    }
+
+    public boolean isOrder_assigned() {
+        return order_assigned;
+    }
+
+    public void setOrder_assigned(boolean order_assigned) {
+        this.order_assigned = order_assigned;
     }
 
     public void setRegister_number(int register_number) {
