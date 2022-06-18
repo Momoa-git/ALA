@@ -365,4 +365,17 @@ public class OrderActivityModel {
     }
 
 
+    public String calculatePriceAfterSale(float sale_f, float price, float old_sale_f) {
+
+        float full_price;
+
+        if(old_sale_f != 0)
+         full_price = price * 100 / (100 - old_sale_f);
+
+        else
+            full_price = price;
+
+        float sale = sale_f * full_price / 100;
+        return setPriceFormat(String.valueOf(full_price - sale));
+    }
 }

@@ -2,6 +2,7 @@ package com.example.ala;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class NewProductActivity extends AppCompatActivity {
@@ -39,9 +41,10 @@ public class NewProductActivity extends AppCompatActivity {
   // public int id;
     Integer piece;
     Integer reg_number, register_number;
-    Integer semaphore;
+    boolean semaphore = true;
     Integer counter;
     boolean order_assigned = false;
+
 
     //TODO ošetřit, když dostanu nevalidní ean kod
     //TODO ošetřit, když počet kusů nebo umístění bude null
@@ -64,6 +67,7 @@ public class NewProductActivity extends AppCompatActivity {
        // txt_id = findViewById(R.id.id);
 
         mAuth = FirebaseAuth.getInstance();
+
 
 
 
@@ -130,15 +134,21 @@ public class NewProductActivity extends AppCompatActivity {
                   //  Product product = new Product(id,name, price, bar_code, line, place);
                     order_assigned = false;
                     //  databaseReference.child(String.valueOf(id+1)).setValue(product);
-                    for (int i = 0; i < piece; i++) {
-                        counter = 0;
-                        readRegisterNumberData(new FirebaseCallback() {
-                            @Override
-                            public void onCallBack(int reg_num) {
-                                register_number = reg_num + counter;
-                                searchingOrder(id_list_product, new FirebaseCallback2() {
-                                    @Override
-                                    public void onCallBack2(boolean order_assigned) {
+                    counter = 0;
+
+                        semaphore = false;
+
+
+
+                            readRegisterNumberData(new FirebaseCallback() {
+                                @Override
+                                public void onCallBack(int reg_num) {
+                                    for (int i = 0; i < piece; i++) {
+                                    searchingOrder(id_list_product, new FirebaseCallback2() {
+                                        @Override
+                                        public void onCallBack2(boolean order_assigned) {
+
+                                        register_number = reg_num + counter;
                                         Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place, getActualDateTime(), order_assigned);
                                         databaseReference.push().setValue(product);
                                         int new_reg_number = register_number + 1;
@@ -146,21 +156,15 @@ public class NewProductActivity extends AppCompatActivity {
                                         counter++;
                                         Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price +
                                                 " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+
                                     }
-                                });
-                               /*
-                                Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place);
-                                databaseReference.push().setValue(product);
-                                int new_reg_number = register_number + 1;
-                                databaseReference2.setValue(new_reg_number);
-                                counter++;
-                             //  databaseReference2.setValue(id + 1);
-                                Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price + " BarCode: " + bar_code + " Line-place: " + line + "-" + place);
-                           */ }
+
+                                });}
+                                }
+
                         });
 
 
-                    }
                     Toast.makeText(NewProductActivity.this, piece + " Product(s) added!" , Toast.LENGTH_LONG).show();
 
                 }
@@ -197,10 +201,14 @@ public class NewProductActivity extends AppCompatActivity {
                             for(int j = 0; j < array_id_list_product.length; j++) {
                                 if (mAuth.getUid().contains(order.getOffice()) && array_id_list_product[j].equals(String.valueOf(id_list_product - 1)) && order.getStatus().equals("PE")) {
                                     Log.i("outline", "[MATCH IN ORDER:]" + String.valueOf(order.getOrder_number()) + " " +  array_id_list_product[j]);
-                                   // updateOrder(dataSnapshot);
+                                   // updateOrder(order, id_list_product - 1);
+                                    databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
                                     order_assigned = true;
+
+
                                     break;
                                 }
+
                             }
 
                         }
@@ -245,6 +253,11 @@ public class NewProductActivity extends AppCompatActivity {
 
 
     }
+
+    private void updateOrder(Order order, int key) {
+        databaseReference3.child(String.valueOf(order.getId_order()-1)).child("registation_product_num").setValue(String.valueOf(reg_number));
+        databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
+    }
 /*
     private boolean searchOrder() {
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -253,7 +266,6 @@ public class NewProductActivity extends AppCompatActivity {
 
     private void readRegisterNumberData(FirebaseCallback firebaseCallback){
         Log.i("outline", "Before read");
-        semaphore = 0;
         firebaseDatabase2 = FirebaseDatabase.getInstance();
         databaseReference2 = firebaseDatabase2.getReference().child("Product").child("register_number");
         databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -272,6 +284,8 @@ public class NewProductActivity extends AppCompatActivity {
 
         });
     }
+
+
 
 
     private interface FirebaseCallback{

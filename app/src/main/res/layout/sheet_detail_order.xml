@@ -589,6 +589,19 @@
             android:text="10%"
             android:textColor="@color/primary" />
 
+        <Button
+            android:id="@+id/btn_edit_sale"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/txt_discount"
+            android:layout_toRightOf="@+id/txt_discount"
+            android:background="@drawable/ic_edit_sale"
+            android:layout_below="@+id/txt_paid"
+
+            />
 
         <TextView
             android:id="@+id/title_price"
@@ -647,8 +660,25 @@
             android:layout_height="54dp"
             android:layout_below="@+id/edT_bar"
             android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primary"
+            android:drawableLeft="@drawable/ic_payment"
             android:text="Platba"
-            android:drawableLeft="@drawable/ic_payment" />
+            android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/btn_storno"
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:layout_below="@+id/edT_bar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:backgroundTint="@color/primary"
+            android:drawableLeft="@drawable/ic_payment"
+            android:text="Storno"
+            android:textColor="@color/white" />
 
     </RelativeLayout>
 

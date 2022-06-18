@@ -1,13 +1,15 @@
 package com.example.ala.controller;
 
+import android.util.Log;
 import android.view.View;
 
 import com.example.ala.Order;
 import com.example.ala.R;
+import com.example.ala.SaleDialog;
 import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.OrderActivityView;
 
-public class OrderActivityController {
+public class OrderActivityController{
   private OrderActivityModel model;
   private OrderActivityView view;
 
@@ -67,6 +69,8 @@ public class OrderActivityController {
                 this.view.txt_date_locate.setVisibility(View.GONE);
                 this.view.title_registr_num.setVisibility(View.GONE);
                 this.view.txt_register_num.setVisibility(View.GONE);
+                this.view.btn_payment.setVisibility(View.GONE);
+                this.view.btn_storno.setVisibility(View.GONE);
                 break;
             case "IP":
                 this.view.txt_status.setText("Vyřizuje se");
@@ -103,4 +107,32 @@ public class OrderActivityController {
        this.view.txt_date_pay.setVisibility(View.GONE);
        this.view.title_date_pay.setVisibility(View.GONE);
     }
+
+
+    public void setAfterSale(String sale) {
+     /*   if(sale.equals("0"))
+            view.txt_discount.setText("-");*/
+
+
+        String old_sale = view.txt_discount.getText().toString().replace("%", "");
+        float old_sale_f;
+        try {
+             old_sale_f = Float.valueOf(old_sale);
+        } catch (NumberFormatException e) {
+            old_sale_f = 0;
+        }
+
+        view.txt_discount.setText(sale + " %");
+
+
+
+
+        String newStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
+        float price = Float.valueOf(newStr);
+        float sale_F = Float.valueOf(sale);
+        Log.i("vysledek", sale_F +" * "+ price);
+        view.txt_price.setText(model.calculatePriceAfterSale(sale_F, price, old_sale_f) + " Kč s DPH");;
+    }
+
+
 }

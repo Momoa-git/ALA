@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,13 +18,14 @@ import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
 import com.example.ala.OrderAdapter;
 import com.example.ala.R;
+import com.example.ala.SaleDialog;
 import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
-public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener {
+public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener {
 
     OrderActivityController controller;
 
@@ -38,6 +40,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
             txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay, title_locate,
             txt_locate, txt_date_locate, title_registr_num, txt_register_num;
     public ImageView img_status_bar;
+    public Button btn_payment, btn_storno, btn_edit_sale;
 
     //TODO fce filter orders by word search or status
     //TODO adding count  product
@@ -113,16 +116,31 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         txt_date_locate = bottomSheetDialog.findViewById(R.id.txt_date_locate);
         title_registr_num = bottomSheetDialog.findViewById(R.id.title_registr_num);
         txt_register_num = bottomSheetDialog.findViewById(R.id.txt_register_num);
-
-
+        btn_payment = bottomSheetDialog.findViewById(R.id.btn_payment);
+        btn_storno = bottomSheetDialog.findViewById(R.id.btn_storno);
+        btn_edit_sale = bottomSheetDialog.findViewById(R.id.btn_edit_sale);
 
 
         bottomSheetDialog.show();
 
+
+        btn_edit_sale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSaleDialog();
+            }
+        });
+
+
     }
 
+    public void openSaleDialog() {
+        SaleDialog saleDialog = new SaleDialog();
+        saleDialog.show(getSupportFragmentManager(),"sale dialog");
+    }
 
-
-
-
+    @Override
+    public void applyTexts(String sale) {
+        controller.setAfterSale(sale);
+    }
 }
