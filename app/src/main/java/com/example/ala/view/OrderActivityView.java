@@ -123,7 +123,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
 
         bottomSheetDialog.show();
 
-
         btn_edit_sale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,5 +141,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     @Override
     public void applyTexts(String sale) {
         controller.setAfterSale(sale);
+
     }
 }

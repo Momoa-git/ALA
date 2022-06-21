@@ -22,24 +22,27 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class OrderActivityModel {
 
-    private FirebaseDatabase firebaseDatabase, firebaseDatabase2;
-    private DatabaseReference databaseReference, databaseReference2;
+    private FirebaseDatabase firebaseDatabase, firebaseDatabase2, firebaseDatabase3, firebaseDatabase4;
+    private DatabaseReference databaseReference, databaseReference2, databaseReference3, databaseReference4;
     private FirebaseAuth mAuth;
     Order order = new Order();
+   //boolean semaphore = true;
     int count;
+    int id_order_firebase;
     private OrderActivityController controller;
     ArrayList<String> names_product = new ArrayList<String>(2);
 
-    public OrderActivityModel(OrderActivityController controller)
-    {
+    public OrderActivityModel(OrderActivityController controller) {
         this.controller = controller;
     }
 
-    public void setRecViewContent()
-    {
+    public void setRecViewContent() {
         mAuth = FirebaseAuth.getInstance();
 
         final FirebaseUser office = mAuth.getCurrentUser();
@@ -51,12 +54,11 @@ public class OrderActivityModel {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Order order = dataSnapshot.getValue(Order.class);
 
 
-                    if(order.getOffice().contains(id)) {
+                    if (order.getOffice().contains(id)) {
                         //list.add(order);
                         controller.onAddOrderToList(order);
                     }
@@ -74,8 +76,7 @@ public class OrderActivityModel {
 
     }
 
-    public int getOrderID(int position)
-    {
+    public int getOrderID(int position) {
         return controller.onOrderID(position);
 
     }
@@ -87,13 +88,11 @@ public class OrderActivityModel {
         databaseReference2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String id_order_firebase_STR = dataSnapshot.child("id_order").getValue().toString();
-                    int id_order_firebase = Integer.valueOf(id_order_firebase_STR);
+                    id_order_firebase = Integer.valueOf(id_order_firebase_STR);
 
-                    if(id_order_firebase == id_order)
-                    {
+                    if (id_order_firebase == id_order) {
                         String order_number = dataSnapshot.child("order_number").getValue().toString();
                         String date_order = dataSnapshot.child("date").getValue().toString();
                         String time_order = dataSnapshot.child("time").getValue().toString();
@@ -103,7 +102,7 @@ public class OrderActivityModel {
 
                         String[] str = id_list_product.split(",");
                         String[] array_id_list_product = new String[str.length];
-                        for(int i = 0; i < str.length; i++)
+                        for (int i = 0; i < str.length; i++)
                             array_id_list_product[i] = str[i];
 
                         String id_customer = dataSnapshot.child("id_customer").getValue().toString();
@@ -115,10 +114,7 @@ public class OrderActivityModel {
                         String possibleDatePay = checkPosssibleDatePay(dataSnapshot, paid);
 
 
-
-
-
-                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: "+ paid +", ListProd.: " + array_id_list_product[0]);
+                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: " + paid + ", ListProd.: " + array_id_list_product[0]);
 
 
                         String paidAfterParse = setPaidTitle(paid);
@@ -126,9 +122,9 @@ public class OrderActivityModel {
                         String priceAfterParse = setPriceFormat(price);
                         String dateAfterParse = setDateFormat(date_order);
 
-                        controller.setOrderResources(order_number, dateAfterParse,time_order,status, office, id_list_product, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
+                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, office, id_list_product, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
 
-
+                        //semaphore = true;
                         getCustomerFirebaseResources(Integer.parseInt(id_customer));
                         getOfficeFirebaseResources(office);
                         getProductListFirebaseResources(array_id_list_product);
@@ -139,7 +135,6 @@ public class OrderActivityModel {
                 }
 
             }
-
 
 
             @Override
@@ -161,7 +156,7 @@ public class OrderActivityModel {
                 return "invisible";
             }
 
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             controller.setInvisibleDatePay();
             return "invisible";
         }
@@ -169,17 +164,17 @@ public class OrderActivityModel {
     }
 
     private String checkPossibleDiscount(DataSnapshot dataSnapshot) {
+        try {
+            String discount = dataSnapshot.child("Payment").child("discount").getValue().toString();
             try {
-                String discount = dataSnapshot.child("Payment").child("discount").getValue().toString();
-                try {
-                    Integer.parseInt(discount);
-                    return discount + "%";
-                }catch (NumberFormatException n){
-                    return "ERR format exception";
-                }
-            }catch (NullPointerException e){
-                return "-";
+                Integer.parseInt(discount);
+                return discount + "%";
+            } catch (NumberFormatException n) {
+                return "ERR format exception";
             }
+        } catch (NullPointerException e) {
+            return "-";
+        }
 
 
     }
@@ -197,7 +192,7 @@ public class OrderActivityModel {
         }
     }
 
-    private String setPriceFormat(String price) {
+    public String setPriceFormat(String price) {
 
         double amount = Double.parseDouble(price);
         DecimalFormat formater = new DecimalFormat("###,###.00");
@@ -207,16 +202,16 @@ public class OrderActivityModel {
     }
 
     private String setTypeTitle(String type_pay) {
-        if(type_pay.equals("card"))
+        if (type_pay.equals("card"))
             return "Kartou";
-        if(type_pay.equals("cash"))
+        if (type_pay.equals("cash"))
             return "Hotovost";
         else
             return "ERR";
     }
 
     private String setPaidTitle(boolean paid) {
-        if(paid == true)
+        if (paid == true)
             return "ANO";
         else
             return "NE";
@@ -231,13 +226,11 @@ public class OrderActivityModel {
         databaseReference2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String id_customer_STR = dataSnapshot.child("id").getValue().toString();
                     int id_order_firebase = Integer.valueOf(id_customer_STR);
 
-                    if(id_order_firebase == id_customer)
-                    {
+                    if (id_order_firebase == id_customer) {
                         String fname = dataSnapshot.child("fname").getValue().toString();
                         String lname = dataSnapshot.child("lname").getValue().toString();
                         String email = dataSnapshot.child("email").getValue().toString();
@@ -255,14 +248,11 @@ public class OrderActivityModel {
 */
 
 
-
-
                     }
 
                 }
 
             }
-
 
 
             @Override
@@ -297,7 +287,7 @@ public class OrderActivityModel {
 
                 controller.setOfficeResources(name, address);
 
-               // getProductListFirebaseResources(arr);
+                // getProductListFirebaseResources(arr);
                 // createBottomSheet();
             }
 
@@ -308,46 +298,46 @@ public class OrderActivityModel {
         });
 
 
-
-
     }
 
-    private void getProductListFirebaseResources(String[]arr) {
+    private void getProductListFirebaseResources(String[] arr) {
         firebaseDatabase2 = FirebaseDatabase.getInstance();
         databaseReference2 = firebaseDatabase2.getReference().child("Product").child("Products");
 
-
+        names_product.clear();
 
         count = 0;
 
-        for(int i = 0; i < arr.length; i++) {
-
+        for (int i = 0; i < arr.length; i++) {
+            Log.i("getProductListFirebRes", "iterace: " + i);
             databaseReference2.child(arr[i]).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Product product = snapshot.getValue(Product.class);
-                    //  if (officeProfile != null){
-                    String name_product = snapshot.child("name").getValue().toString();
-
-                    names_product.add(name_product);
-                    // name[count] = name_product;
-
-                    //   product.setName(name_product);
-
-                    Log.i("getProductListFirebRes", "product name: " + name_product);
 
 
-                    Log.i("getProductListFirebRes", "product names: " + names_product);
+                        String name_product = snapshot.child("name").getValue().toString();
 
-                    if(count == arr.length -1) {
-                        String nameStream = Arrays.toString(names_product.toArray()).replace("[","").replace("]","").replace(",","\n");
-                       // product.setName(out);
-                        controller.setProductListResources(nameStream);
-                        names_product.clear();
-                    }
+                        names_product.add(name_product);
+                        // name[count] = name_product;
 
-                    count++;
+                        //   product.setName(name_product);
 
+                        Log.i("getProductListFirebRes", "product name: " + name_product);
+
+
+                        Log.i("getProductListFirebRes", "product names: " + names_product);
+
+                        if (count == arr.length - 1) {
+                            String nameStream = Arrays.toString(names_product.toArray()).replace("[", "").replace("]", "").replace(",", "\n");
+                            // product.setName(out);
+                            Log.i("getProductListFirebRes", "product names: " + nameStream);
+                            names_product.clear();
+                            controller.setProductListResources(nameStream);
+
+                        }
+
+                        count++;
 
 
                 }
@@ -365,17 +355,46 @@ public class OrderActivityModel {
     }
 
 
-    public String calculatePriceAfterSale(float sale_f, float price, float old_sale_f) {
+    public float calculatePriceAfterSale(float sale_f, float price, float old_sale_f) {
 
         float full_price;
 
-        if(old_sale_f != 0)
-         full_price = price * 100 / (100 - old_sale_f);
+        if (old_sale_f != 0)
+            full_price = price * 100 / (100 - old_sale_f);
 
         else
             full_price = price;
 
         float sale = sale_f * full_price / 100;
-        return setPriceFormat(String.valueOf(full_price - sale));
+        return full_price - sale;
     }
+
+    //setPriceFormat(String.valueOf(
+    public void saveDiscountInDB(float sale_F, int id) {
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders");
+        databaseReference3.child(String.valueOf(id - 1)).child("Payment").child("discount").setValue(sale_F);
+
+
+    }
+
+    public void saveNewPriceInDB(float result_price, int id) {
+        firebaseDatabase4 = FirebaseDatabase.getInstance();
+        databaseReference4 = firebaseDatabase3.getReference().child("Order").child("Orders");
+        databaseReference4.child(String.valueOf(id - 1)).child("Payment").child("price").setValue(result_price);
+    }
+
+    public void hash(float sale_F, float result_price, int id)
+    {
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
+
+        Map update = new HashMap();
+        update.put("discount", sale_F);
+        update.put("price", result_price);
+
+
+        databaseReference3.updateChildren(update);
+    }
+
 }

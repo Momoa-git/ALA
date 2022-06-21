@@ -9,9 +9,12 @@ import com.example.ala.SaleDialog;
 import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.OrderActivityView;
 
+import java.util.concurrent.TimeUnit;
+
 public class OrderActivityController{
   private OrderActivityModel model;
   private OrderActivityView view;
+  int id;
 
 
    public OrderActivityController(OrderActivityView view){
@@ -43,6 +46,7 @@ public class OrderActivityController{
 
     public void getOrderFirebaseResources(int id_order)
     {
+        id = id_order;
         model.getOrderFirebaseResources(id_order);
     }
 
@@ -51,11 +55,19 @@ public class OrderActivityController{
        this.view.txt_price.setText(price + " Kč s DPH");
        this.view.txt_paid.setText(paid);
        this.view.txt_type_payment.setText(type_pay);
+       getPaid(paid);
        setStatus(status);
        this.view.txt_date_order.setText(date_order + " " + time_order);
        this.view.txt_discount.setText(discount);
        this.view.txt_date_pay.setText(date_pay);
 
+    }
+
+    private void getPaid(String paid) {
+       if(paid.equals("ANO"))
+           this.view.btn_edit_sale.setVisibility(View.GONE);
+       else
+           this.view.btn_edit_sale.setVisibility(View.VISIBLE);
     }
 
     private void setStatus(String status)
@@ -79,10 +91,12 @@ public class OrderActivityController{
             case "CO":
                 this.view. txt_status.setText("Vyřízena");
                 this.view. img_status_bar.setImageResource(R.drawable.status_bar_co);
+                this.view.btn_edit_sale.setVisibility(View.GONE);
                 break;
             case "CA":
                 this.view. txt_status.setText("Stornována");
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_ca);
+                this.view.btn_edit_sale.setVisibility(View.GONE);
                 break;
 
         }
@@ -113,6 +127,8 @@ public class OrderActivityController{
      /*   if(sale.equals("0"))
             view.txt_discount.setText("-");*/
 
+        String name_product = this.view.txt_name_product.getText().toString();
+
 
         String old_sale = view.txt_discount.getText().toString().replace("%", "");
         float old_sale_f;
@@ -131,7 +147,17 @@ public class OrderActivityController{
         float price = Float.valueOf(newStr);
         float sale_F = Float.valueOf(sale);
         Log.i("vysledek", sale_F +" * "+ price);
-        view.txt_price.setText(model.calculatePriceAfterSale(sale_F, price, old_sale_f) + " Kč s DPH");;
+        float result_price = model.calculatePriceAfterSale(sale_F, price, old_sale_f);
+      //  model.saveDiscountInDB(sale_F, id);
+     /*   try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+     //   model.saveNewPriceInDB(result_price, id);
+    //    model.hash(sale_F, result_price, id);
+        view.txt_price.setText(model.setPriceFormat(String.valueOf(result_price)) + " Kč s DPH");
+
     }
 
 
