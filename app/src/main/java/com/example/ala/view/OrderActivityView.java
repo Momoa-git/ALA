@@ -18,14 +18,15 @@ import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
 import com.example.ala.OrderAdapter;
 import com.example.ala.R;
-import com.example.ala.SaleDialog;
+import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
+import com.example.ala.view.dialog.StornoDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
-public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener {
+public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener {
 
     OrderActivityController controller;
 
@@ -38,7 +39,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     public ArrayList<Order> list;
     public TextView numberOrder, register_num, txt_date_order, txt_status, txt_type_payment, txt_paid, txt_price, txt_name_customer,txt_email_customer,
             txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay, title_locate,
-            txt_locate, txt_date_locate, title_registr_num, txt_register_num;
+            txt_locate, txt_date_locate, title_registr_num, txt_register_num, txt_description;
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
 
@@ -119,6 +120,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         btn_payment = bottomSheetDialog.findViewById(R.id.btn_payment);
         btn_storno = bottomSheetDialog.findViewById(R.id.btn_storno);
         btn_edit_sale = bottomSheetDialog.findViewById(R.id.btn_edit_sale);
+        txt_description = bottomSheetDialog.findViewById(R.id.txt_waiting_alert);
 
 
         bottomSheetDialog.show();
@@ -130,12 +132,28 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
             }
         });
 
+        btn_storno.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openStornoDialog();
+            }
+        });
 
+    }
+
+    private void openStornoDialog() {
+        StornoDialog stornoDialog = new StornoDialog();
+        stornoDialog.show(getSupportFragmentManager(), "storno dialog");
     }
 
     public void openSaleDialog() {
         SaleDialog saleDialog = new SaleDialog();
         saleDialog.show(getSupportFragmentManager(),"sale dialog");
+    }
+    @Override
+    public void applyTexts2() {
+        controller.setAfterStorno();
+
     }
 
     @Override
@@ -143,4 +161,5 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         controller.setAfterSale(sale);
 
     }
+
 }

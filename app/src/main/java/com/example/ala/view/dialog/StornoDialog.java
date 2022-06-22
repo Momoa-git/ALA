@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.view.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,24 +8,27 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-public class SaleDialog extends AppCompatDialogFragment {
-    private EditText editSaleText;
-    private SaleDialogListener listener;
+import com.example.ala.R;
+
+public class StornoDialog extends AppCompatDialogFragment {
+    private StornoDialogListener listener;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater flater = getActivity().getLayoutInflater();
-        View view = flater.inflate(R.layout.layout_sale_dialog, null);
+        View view = flater.inflate(R.layout.layout_storno_dialog, null);
 
         builder.setView(view)
-                .setTitle("Přidání slevy")
+                .setTitle("Stornování objednávky")
                 .setNegativeButton("Zrušit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -35,12 +38,10 @@ public class SaleDialog extends AppCompatDialogFragment {
                 .setPositiveButton("Potvrdit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       String sale = editSaleText.getText().toString();
-                       listener.applyTexts(sale);
+                       listener.applyTexts2();
                     }
                 });
 
-        editSaleText = view.findViewById(R.id.edt_sale);
         return builder.create();
     }
 
@@ -50,13 +51,13 @@ public class SaleDialog extends AppCompatDialogFragment {
         super.onAttach(context);
 
         try {
-            listener = (SaleDialogListener) context;
+            listener = (StornoDialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + "nust implement dialog listener");
         }
     }
 
-    public interface SaleDialogListener{
-        void applyTexts(String sale);
+    public interface StornoDialogListener{
+        void applyTexts2();
     }
 }

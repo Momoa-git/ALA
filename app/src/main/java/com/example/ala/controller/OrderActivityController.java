@@ -5,11 +5,8 @@ import android.view.View;
 
 import com.example.ala.Order;
 import com.example.ala.R;
-import com.example.ala.SaleDialog;
 import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.OrderActivityView;
-
-import java.util.concurrent.TimeUnit;
 
 public class OrderActivityController{
   private OrderActivityModel model;
@@ -81,22 +78,37 @@ public class OrderActivityController{
                 this.view.txt_date_locate.setVisibility(View.GONE);
                 this.view.title_registr_num.setVisibility(View.GONE);
                 this.view.txt_register_num.setVisibility(View.GONE);
+                //btn
                 this.view.btn_payment.setVisibility(View.GONE);
                 this.view.btn_storno.setVisibility(View.GONE);
+                this.view.txt_description.setVisibility(View.VISIBLE);
                 break;
             case "IP":
                 this.view.txt_status.setText("Vyřizuje se");
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_ip);
+                this.view.txt_description.setVisibility(View.GONE);
+                //btn
+                this.view.btn_edit_sale.setVisibility(View.VISIBLE);
+                this.view.btn_payment.setVisibility(View.VISIBLE);
+                this.view.btn_storno.setVisibility(View.VISIBLE);
                 break;
             case "CO":
                 this.view. txt_status.setText("Vyřízena");
                 this.view. img_status_bar.setImageResource(R.drawable.status_bar_co);
+                this.view.txt_description.setVisibility(View.GONE);
+                //btn
                 this.view.btn_edit_sale.setVisibility(View.GONE);
+                this.view.btn_payment.setVisibility(View.GONE);
+                this.view.btn_storno.setVisibility(View.GONE);
                 break;
             case "CA":
                 this.view. txt_status.setText("Stornována");
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_ca);
+                this.view.txt_description.setVisibility(View.VISIBLE);
+                //btn
                 this.view.btn_edit_sale.setVisibility(View.GONE);
+                this.view.btn_payment.setVisibility(View.GONE);
+                this.view.btn_storno.setVisibility(View.GONE);
                 break;
 
         }
@@ -158,6 +170,12 @@ public class OrderActivityController{
     //    model.hash(sale_F, result_price, id);
         view.txt_price.setText(model.setPriceFormat(String.valueOf(result_price)) + " Kč s DPH");
 
+    }
+
+    public void setAfterStorno()
+    {
+        model.saveStornoStatus(id);
+        view.txt_description.setText("OBJEDNÁVKA BYLA STORNOVÁNA");
     }
 
 

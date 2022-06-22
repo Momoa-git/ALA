@@ -397,4 +397,14 @@ public class OrderActivityModel {
         databaseReference3.updateChildren(update);
     }
 
+    public void saveStornoStatus(int id)
+    {
+        Log.i("stornoo", "MODEL");
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders");
+
+        databaseReference3.child(String.valueOf(id - 1)).child("status").setValue("CA");
+
+    }
+
 }
