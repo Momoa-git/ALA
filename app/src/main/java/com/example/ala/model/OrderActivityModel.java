@@ -114,7 +114,7 @@ public class OrderActivityModel {
                         String possibleDatePay = checkPosssibleDatePay(dataSnapshot, paid);
 
 
-                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: " + paid + ", ListProd.: " + array_id_list_product[0]);
+                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: " + paid + ", ListProd.: " + array_id_list_product[0] + " DatePay: " + possibleDatePay);
 
 
                         String paidAfterParse = setPaidTitle(paid);
@@ -407,4 +407,44 @@ public class OrderActivityModel {
 
     }
 
+    public void updateAfterPayment(float result_price, int old_sale, int id, String paid) {
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
+
+        Map updatepay = new HashMap();
+        updatepay.put("discount", old_sale);
+        updatepay.put("price", result_price);
+        if (paid.equals("NE")) {
+            updatepay.put("date_pay", getActualDate());
+            updatepay.put("time_pay", getActualTime());
+            updatepay.put("paid", true);
+        }
+
+        databaseReference3.updateChildren(updatepay);
+
+        firebaseDatabase4 = FirebaseDatabase.getInstance();
+        databaseReference4 = firebaseDatabase4.getReference().child("Order").child("Orders").child(String.valueOf(id - 1));
+
+        Map update = new HashMap();
+        update.put("status", "CO");
+
+        databaseReference4.updateChildren(update);
+
+    }
+
+    private String getActualDate() {
+        SimpleDateFormat output_format = new SimpleDateFormat("MM-dd-yyyy");
+        Date date = new Date();
+
+        return  output_format.format(date);
+    }
+
+    private String getActualTime() {
+
+        SimpleDateFormat output_format = new SimpleDateFormat("H:mm:ss");
+        Date date = new Date();
+
+        return output_format.format(date);
+
+    }
 }

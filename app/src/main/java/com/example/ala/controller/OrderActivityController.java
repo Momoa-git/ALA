@@ -12,6 +12,9 @@ public class OrderActivityController{
   private OrderActivityModel model;
   private OrderActivityView view;
   int id;
+  float result_price, result_price2;
+    String old_sale;
+    float sale_F;
 
 
    public OrderActivityController(OrderActivityView view){
@@ -52,7 +55,7 @@ public class OrderActivityController{
        this.view.txt_price.setText(price + " Kč s DPH");
        this.view.txt_paid.setText(paid);
        this.view.txt_type_payment.setText(type_pay);
-       getPaid(paid);
+       getPaid(paid, date_pay);
        setStatus(status);
        this.view.txt_date_order.setText(date_order + " " + time_order);
        this.view.txt_discount.setText(discount);
@@ -60,11 +63,20 @@ public class OrderActivityController{
 
     }
 
-    private void getPaid(String paid) {
-       if(paid.equals("ANO"))
+    private void getPaid(String paid, String date_pay) {
+       if(paid.equals("ANO")) {
            this.view.btn_edit_sale.setVisibility(View.GONE);
-       else
+           this.view.btn_payment.setText("PŘEDÁNÍ");
+           this.view.txt_date_pay.setText(date_pay);
+           this.view.txt_date_pay.setVisibility(View.VISIBLE);
+           this.view.title_date_pay.setVisibility(View.VISIBLE);
+       }
+       else {
            this.view.btn_edit_sale.setVisibility(View.VISIBLE);
+           this.view.btn_payment.setText("PLATBA");
+           this.view.txt_date_pay.setVisibility(View.GONE);
+           this.view.title_date_pay.setVisibility(View.GONE);
+       }
     }
 
     private void setStatus(String status)
@@ -88,7 +100,7 @@ public class OrderActivityController{
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_ip);
                 this.view.txt_description.setVisibility(View.GONE);
                 //btn
-                this.view.btn_edit_sale.setVisibility(View.VISIBLE);
+                //this.view.btn_edit_sale.setVisibility(View.VISIBLE);
                 this.view.btn_payment.setVisibility(View.VISIBLE);
                 this.view.btn_storno.setVisibility(View.VISIBLE);
                 break;
@@ -142,7 +154,7 @@ public class OrderActivityController{
         String name_product = this.view.txt_name_product.getText().toString();
 
 
-        String old_sale = view.txt_discount.getText().toString().replace("%", "");
+        old_sale = view.txt_discount.getText().toString().replace("%", "");
         float old_sale_f;
         try {
              old_sale_f = Float.valueOf(old_sale);
@@ -157,9 +169,9 @@ public class OrderActivityController{
 
         String newStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
         float price = Float.valueOf(newStr);
-        float sale_F = Float.valueOf(sale);
+        sale_F = Float.valueOf(sale);
         Log.i("vysledek", sale_F +" * "+ price);
-        float result_price = model.calculatePriceAfterSale(sale_F, price, old_sale_f);
+        result_price = model.calculatePriceAfterSale(sale_F, price, old_sale_f);
       //  model.saveDiscountInDB(sale_F, id);
      /*   try {
             TimeUnit.SECONDS.sleep(1);
@@ -179,4 +191,11 @@ public class OrderActivityController{
     }
 
 
+    public void setAfterPayment() {
+           String priceStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
+           String saleStr = this.view.txt_discount.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
+           model.updateAfterPayment(Float.valueOf(priceStr),Integer.valueOf(saleStr),id,view.txt_paid.getText().toString());
+           Log.i("payment", "Price: " + priceStr + " Sale: " + saleStr + " Payment: " + view.txt_paid.getText().toString());
+
+    }
 }

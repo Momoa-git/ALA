@@ -18,6 +18,7 @@ import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
 import com.example.ala.OrderAdapter;
 import com.example.ala.R;
+import com.example.ala.view.dialog.PaymentDialog;
 import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
@@ -26,7 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
-public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener {
+public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener {
 
     OrderActivityController controller;
 
@@ -42,6 +43,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
             txt_locate, txt_date_locate, title_registr_num, txt_register_num, txt_description;
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
+    public BottomSheetDialog bottomSheetDialog;
 
     //TODO fce filter orders by word search or status
     //TODO adding count  product
@@ -92,7 +94,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
 
 
     private void createBottomSheet() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(OrderActivityView.this, R.style.BottomSheetDialogTheme);
+         bottomSheetDialog = new BottomSheetDialog(OrderActivityView.this, R.style.BottomSheetDialogTheme);
         View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.sheet_detail_order,(LinearLayout)findViewById(R.id.sheet_container));
         bottomSheetDialog.setContentView(bottomSheetView);
 
@@ -139,6 +141,18 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
             }
         });
 
+        btn_payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPaymentDialog();
+            }
+        });
+
+    }
+
+    private void openPaymentDialog() {
+        PaymentDialog paymentDialog = new PaymentDialog();
+        paymentDialog.show(getSupportFragmentManager(), "payment dialog");
     }
 
     private void openStornoDialog() {
@@ -159,6 +173,13 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     @Override
     public void applyTexts(String sale) {
         controller.setAfterSale(sale);
+
+    }
+
+    @Override
+    public void applyTexts3() {
+        controller.setAfterPayment();
+        bottomSheetDialog.cancel();
 
     }
 
