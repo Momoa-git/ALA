@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
@@ -44,6 +46,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
     public BottomSheetDialog bottomSheetDialog;
+    Context context;
 
     //TODO fce filter orders by word search or status
     //TODO adding count  product
@@ -54,6 +57,8 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         setContentView(R.layout.activity_order);
 
         controller = new OrderActivityController(this);
+
+        context = this;
 
         recyclerView = findViewById(R.id.recycler_view2);
         progressBar = findViewById(R.id.progress_bar);
@@ -144,7 +149,9 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         btn_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPaymentDialog();
+               // openPaymentDialog();
+                controller.setPDF(context);
+
             }
         });
 
@@ -180,7 +187,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     public void applyTexts3() {
         controller.setAfterPayment();
         bottomSheetDialog.cancel();
-
+        adapter.notifyDataSetChanged();
     }
 
 }

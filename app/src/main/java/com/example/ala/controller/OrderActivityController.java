@@ -1,5 +1,6 @@
 package com.example.ala.controller;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
@@ -197,5 +198,10 @@ public class OrderActivityController{
            model.updateAfterPayment(Float.valueOf(priceStr),Integer.valueOf(saleStr),id,view.txt_paid.getText().toString());
            Log.i("payment", "Price: " + priceStr + " Sale: " + saleStr + " Payment: " + view.txt_paid.getText().toString());
 
+    }
+
+    public void setPDF(Context context)
+    {
+        model.loadPDF(context);
     }
 }
