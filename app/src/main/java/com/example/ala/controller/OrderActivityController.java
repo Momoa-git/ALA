@@ -51,8 +51,9 @@ public class OrderActivityController{
         model.getOrderFirebaseResources(id_order);
     }
 
-    public void setOrderResources(String order_number, String date_order, String time_order, String status, String office, String id_list_product, String type_pay, String paid, String price, String discount, String date_pay) {
+    public void setOrderResources(String order_number, String date_order, String time_order, String status, String names, String type_pay, String paid, String price, String discount, String date_pay) {
        this.view.numberOrder.setText("Objednávka " + order_number);
+       this.view.txt_name_product.setText(names);
        this.view.txt_price.setText(price + " Kč s DPH");
        this.view.txt_paid.setText(paid);
        this.view.txt_type_payment.setText(type_pay);

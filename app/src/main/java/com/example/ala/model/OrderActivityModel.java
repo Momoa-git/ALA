@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -46,15 +49,25 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.TabStop;
+import com.itextpdf.text.pdf.PdfPCellEvent;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BarcodeEAN;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPCellEvent;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.parser.LineDashPattern;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -146,12 +159,19 @@ public class OrderActivityModel{
                         String time_order = dataSnapshot.child("time").getValue().toString();
                         String status = dataSnapshot.child("status").getValue().toString();
                         String office = dataSnapshot.child("office").getValue().toString();
-                        String id_list_product = dataSnapshot.child("id_list_product").getValue().toString();
 
-                        String[] str = id_list_product.split(",");
-                        String[] array_id_list_product = new String[str.length];
-                        for (int i = 0; i < str.length; i++)
-                            array_id_list_product[i] = str[i];
+                        //Piece and name of products
+                        String name_products = "";
+                        long iteration = dataSnapshot.child("Product item").getChildrenCount();
+
+                        for (int count = 0; count < iteration; count++) {
+                            String name = dataSnapshot.child("Product item").child(String.valueOf(count)).child("name").getValue().toString();
+                            String pieces_of_product = dataSnapshot.child("Product item").child(String.valueOf(count)).child("piece").getValue().toString();
+                            if(name_products.isEmpty())
+                                name_products = "(" + pieces_of_product + "ks) " + name;
+                            else
+                                name_products = name_products + "\n" + "(" + pieces_of_product + "ks) " + name;
+                        }
 
                         String id_customer = dataSnapshot.child("id_customer").getValue().toString();
                         //Payment detail
@@ -162,7 +182,7 @@ public class OrderActivityModel{
                         String possibleDatePay = checkPosssibleDatePay(dataSnapshot, paid);
 
 
-                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: " + paid + ", ListProd.: " + array_id_list_product[0] + " DatePay: " + possibleDatePay);
+                        Log.i("getOrderFirebaseRes", "Num.order: " + order_number + ", Status: " + status + ", TypePay: " + type_pay + " Paid: " + paid + ", NameProducts: " + name_products+"" + " DatePay: " + possibleDatePay);
 
 
                         String paidAfterParse = setPaidTitle(paid);
@@ -170,12 +190,12 @@ public class OrderActivityModel{
                         String priceAfterParse = setPriceFormat(price);
                         String dateAfterParse = setDateFormat(date_order);
 
-                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, office, id_list_product, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
+                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
 
                         //semaphore = true;
                         getCustomerFirebaseResources(Integer.parseInt(id_customer));
                         getOfficeFirebaseResources(office);
-                        getProductListFirebaseResources(array_id_list_product);
+                       // getProductListFirebaseResources(array_id_list_product);
 
 
                     }
@@ -525,6 +545,8 @@ public class OrderActivityModel{
         PdfDocument pdfDocument = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new Document(pdfDocument);
 
+        DeviceRgb white = new DeviceRgb(255,255,255);
+        DeviceRgb black = new DeviceRgb(0,0,0);
 
         /*--Table1--*/
         float column_width[] = {140,100,180,140};
@@ -533,6 +555,10 @@ public class OrderActivityModel{
         /*--Table2--*/
         float column_width2[] = {70,110,100,280};
         Table table_text = new Table(column_width2);
+
+        /*--Table3--*/
+        float column_width3[] = {30,210,70,70,70,40,70};
+        Table table_product = new Table(column_width3);
 
         /*--Row1*/
         Drawable shopLogo = ContextCompat.getDrawable(context, R.drawable.shop_logo);
@@ -547,20 +573,20 @@ public class OrderActivityModel{
 
         PdfFont font;
 
-        table1.addCell(new Cell(3,1).add(logo));
-        table1.addCell(new Cell().add(new Paragraph("")));
+        table1.addCell(new Cell(3,1).add(logo).setBorder(Border.NO_BORDER));
+        table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         try {
                // BaseFont baseFont = BaseFont.createFont("c:/Windows/Fonts/arial.ttf", BaseFont.IDENTITY_H, true);
                 String path = "/res/font/arialce.ttf";
                 //String name = getResource(path).toString();
                  font = PdfFontFactory.createFont(path, BaseFont.IDENTITY_H, true);
                 Paragraph p = new Paragraph("Faktura - Daňový doklad - 0000000000").setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
-                table1.addCell(new Cell(1,2).add(p));
+                table1.addCell(new Cell(1,2).add(p).setBorder(Border.NO_BORDER));
 
             /*--Row2*/
             // table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph(""))).setBorder(Border.NO_BORDER);;
-            table1.addCell(new Cell().add(new Paragraph(""))).setBorder(Border.NO_BORDER);;
+            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
+            table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list")).setBorder(Border.NO_BORDER));
              /* BarcodeEAN barcodeEAN = new BarcodeEAN();
             barcodeEAN.setCode("5050505050");
             barcodeEAN.setCodeType(BarcodeEAN.CODE128);*/
@@ -571,40 +597,93 @@ public class OrderActivityModel{
             PdfFormXObject object = qrCode.createFormXObject(ColorConstants.BLACK,pdfDocument);
 
             Image imageBarcode = new Image(object).setWidth(100f);
-            table1.addCell(new Cell().add(imageBarcode));
+            table1.addCell(new Cell().add(imageBarcode).setBorder(Border.NO_BORDER));
+/*
 
-            /*--Row3*/
             //table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list").setFont(font).setFontSize(9)));
-
+            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
+            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
+            table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+*/
 
 
 
             /*--Row1*/
-            table_text.addCell(new Cell().add(new Paragraph("Prodávající: ").setFont(font).setFontSize(9).setUnderline().setBold().setCharacterSpacing(1))).setBorder(Border.NO_BORDER);
-            table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1))).setBorder(Border.NO_BORDER);
-            table_text.addCell(new Cell().add(new Paragraph(""))).setBorder(Border.NO_BORDER);
-            table_text.addCell(new Cell().add(new Paragraph(""))).setBorder(Border.NO_BORDER);
+            table_text.addCell(new Cell().add(new Paragraph("Prodávající: ").setFont(font).setFontSize(9).setUnderline().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
 
             /*--Row2-3*/
             table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: Nádražní 2924/75, 70200 Ostrava 1, Sídlo společnosti: Českých Legií 75, 70200 Ostrava 1, IČ: 27082689, DIČ: CZ270697664," +
-                    " Internet: www.smile-shop.cz, Kontakt: www.smile-shop.cz/kontakt, Telefon: +420722231123").setFont(font).setFontSize(9))).setBorder(Border.NO_BORDER);
+                    " Internet: www.smile-shop.cz, Kontakt: www.smile-shop.cz/kontakt, Telefon: +420722231123").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
             /*--Row4*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Daňový doklad: ").setFont(font).setFontSize(9))).setBorder(Border.NO_BORDER);
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Daňový doklad: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("Faktura").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1))).setBorder(Border.NO_BORDER);
-            table_text.addCell(new Cell().add(new Paragraph("Kupující:\t\t\t\t\t\t\t\t\t\t\t\t" +
-                                                                         "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t").setFont(font).setFontSize(9).setUnderline().setBold().setCharacterSpacing(1))).setBorder(Border.NO_BORDER);
+            table_text.addCell(new Cell().add(new Paragraph("Faktura").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Kupující:").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
             /*--Row5*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum vystavění: ").setFont(font).setFontSize(9))).setBorder(Border.NO_BORDER);
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum vystavění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("12.6.2022").setFont(font).setFontSize(9))).setBorder(Border.NO_BORDER);
-            table_text.addCell(new Cell().add(new Paragraph("Adam Daniel").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1))).setBorder(Border.NO_BORDER);
+            table_text.addCell(new Cell().add(new Paragraph("12.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Adam Daniel").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
 
+            /*--Row6*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum uskut. zdaň. plnění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("13.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Email: adam.dany@seznam.cz").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+
+            /*--Row7*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum splatnosti: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("14.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Tel: +420722231123").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+
+            /*--Row8*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum převzetí: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("15.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+
+            /*--Row9*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Způsob úhrady: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("Kartou Internetem").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
+
+            /*--Row9*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Bankovní účet: ").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
+
+            /*--Row10*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("ČSOB, a.s. (CZK): ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("277505042 / 0300").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
+
+            /*--Row11*/
+            table_text.addCell(new Cell(1,2).add(new Paragraph("Variabilní symbol: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
+            table_text.addCell(new Cell().add(new Paragraph("4560322251").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
+
+
+            /*--Row1*/
+
+            //SolidBorder solid = new SolidBorder(black,new boolean[]{false,false,true,false});
+
+            table_product.addCell(new Cell().add(new Paragraph("Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Popis").setBold().setFontSize(9).setCharacterSpacing(1).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Cena Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("bez DPH").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("DPH").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
 
         } catch (IOException e) {
@@ -619,10 +698,14 @@ public class OrderActivityModel{
 
         document.add(table1);
         document.add(table_text);
+        document.add(new Paragraph("\n"));
+        document.add(table_product);
         document.close();
 
         Log.i("pdfko", "facha_after");
 
     }
+
+
 
 }
