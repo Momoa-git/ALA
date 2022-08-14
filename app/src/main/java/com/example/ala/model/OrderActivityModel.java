@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.example.ala.Invoice;
 import com.example.ala.Office;
 import com.example.ala.Order;
 import com.example.ala.Product;
@@ -98,6 +99,7 @@ public class OrderActivityModel{
     private OrderActivityController controller;
     private Context context;
     ArrayList<String> names_product = new ArrayList<String>(2);
+    Invoice invoice = new Invoice();
 
     public OrderActivityModel(OrderActivityController controller) {
         this.controller = controller;
@@ -190,6 +192,11 @@ public class OrderActivityModel{
                         String priceAfterParse = setPriceFormat(price);
                         String dateAfterParse = setDateFormat(date_order);
 
+                        invoice.setOrder_number(order_number);
+                        invoice.setDate_order(dateAfterParse);
+                        invoice.setType_pay(typePayAfterParse);
+                        invoice.setDiscount(possibleDiscount);
+                        invoice.setResult_price(priceAfterParse);
                         controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
 
                         //semaphore = true;
@@ -218,6 +225,7 @@ public class OrderActivityModel{
                 String date_pay = dataSnapshot.child("Payment").child("date_pay").getValue().toString();
                 String time_pay = dataSnapshot.child("Payment").child("time_pay").getValue().toString();
 
+                invoice.setDate_pay(setDateFormat(date_pay));
                 return setDateFormat(date_pay) + " " + time_pay;
             } else {
                 controller.setInvisibleDatePay();
@@ -249,7 +257,7 @@ public class OrderActivityModel{
 
     private String setDateFormat(String date_order) {
         SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
-        SimpleDateFormat output_format = new SimpleDateFormat("dd.M.yyyy");
+        SimpleDateFormat output_format = new SimpleDateFormat("dd.MM.yyyy");
 
         try {
             Date date = database_format.parse(date_order);
@@ -271,7 +279,7 @@ public class OrderActivityModel{
 
     private String setTypeTitle(String type_pay) {
         if (type_pay.equals("card"))
-            return "Kartou";
+            return "Kartou Internetem";
         if (type_pay.equals("cash"))
             return "Hotovost";
         else
@@ -304,16 +312,14 @@ public class OrderActivityModel{
                         String email = dataSnapshot.child("email").getValue().toString();
                         String phone = dataSnapshot.child("phone").getValue().toString();
 
+                        invoice.setCustomer_name(fname + " " + lname);
+                        invoice.setCustomer_email(email);
+                        invoice.setCustomer_phone(phone);
 
                         Log.i("getCustomerFirebaseRes", "L.name: " + lname + ", Email: " + email + ", Phone num.:" + phone);
 
                         controller.setCustomerResources(fname, lname, email, phone);
-/*
-                        customer.setLname(lname);
-                        customer.setFname(fname);
-                        customer.setEmail(email);
-                        customer.setPhone(phone);
-*/
+
 
 
                     }
@@ -346,11 +352,8 @@ public class OrderActivityModel{
                 String name = officeProfile.name;
                 String address = officeProfile.address;
 
+                invoice.setAdress_office(address + ", " + name);
 
-/*
-                office.setName(name);
-                office.setAddress(address);
-*/
                 Log.i("getOfficeFirebaseRes", "office: " + officeS);
 
                 controller.setOfficeResources(name, address);
@@ -368,59 +371,7 @@ public class OrderActivityModel{
 
     }
 
-    private void getProductListFirebaseResources(String[] arr) {
-        firebaseDatabase2 = FirebaseDatabase.getInstance();
-        databaseReference2 = firebaseDatabase2.getReference().child("Product").child("Products");
 
-        names_product.clear();
-
-        count = 0;
-
-        for (int i = 0; i < arr.length; i++) {
-            Log.i("getProductListFirebRes", "iterace: " + i);
-            databaseReference2.child(arr[i]).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Product product = snapshot.getValue(Product.class);
-
-
-                        String name_product = snapshot.child("name").getValue().toString();
-
-                        names_product.add(name_product);
-                        // name[count] = name_product;
-
-                        //   product.setName(name_product);
-
-                        Log.i("getProductListFirebRes", "product name: " + name_product);
-
-
-                        Log.i("getProductListFirebRes", "product names: " + names_product);
-
-                        if (count == arr.length - 1) {
-                            String nameStream = Arrays.toString(names_product.toArray()).replace("[", "").replace("]", "").replace(",", "\n");
-                            // product.setName(out);
-                            Log.i("getProductListFirebRes", "product names: " + nameStream);
-                            names_product.clear();
-                            controller.setProductListResources(nameStream);
-
-                        }
-
-                        count++;
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-
-        //Log.i("getProductListFirebRes", "product names: " + names_product);
-        //  product.setName(names_product);
-
-    }
 
 
     public float calculatePriceAfterSale(float sale_f, float price, float old_sale_f) {
@@ -434,6 +385,8 @@ public class OrderActivityModel{
             full_price = price;
 
         float sale = sale_f * full_price / 100;
+        invoice.setDiscount(sale_f+"");
+        invoice.setResult_price(full_price-sale + "");
         return full_price - sale;
     }
 
@@ -482,10 +435,16 @@ public class OrderActivityModel{
         Map updatepay = new HashMap();
         updatepay.put("discount", old_sale);
         updatepay.put("price", result_price);
+
+        invoice.setDiscount(old_sale+"");
+        invoice.setResult_price(result_price+"");
+
         if (paid.equals("NE")) {
             updatepay.put("date_pay", getActualDate());
             updatepay.put("time_pay", getActualTime());
             updatepay.put("paid", true);
+
+            invoice.setDate_pay(getActualDate());
         }
 
         databaseReference3.updateChildren(updatepay);
@@ -523,189 +482,15 @@ public class OrderActivityModel{
 
 */
         Log.i("pdfko", "facha1");
-        try {
-            createPDF(context);
-        } catch (FileNotFoundException e) {
+      //  try {
+            invoice.fetchCorporateInfo(context);
+           // invoice.createPDF(context);
+
+       /* } catch (FileNotFoundException e) {
             Log.i("pdfko", "facha3");
             e.printStackTrace();
-        }
+        }*/
     }
-
-
-
-
-    public void createPDF(Context context) throws FileNotFoundException {
-        String pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File file = new File(pdfPath, "mypdfko.pdf");
-        FileOutputStream outputStream = new FileOutputStream(file);
-
-        Log.i("pdfko", "facha " + pdfPath);
-
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDocument = new PdfDocument(writer);
-        com.itextpdf.layout.Document document = new Document(pdfDocument);
-
-        DeviceRgb white = new DeviceRgb(255,255,255);
-        DeviceRgb black = new DeviceRgb(0,0,0);
-
-        /*--Table1--*/
-        float column_width[] = {140,100,180,140};
-        Table table1 = new Table(column_width);
-
-        /*--Table2--*/
-        float column_width2[] = {70,110,100,280};
-        Table table_text = new Table(column_width2);
-
-        /*--Table3--*/
-        float column_width3[] = {30,210,70,70,70,40,70};
-        Table table_product = new Table(column_width3);
-
-        /*--Row1*/
-        Drawable shopLogo = ContextCompat.getDrawable(context, R.drawable.shop_logo);
-        Bitmap bitmap = ((BitmapDrawable)shopLogo).getBitmap();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] bitmapData2 = stream.toByteArray();
-
-        ImageData imageData = ImageDataFactory.create(bitmapData2);
-        Image logo = new Image(imageData);
-        logo.setHeight(100);
-
-        PdfFont font;
-
-        table1.addCell(new Cell(3,1).add(logo).setBorder(Border.NO_BORDER));
-        table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-        try {
-               // BaseFont baseFont = BaseFont.createFont("c:/Windows/Fonts/arial.ttf", BaseFont.IDENTITY_H, true);
-                String path = "/res/font/arialce.ttf";
-                //String name = getResource(path).toString();
-                 font = PdfFontFactory.createFont(path, BaseFont.IDENTITY_H, true);
-                Paragraph p = new Paragraph("Faktura - Daňový doklad - 0000000000").setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
-                table1.addCell(new Cell(1,2).add(p).setBorder(Border.NO_BORDER));
-
-            /*--Row2*/
-            // table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-            table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list")).setBorder(Border.NO_BORDER));
-             /* BarcodeEAN barcodeEAN = new BarcodeEAN();
-            barcodeEAN.setCode("5050505050");
-            barcodeEAN.setCodeType(BarcodeEAN.CODE128);*/
-
-
-            com.itextpdf.barcodes.BarcodeQRCode qrCode = new BarcodeQRCode("1010101010");
-
-            PdfFormXObject object = qrCode.createFormXObject(ColorConstants.BLACK,pdfDocument);
-
-            Image imageBarcode = new Image(object).setWidth(100f);
-            table1.addCell(new Cell().add(imageBarcode).setBorder(Border.NO_BORDER));
-/*
-
-            //table1.addCell(new Cell().add(new Paragraph("")));
-            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-            table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-            table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-*/
-
-
-
-            /*--Row1*/
-            table_text.addCell(new Cell().add(new Paragraph("Prodávající: ").setFont(font).setFontSize(9).setUnderline().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-
-            /*--Row2-3*/
-            table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: Nádražní 2924/75, 70200 Ostrava 1, Sídlo společnosti: Českých Legií 75, 70200 Ostrava 1, IČ: 27082689, DIČ: CZ270697664," +
-                    " Internet: www.smile-shop.cz, Kontakt: www.smile-shop.cz/kontakt, Telefon: +420722231123").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-
-            /*--Row4*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Daňový doklad: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-           // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("Faktura").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Kupující:").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-
-            /*--Row5*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum vystavění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("12.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Adam Daniel").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-
-            /*--Row6*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum uskut. zdaň. plnění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("13.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Email: adam.dany@seznam.cz").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-
-            /*--Row7*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum splatnosti: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("14.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Tel: +420722231123").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-
-            /*--Row8*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Datum převzetí: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("15.6.2022").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-
-            /*--Row9*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Způsob úhrady: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("Kartou Internetem").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
-
-            /*--Row9*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Bankovní účet: ").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
-
-            /*--Row10*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("ČSOB, a.s. (CZK): ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("277505042 / 0300").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
-
-            /*--Row11*/
-            table_text.addCell(new Cell(1,2).add(new Paragraph("Variabilní symbol: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph("4560322251").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
-
-
-            /*--Row1*/
-
-            //SolidBorder solid = new SolidBorder(black,new boolean[]{false,false,true,false});
-
-            table_product.addCell(new Cell().add(new Paragraph("Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Popis").setBold().setFontSize(9).setCharacterSpacing(1).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Cena Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("bez DPH").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("DPH").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       // table1.addCell(new Cell().add(new Paragraph("")));
-
-
-
-
-
-
-        document.add(table1);
-        document.add(table_text);
-        document.add(new Paragraph("\n"));
-        document.add(table_product);
-        document.close();
-
-        Log.i("pdfko", "facha_after");
-
-    }
-
 
 
 }
