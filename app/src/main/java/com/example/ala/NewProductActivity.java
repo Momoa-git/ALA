@@ -2,7 +2,6 @@ package com.example.ala;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.ScannerAddActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,12 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-public class NewProductActivity extends AppCompatActivity {
+public class NewProductActivity extends AppCompatActivity{
 
     public static EditText edT_name_product, edT_price, edT_bar, edT_ks, edT_line, edT_place;
     private Button btn_scan;
@@ -114,6 +109,9 @@ public class NewProductActivity extends AppCompatActivity {
                 firebaseDatabase2 = FirebaseDatabase.getInstance();
                 databaseReference2 = firebaseDatabase2.getReference().child("Product").child("register_number");
 
+                firebaseDatabase3 = FirebaseDatabase.getInstance();
+                databaseReference3 = firebaseDatabase2.getReference().child("Order").child("Orders");
+
                 piece = Integer.valueOf(edT_ks.getText().toString());
 
                 String name = edT_name_product.getText().toString();
@@ -144,22 +142,34 @@ public class NewProductActivity extends AppCompatActivity {
                                 @Override
                                 public void onCallBack(int reg_num) {
                                     for (int i = 0; i < piece; i++) {
-                                    searchingOrder(id_list_product, new FirebaseCallback2() {
+                                   searchingOrder(id_list_product, register_number, new FirebaseCallback2() {
                                         @Override
-                                        public void onCallBack2(boolean order_assigned) {
+                                        public void onCallBack2(boolean order_assigned, Order order) {
+                                            register_number = reg_num + counter;
 
-                                        register_number = reg_num + counter;
                                         Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place, getActualDateTime(), order_assigned);
                                         databaseReference.push().setValue(product);
                                         int new_reg_number = register_number + 1;
                                         databaseReference2.setValue(new_reg_number);
                                         counter++;
-                                        Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price +
-                                                " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+
+                                        if(order_assigned == true) {
+                                            Log.i("outline", "[MATCH:] Order: " + order.getOrder_number() + " | Product: " + register_number);
+                                             databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("Product item").child(0 + "").child("registration_num").setValue(register_number);
+                                             databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("status").setValue("IP");
+
+                                            Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price +
+                                                    " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+
+                                             order_assigned = false;
+                                        }
+
+
 
                                     }
 
-                                });}
+                                });
+                                    }
                                 }
 
                         });
@@ -180,7 +190,7 @@ public class NewProductActivity extends AppCompatActivity {
 
             }
 
-            private void searchingOrder(int id_list_product, FirebaseCallback2 firebaseCallback) {
+            private void searchingOrder(int id_list_product, Integer register_number, FirebaseCallback2 firebaseCallback) {
 
                 Log.i("outline", "Before searching");
                 firebaseDatabase3 = FirebaseDatabase.getInstance();
@@ -189,30 +199,33 @@ public class NewProductActivity extends AppCompatActivity {
                 databaseReference3.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                        Order searchOrder = null;
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Order order = dataSnapshot.getValue(Order.class);
-
-                            String[] str = order.getId_list_product().split(",");
-                            String[] array_id_list_product = new String[str.length];
-                            for(int i = 0; i < str.length; i++)
-                                array_id_list_product[i] = str[i];
-
-                            for(int j = 0; j < array_id_list_product.length; j++) {
-                                if (mAuth.getUid().contains(order.getOffice()) && array_id_list_product[j].equals(String.valueOf(id_list_product - 1)) && order.getStatus().equals("PE")) {
-                                    Log.i("outline", "[MATCH IN ORDER:]" + String.valueOf(order.getOrder_number()) + " " +  array_id_list_product[j]);
-                                   // updateOrder(order, id_list_product - 1);
-                                    databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
-                                    order_assigned = true;
+                            long count_product = Long.valueOf(dataSnapshot.child("Product item").getChildrenCount());
+                            for (int i = 0; mAuth.getUid().contains(order.getOffice()) && i < count_product; i++)
+                            {
+                                Log.i("DBZ", "ORDER: "+ order.getOrder_number());
+                                int id_product = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("id_product").getValue().toString()) + 1;
+                                int registration_num = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("registration_num").getValue().toString());
+                                Log.i("DBZ", "ID product " + id_product + " IDLISTPRODUCT: " + id_list_product + "|" + registration_num);
 
 
-                                    break;
+
+
+                                if(id_product == id_list_product && order.getStatus().equals("PE") && registration_num == 0) {
+
+                                            Log.i("DBZ", "[MATCH IN ORDER:]" + id_list_product );
+                                            order_assigned = true;
+                                            searchOrder = order;
+
                                 }
 
                             }
 
+
                         }
-                        firebaseCallback.onCallBack2(order_assigned);
+                        firebaseCallback.onCallBack2(order_assigned, searchOrder);
                     }
 
 
@@ -254,10 +267,21 @@ public class NewProductActivity extends AppCompatActivity {
 
     }
 
-    private void updateOrder(Order order, int key) {
-        databaseReference3.child(String.valueOf(order.getId_order()-1)).child("registation_product_num").setValue(String.valueOf(reg_number));
-        databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
+    private void updateOrder(DataSnapshot dataSnapshot, int id_list_product, Order order, int i, FirebaseCallback3 firebaseCallback3) {
+        int id_product = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("id_product").getValue().toString()) + 1;
+        int registration_num = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("registration_num").getValue().toString());
+        Log.i("DBZ", "ID product " + id_product + " IDLISTPRODUCT: " + id_list_product + "| " + registration_num);
+
+/*
+        if(id_product == id_list_product && order.getStatus().equals("PE") && registration_num == 0) {
+            //firebaseCallback3.onCallBack3(i);
+            databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("Product item").child(i + "").child("registration_num").setValue(1);
+            //databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
+        }*/
+        firebaseCallback3.onCallBack3(i);
     }
+
+
 /*
     private boolean searchOrder() {
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -293,7 +317,10 @@ public class NewProductActivity extends AppCompatActivity {
     }
 
     private interface FirebaseCallback2{
-        void onCallBack2(boolean order_assigned);
+        void onCallBack2(boolean order_assigned,Order order);
+    }
+    private interface FirebaseCallback3{
+        void onCallBack3(int i);
     }
 
 }
