@@ -116,6 +116,7 @@ public class NewProductActivity extends AppCompatActivity{
 
                 String name = edT_name_product.getText().toString();
                 String price = edT_price.getText().toString();
+
                 String bar_code = edT_bar.getText().toString();
                 String line = edT_line.getText().toString();
                 String place = edT_place.getText().toString();
@@ -141,35 +142,46 @@ public class NewProductActivity extends AppCompatActivity{
                             readRegisterNumberData(new FirebaseCallback() {
                                 @Override
                                 public void onCallBack(int reg_num) {
-                                    for (int i = 0; i < piece; i++) {
                                    searchingOrder(id_list_product, register_number, new FirebaseCallback2() {
                                         @Override
-                                        public void onCallBack2(boolean order_assigned, Order order) {
-                                            register_number = reg_num + counter;
+                                        public void onCallBack2(boolean order_assigned, Order order, int product_iteration) {
+                                            for (int i = 0; i < piece; i++) {
+                                                register_number = reg_num + counter;
 
-                                        Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place, getActualDateTime(), order_assigned);
-                                        databaseReference.push().setValue(product);
-                                        int new_reg_number = register_number + 1;
-                                        databaseReference2.setValue(new_reg_number);
-                                        counter++;
+                                                Product product = new Product(register_number, id_list_product, name, price, bar_code, line, place, getActualDateTime(), order_assigned);
+                                                databaseReference.push().setValue(product);
+                                                int new_reg_number = register_number + 1;
+                                                databaseReference2.setValue(new_reg_number);
+                                                counter++;
 
-                                        if(order_assigned == true) {
-                                            Log.i("outline", "[MATCH:] Order: " + order.getOrder_number() + " | Product: " + register_number);
-                                             databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("Product item").child(0 + "").child("registration_num").setValue(register_number);
-                                             databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("status").setValue("IP");
+                                                if (order_assigned == true) {
+                                                    Log.i("outline", "[MATCH:] Order: " + order.getOrder_number() + " | Product: " + register_number);
+                                                    databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("Product item").child(product_iteration + "").child("registration_num").setValue(register_number);
 
-                                            Log.i("outline","[WAREHOUSE:] Register_num.: " + register_number +" ID_list_product: "+ id_list_product  + " Name: " + name + " Price: "+ price +
-                                                    " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+                                                    checkfillAllProduct(databaseReference3, order.getId_order() - 1, new FirebaseCallback3(){
+                                                        @Override
+                                                        public void onCallBack3() {
 
-                                             order_assigned = false;
-                                        }
+                                                        }
+
+                                                    });
+
+                                                    Log.i("outline", "[WAREHOUSE:] Register_num.: " + register_number + " ID_list_product: " + id_list_product + " Name: " + name + " Price: " + price +
+                                                            " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+
+                                                    order_assigned = false;
+                                                }
+                                                else{
+                                                    Log.i("outline", "[WAREHOUSE:] Register_num.: " + register_number + " ID_list_product: " + id_list_product + " Name: " + name + " Price: " + price +
+                                                            " BarCode: " + bar_code + " Line-place: " + line + "-" + place + " DateTime arrivals " + getActualDateTime() + " Assigned: " + order_assigned);
+                                                }
 
 
-
+                                            }
                                     }
 
                                 });
-                                    }
+                                   // }
                                 }
 
                         });
@@ -200,6 +212,7 @@ public class NewProductActivity extends AppCompatActivity{
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Order searchOrder = null;
+                        int product_iteration = 0;
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Order order = dataSnapshot.getValue(Order.class);
                             long count_product = Long.valueOf(dataSnapshot.child("Product item").getChildrenCount());
@@ -211,13 +224,12 @@ public class NewProductActivity extends AppCompatActivity{
                                 Log.i("DBZ", "ID product " + id_product + " IDLISTPRODUCT: " + id_list_product + "|" + registration_num);
 
 
-
-
                                 if(id_product == id_list_product && order.getStatus().equals("PE") && registration_num == 0) {
 
                                             Log.i("DBZ", "[MATCH IN ORDER:]" + id_list_product );
                                             order_assigned = true;
                                             searchOrder = order;
+                                            product_iteration = i;
 
                                 }
 
@@ -225,7 +237,7 @@ public class NewProductActivity extends AppCompatActivity{
 
 
                         }
-                        firebaseCallback.onCallBack2(order_assigned, searchOrder);
+                        firebaseCallback.onCallBack2(order_assigned, searchOrder, product_iteration);
                     }
 
 
@@ -267,18 +279,45 @@ public class NewProductActivity extends AppCompatActivity{
 
     }
 
-    private void updateOrder(DataSnapshot dataSnapshot, int id_list_product, Order order, int i, FirebaseCallback3 firebaseCallback3) {
-        int id_product = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("id_product").getValue().toString()) + 1;
-        int registration_num = Integer.valueOf(dataSnapshot.child("Product item").child(i+"").child("registration_num").getValue().toString());
-        Log.i("DBZ", "ID product " + id_product + " IDLISTPRODUCT: " + id_list_product + "| " + registration_num);
+    private void checkfillAllProduct(DatabaseReference databaseReference, int id, FirebaseCallback3 firebaseCallback3) {
 
-/*
-        if(id_product == id_list_product && order.getStatus().equals("PE") && registration_num == 0) {
-            //firebaseCallback3.onCallBack3(i);
-            databaseReference3.child(String.valueOf(order.getId_order() - 1)).child("Product item").child(i + "").child("registration_num").setValue(1);
-            //databaseReference3.child(String.valueOf(order.getId_order()-1)).child("status").setValue("IP");
-        }*/
-        firebaseCallback3.onCallBack3(i);
+
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(id+"").child("Product item");
+
+        databaseReference3.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                  int i = 0;
+                long count_product = Long.valueOf(snapshot.getChildrenCount());
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    ProductInOrder product =  dataSnapshot.getValue(ProductInOrder.class);
+
+                    i++;
+                    if(product.getRegistration_num() == 0)
+                        break;
+
+                    Log.i("outline", "Fill reg. num: " + snapshot.child("registration_num").getValue() + " " + count_product);
+
+                    if(i == count_product) {
+                        databaseReference.child(String.valueOf(id)).child("status").setValue("IP");
+                        Log.i("outline", "STATUS CHANGE...");
+                    }
+                }
+
+            }
+
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
+        });
+        firebaseCallback3.onCallBack3();
+
     }
 
 
@@ -317,10 +356,10 @@ public class NewProductActivity extends AppCompatActivity{
     }
 
     private interface FirebaseCallback2{
-        void onCallBack2(boolean order_assigned,Order order);
+        void onCallBack2(boolean order_assigned, Order order, int product_iteration);
     }
     private interface FirebaseCallback3{
-        void onCallBack3(int i);
+        void onCallBack3();
     }
 
 }

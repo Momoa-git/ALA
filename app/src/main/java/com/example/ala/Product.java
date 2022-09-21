@@ -15,7 +15,7 @@ public class Product {
 
     }
 
-    public Product(int register_number, int id_list_product, String name, String price, String bar_code, String line, String place, String date_time_arrivals,  boolean order_assigned) {
+    public Product(int register_number, int id_list_product, String name, String price, String bar_code, String line, String place, String date_time_arrivals, boolean order_assigned) {
         this.register_number = register_number;
         this.id_list_product = id_list_product;
         this.name = name;
@@ -27,12 +27,6 @@ public class Product {
         this.order_assigned = order_assigned;
     }
 
-    public Product(String name, String price, String bar_code) {
-        this.name = name;
-        this.price = price;
-        this.bar_code = bar_code;
-
-    }
 
     public void setDate_time_arrivals(String date_time_arrivals) {
         this.date_time_arrivals = date_time_arrivals;
