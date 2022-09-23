@@ -5,9 +5,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.ala.Order;
+import com.example.ala.OrderDAO;
 import com.example.ala.R;
 import com.example.ala.model.OrderActivityModel;
 import com.example.ala.view.OrderActivityView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class OrderActivityController{
   private OrderActivityModel model;
@@ -23,9 +27,9 @@ public class OrderActivityController{
        model = new OrderActivityModel(this);
    }
 
-    public void setRecViewContent()
+    public void setRecViewContent(OrderDAO dao)
     {
-       model.setRecViewContent();
+       model.setRecViewContent(dao);
     }
 
     public void onAddOrderToList(Order order){
@@ -34,6 +38,11 @@ public class OrderActivityController{
 
     public void onNotifyDataSetChanged() {
        this.view.adapter.notifyDataSetChanged();
+    }
+
+    public void onSetItems(ArrayList<Order> order)
+    {
+        this.view.adapter.setItems(order);
     }
 
     public int getOrderID(int position)

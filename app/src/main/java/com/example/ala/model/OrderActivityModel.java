@@ -24,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.ala.Invoice;
 import com.example.ala.Office;
 import com.example.ala.Order;
+import com.example.ala.OrderDAO;
 import com.example.ala.Product;
 import com.example.ala.R;
 import com.example.ala.controller.OrderActivityController;
@@ -101,33 +102,36 @@ public class OrderActivityModel{
     private Context context;
     ArrayList<String> names_product = new ArrayList<String>(2);
     Invoice invoice = new Invoice();
+    ArrayList<Order> orders = new ArrayList<>();
 
     public OrderActivityModel(OrderActivityController controller) {
         this.controller = controller;
     }
 
-    public void setRecViewContent() {
+    public void setRecViewContent(OrderDAO dao) {
         mAuth = FirebaseAuth.getInstance();
 
         final FirebaseUser office = mAuth.getCurrentUser();
         String id = office.getUid();
 
-        firebaseDatabase = FirebaseDatabase.getInstance();//
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
+   /*     firebaseDatabase = FirebaseDatabase.getInstance();//
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");*/
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        dao.get().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Order order = dataSnapshot.getValue(Order.class);
 
 
                     if (order.getOffice().contains(id)) {
-                        controller.onAddOrderToList(order);
+                       // controller.onAddOrderToList(order);
+                        orders.add(order);
                     }
 
                 }
-                //adapter.notifyDataSetChanged();
+                controller.onSetItems(orders);
                 controller.onNotifyDataSetChanged();
             }
 
@@ -140,8 +144,8 @@ public class OrderActivityModel{
     }
 
     public int getOrderID(int position) {
-        return controller.onOrderID(position);
-
+       // return controller.onOrderID(position);
+        return orders.get(position).getId_order();
     }
 
     public void getOrderFirebaseResources(int id_order) {

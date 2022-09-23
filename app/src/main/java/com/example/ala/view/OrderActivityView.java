@@ -1,5 +1,6 @@
 package com.example.ala.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
 import com.example.ala.OrderAdapter;
+import com.example.ala.OrderDAO;
+import com.example.ala.OrderViewHolder;
 import com.example.ala.R;
 import com.example.ala.view.dialog.PaymentDialog;
 import com.example.ala.view.dialog.SaleDialog;
@@ -26,12 +29,16 @@ import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
 import com.example.ala.view.dialog.StornoDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class OrderActivityView extends AppCompatActivity implements OrderAdapter.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener {
+public class OrderActivityView extends AppCompatActivity implements OrderViewHolder.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener {
 
     OrderActivityController controller;
+    OrderDAO dao;
 
     private Spinner spinner_status;
     private StatusAdapter statAdapter;
@@ -61,11 +68,20 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         context = this;
 
         recyclerView = findViewById(R.id.recycler_view2);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         progressBar = findViewById(R.id.progress_bar);
         spinner_status = findViewById(R.id.spinner_filter);
         statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
         spinner_status.setAdapter(statAdapter);
-
+        list = new ArrayList<>();
+        adapter = new OrderAdapter(this,this);
+        recyclerView.setAdapter(adapter);
+        dao = new OrderDAO();
+        progressBar.setVisibility(View.VISIBLE);
+        controller.setRecViewContent(dao); //load data
+        progressBar.setVisibility(View.INVISIBLE);
         //   mAuth = FirebaseAuth.getInstance();
 
         //   final FirebaseUser office = mAuth.getCurrentUser();
@@ -73,19 +89,15 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
 
         //  firebaseDatabase = FirebaseDatabase.getInstance();
         // databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        list = new ArrayList<>();
-        adapter = new OrderAdapter(this, list, this);
-        recyclerView.setAdapter(adapter);
 
-        progressBar.setVisibility(View.VISIBLE);
-        controller.setRecViewContent();
-        progressBar.setVisibility(View.INVISIBLE);
+
+
+
 
 
     }
+
 
     @Override
     public void onDetailClick(int position)
