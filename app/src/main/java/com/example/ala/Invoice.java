@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -49,12 +50,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Invoice {
     String order_number, adress_office, date_order, date_pay, type_pay, customer_name, customer_email, customer_phone, discount, result_price;
     String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
     Bitmap logo;
+    List<String> piecesofProduct = new ArrayList<>();
+    List<String> namesofProduct = new ArrayList<>();
+    List<Integer> registerNumsofProduct = new ArrayList<>();
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -73,6 +79,18 @@ public class Invoice {
         this.customer_name = customer_name;
         this.customer_email = customer_email;
         this.customer_phone = customer_phone;
+    }
+
+    public void addPiecesofProduct(String adding_value){
+        piecesofProduct.add(adding_value);
+    }
+
+    public void addNamesofProduct(String adding_value){
+        namesofProduct.add(adding_value);
+    }
+
+    public void addRegisterNumsofProduct(int adding_value){
+        registerNumsofProduct.add(adding_value);
     }
 
     public void setLogo_path(String logo_path) {
@@ -267,11 +285,20 @@ public class Invoice {
             @Override
             public void onCallBack() {
 
-                try {
-                    createPDF(context);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+              /*  readProductsInfo(new FirebaseCallback(){
+                    @Override
+                    public void onCallBack() {*/
+
+                        try {
+                            createPDF(context);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                   /* }
+
+                });*/
+
+
             }
         });
 
@@ -313,6 +340,42 @@ public class Invoice {
         });
     }
 
+    private void readProductsInfo(FirebaseCallback firebaseCallback)
+    {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("Order").child("Orders");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+
+                setName(snapshot.child("name").getValue().toString());
+                setResidence(snapshot.child("residence").getValue().toString());
+                setIc(snapshot.child("ič").getValue().toString());
+                setDic(snapshot.child("dič").getValue().toString());
+                setWebsite(snapshot.child("website").getValue().toString());
+                setContact(snapshot.child("contact").getValue().toString());
+                setPhone(snapshot.child("phone").getValue().toString());
+                setBank_account(snapshot.child("bank account").getValue().toString());
+                setVariable_symbol(snapshot.child("variable symbol").getValue().toString());
+                setLogo_path(snapshot.child("logo").getValue().toString());
+
+                firebaseCallback.onCallBack();
+
+
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
     public void createPDF(Context context) throws FileNotFoundException {
         String pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         File file = new File(pdfPath, "faktura_"+ getOrder_number() +".pdf");
@@ -336,7 +399,7 @@ public class Invoice {
         Table table_text = new Table(column_width2);
 
         /*--Table3--*/
-        float column_width3[] = {30,210,70,70,70,40,70};
+        float column_width3[] = {60,180,20,70,70,50,40,70};
         Table table_product = new Table(column_width3);
 
         /*--Row1*/
@@ -451,14 +514,26 @@ public class Invoice {
 
             //SolidBorder solid = new SolidBorder(black,new boolean[]{false,false,true,false});
 
+            table_product.addCell(new Cell().add(new Paragraph("Kód").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Popis").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Popis").setBold().setFontSize(9).setCharacterSpacing(1).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Cena Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("bez DPH").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("DPH").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
+            for(int i = 0; i < piecesofProduct.size(); i++)
+            {
+                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(registerNumsofProduct.get(i))).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(namesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(piecesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph("68 522,00").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph("54 132,38").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph("417,13").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph("21%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph("68522,00").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -475,6 +550,9 @@ public class Invoice {
         document.add(new Paragraph("\n"));
         document.add(table_product);
         document.close();
+
+        Toast toast = Toast.makeText(context,"PDF was created",Toast.LENGTH_LONG);
+        toast.show();
 
         Log.i("pdfko", "facha_after");
 

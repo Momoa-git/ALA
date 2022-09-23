@@ -149,8 +149,8 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
         btn_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // openPaymentDialog();
-                controller.setPDF(context);
+                openPaymentDialog();
+              //  controller.setPDF(context);
 
             }
         });
@@ -186,8 +186,10 @@ public class OrderActivityView extends AppCompatActivity implements OrderAdapter
     @Override
     public void applyTexts3() {
         controller.setAfterPayment();
-        bottomSheetDialog.cancel();
         adapter.notifyDataSetChanged();
+        controller.setPDF(context);
+        bottomSheetDialog.cancel();
+
     }
 
 }

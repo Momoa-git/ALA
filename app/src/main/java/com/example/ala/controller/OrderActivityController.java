@@ -51,9 +51,10 @@ public class OrderActivityController{
         model.getOrderFirebaseResources(id_order);
     }
 
-    public void setOrderResources(String order_number, String date_order, String time_order, String status, String names, String type_pay, String paid, String price, String discount, String date_pay) {
+    public void setOrderResources(String order_number, String date_order, String time_order, String status, String names, String reg_numbers, String type_pay, String paid, String price, String discount, String date_pay) {
        this.view.numberOrder.setText("Objednávka " + order_number);
        this.view.txt_name_product.setText(names);
+       this.view.txt_register_num.setText(reg_numbers);
        this.view.txt_price.setText(price + " Kč s DPH");
        this.view.txt_paid.setText(paid);
        this.view.txt_type_payment.setText(type_pay);
@@ -196,7 +197,10 @@ public class OrderActivityController{
     public void setAfterPayment() {
            String priceStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
            String saleStr = this.view.txt_discount.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
-           model.updateAfterPayment(Float.valueOf(priceStr),Integer.valueOf(saleStr),id,view.txt_paid.getText().toString());
+           if(!saleStr.equals(""))
+             model.updatePaymentAfterPay(Float.valueOf(priceStr),Integer.valueOf(saleStr),id,view.txt_paid.getText().toString());
+
+           model.updateStatusAfterPay(id);
            Log.i("payment", "Price: " + priceStr + " Sale: " + saleStr + " Payment: " + view.txt_paid.getText().toString());
 
     }

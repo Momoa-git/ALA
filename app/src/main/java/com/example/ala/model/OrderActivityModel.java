@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.renderscript.Sampler;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
@@ -122,7 +123,6 @@ public class OrderActivityModel{
 
 
                     if (order.getOffice().contains(id)) {
-                        //list.add(order);
                         controller.onAddOrderToList(order);
                     }
 
@@ -164,15 +164,32 @@ public class OrderActivityModel{
 
                         //Piece and name of products
                         String name_products = "";
+                        String reg_numbers = "";
                         long iteration = dataSnapshot.child("Product item").getChildrenCount();
 
                         for (int count = 0; count < iteration; count++) {
                             String name = dataSnapshot.child("Product item").child(String.valueOf(count)).child("name").getValue().toString();
                             String pieces_of_product = dataSnapshot.child("Product item").child(String.valueOf(count)).child("piece").getValue().toString();
-                            if(name_products.isEmpty())
+                            String reg_number = dataSnapshot.child("Product item").child(String.valueOf(count)).child("registration_num").getValue().toString();
+                            if (name_products.isEmpty()) {
                                 name_products = "(" + pieces_of_product + "ks) " + name;
-                            else
+                                invoice.addNamesofProduct(name);
+                                invoice.addPiecesofProduct(pieces_of_product);
+                            } else {
                                 name_products = name_products + "\n" + "(" + pieces_of_product + "ks) " + name;
+                                invoice.addNamesofProduct(name);
+                                invoice.addPiecesofProduct(pieces_of_product);
+                            }
+
+                            if (reg_numbers.isEmpty()) {
+                                reg_numbers = reg_number;
+                                invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
+                            }
+                            else {
+                                reg_numbers = reg_numbers + "\n" + reg_number;
+                                invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
+                            }
+
                         }
 
                         String id_customer = dataSnapshot.child("id_customer").getValue().toString();
@@ -197,7 +214,7 @@ public class OrderActivityModel{
                         invoice.setType_pay(typePayAfterParse);
                         invoice.setDiscount(possibleDiscount);
                         invoice.setResult_price(priceAfterParse);
-                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
+                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
 
                         //semaphore = true;
                         getCustomerFirebaseResources(Integer.parseInt(id_customer));
@@ -428,7 +445,7 @@ public class OrderActivityModel{
 
     }
 
-    public void updateAfterPayment(float result_price, int old_sale, int id, String paid) {
+    public void updatePaymentAfterPay(float result_price, int old_sale, int id, String paid) {
         firebaseDatabase3 = FirebaseDatabase.getInstance();
         databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
 
@@ -449,6 +466,11 @@ public class OrderActivityModel{
 
         databaseReference3.updateChildren(updatepay);
 
+
+    }
+
+    public void updateStatusAfterPay(int id)
+    {
         firebaseDatabase4 = FirebaseDatabase.getInstance();
         databaseReference4 = firebaseDatabase4.getReference().child("Order").child("Orders").child(String.valueOf(id - 1));
 
@@ -456,7 +478,6 @@ public class OrderActivityModel{
         update.put("status", "CO");
 
         databaseReference4.updateChildren(update);
-
     }
 
     private String getActualDate() {
