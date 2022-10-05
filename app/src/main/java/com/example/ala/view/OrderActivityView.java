@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,10 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ala.Customer;
 import com.example.ala.Inventory.StatusData;
 import com.example.ala.Order;
 import com.example.ala.OrderAdapter;
-import com.example.ala.OrderDAO;
+import com.example.ala.DAO.OrderDAO;
 import com.example.ala.OrderViewHolder;
 import com.example.ala.R;
 import com.example.ala.view.dialog.PaymentDialog;
@@ -28,9 +31,17 @@ import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
 import com.example.ala.view.dialog.StornoDialog;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -54,7 +65,10 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     public Button btn_payment, btn_storno, btn_edit_sale;
     public BottomSheetDialog bottomSheetDialog;
     Context context;
-
+    FirebaseRecyclerAdapter firebaseRecyclerAdapter;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth mAuth;
+    int i = 0;
     //TODO fce filter orders by word search or status
     //TODO adding count  product
 
@@ -68,7 +82,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         context = this;
 
         recyclerView = findViewById(R.id.recycler_view2);
-        recyclerView.setHasFixedSize(true);
+       // recyclerView.setHasFixedSize(true); !!!!!!!!!!!!!!!
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         progressBar = findViewById(R.id.progress_bar);
@@ -76,28 +90,61 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
         spinner_status.setAdapter(statAdapter);
         list = new ArrayList<>();
-        adapter = new OrderAdapter(this,this);
-        recyclerView.setAdapter(adapter);
         dao = new OrderDAO();
         progressBar.setVisibility(View.VISIBLE);
         controller.setRecViewContent(dao); //load data
         progressBar.setVisibility(View.INVISIBLE);
-        //   mAuth = FirebaseAuth.getInstance();
-
-        //   final FirebaseUser office = mAuth.getCurrentUser();
-        //  String id = office.getUid();
-
-        //  firebaseDatabase = FirebaseDatabase.getInstance();
-        // databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
 
 
+        mAuth = FirebaseAuth.getInstance();
+
+        final FirebaseUser office = mAuth.getCurrentUser();
+        String id = office.getUid();
 
 
+        Query query = dao.get().orderByChild("office").equalTo(id+"");
 
 
+        FirebaseRecyclerOptions<Order> options = new FirebaseRecyclerOptions.Builder<Order>()
+                .setQuery(query, new SnapshotParser<Order>() {
+                    @NonNull
+                    @Override
+                    public Order parseSnapshot(@NonNull DataSnapshot snapshot) {
+                        Order order = snapshot.getValue(Order.class);
+                        if (order.getOffice().contains(id)) {
+                            list.add(order);
+                            Log.i("testt", order.getOrder_number() + " pridano");
 
+                        }
+                        i++;
+                        return order;
+
+
+                    }
+                }).build();
+
+        /*FirebaseRecyclerOptions<Order> options = new FirebaseRecyclerOptions.Builder<Order>()
+                .setQuery(FirebaseDatabase.getInstance().getReference().child("Order").child("Orders"),Order.class)
+                .build();*/
+
+        adapter = new OrderAdapter(options, this);
+
+        recyclerView.setAdapter(adapter);
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        adapter.stopListening();
+    }
 
     @Override
     public void onDetailClick(int position)

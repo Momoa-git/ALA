@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Order {
 
+    private String key;
     int order_number, id_product, id_order, id_customer, discount, price;
     String date, time, status, office, id_list_product, date_pay, time_pay, type_pay;
     boolean paid;
@@ -22,6 +23,11 @@ public class Order {
         this.time = time;
         this.status = status;
         this.office = office;
+    }
+
+    public void setKey(String key)
+    {
+        this.key = key;
     }
 
     public void setDiscount(int discount) {

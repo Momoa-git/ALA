@@ -1,6 +1,7 @@
 package com.example.ala;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ala.DAO.CustomerDAO;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,14 +25,86 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    Context context;
-    private DatabaseReference databaseReference;
-    ArrayList<Order> list = new ArrayList<>();
+public class OrderAdapter extends FirebaseRecyclerAdapter<Order,OrderViewHolder> {
     private OrderViewHolder.OnDetailListener onDetailListener;
 
-    public OrderAdapter(Context context, OrderViewHolder.OnDetailListener onDetailListener ) {
+
+    public OrderAdapter(@NonNull FirebaseRecyclerOptions<Order> options, OrderViewHolder.OnDetailListener onDetailListener ) {
+        super(options);
+        this.onDetailListener = onDetailListener;
+    }
+
+   /* public void setItems(ArrayList<Order> order)
+    {
+        list.addAll(order);
+    }*/
+  @Override
+  protected void onBindViewHolder(@NonNull OrderViewHolder orderViewHolder, int i, Order order) {
+    //   Order order1= list.get(i);
+      orderViewHolder.order_number.setText(String.valueOf(order.getOrder_number()));
+      orderViewHolder.id_order = order.getId_order();
+      Log.i("testt","HOLDER " + order.getOrder_number());
+      int id_customer = order.getId_customer();
+
+      CustomerDAO customerDAO = new CustomerDAO();
+
+      customerDAO.get().addValueEventListener(new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot snapshot) {
+              for (DataSnapshot dataSnapshot : snapshot.getChildren())
+              {
+                  Customer customer = dataSnapshot.getValue(Customer.class);
+                  if(customer.getId() == id_customer)
+                      orderViewHolder.id_customer.setText(customer.getFname() + " " + customer.getLname());
+              }
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError error) {
+
+          }
+      });
+
+      parseDateFromDatabase(order, orderViewHolder);
+      String status = order.getStatus();
+
+      switch (status) {
+          case "PE":
+              orderViewHolder.status.setText("Čekající");
+              orderViewHolder.statusImg.setImageResource(R.drawable.status_bar_pe);
+              break;
+          case "IP":
+              orderViewHolder.status.setText("Vyřizuje se");
+              orderViewHolder.statusImg.setImageResource(R.drawable.status_bar_ip);
+              break;
+          case "CO":
+              orderViewHolder.status.setText("Vyřízena");
+              orderViewHolder.statusImg.setImageResource(R.drawable.status_bar_co);
+              break;
+          case "CA":
+              orderViewHolder.status.setText("Stornována");
+              orderViewHolder.statusImg.setImageResource(R.drawable.status_bar_ca);
+              break;
+
+      }
+
+
+  }
+    @NonNull
+    @Override
+    public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_orders, parent, false);
+        return new OrderViewHolder(v, onDetailListener);
+    }
+
+ /*   @Override
+    public int getItemCount() {
+        return list.size();
+    }*/
+
+
+
+    /*public OrderAdapter(Context context, OrderViewHolder.OnDetailListener onDetailListener ) {
         this.context = context;
         this.onDetailListener = onDetailListener;
     }
@@ -101,7 +177,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
-    }
+    }*/
 
  /*   @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
@@ -194,10 +270,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
+
 
     /*public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 

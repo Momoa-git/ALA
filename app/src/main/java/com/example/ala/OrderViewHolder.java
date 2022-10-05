@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    Integer id_order;
+    public Integer id_order;
     public TextView order_number, id_customer, date, status;
-    ImageView statusImg;
-    OnDetailListener onDetailListener;
+    public ImageView statusImg;
+     OnDetailListener onDetailListener;
 
     public OrderViewHolder(@NonNull View itemView, OnDetailListener onDetailListener) {
         super(itemView);
