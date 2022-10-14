@@ -39,6 +39,8 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -49,19 +51,23 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Invoice {
-    String order_number, adress_office, date_order, date_pay, type_pay, customer_name, customer_email, customer_phone, discount, result_price;
+    String order_number, adress_office, date_order, date_pay, type_pay, customer_name, customer_email, customer_phone, result_price;
     String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
+    String datetime;
+    long discount;
     Bitmap logo;
-    List<String> piecesofProduct = new ArrayList<>();
+    List<Long> piecesofProduct = new ArrayList<>();
     List<String> namesofProduct = new ArrayList<>();
     List<Integer> registerNumsofProduct = new ArrayList<>();
-
+    List<Double> pricesOfProduct = new ArrayList<>();
+    final int DPH_percent = 21;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
 
@@ -81,7 +87,25 @@ public class Invoice {
         this.customer_phone = customer_phone;
     }
 
-    public void addPiecesofProduct(String adding_value){
+    public void removeAllPieces()
+    {
+        piecesofProduct.clear();
+        namesofProduct.clear();
+        registerNumsofProduct.clear();
+        pricesOfProduct.clear();
+    }
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a");
+        Date date = new Date();
+        this.datetime = formatter.format(date);
+    }
+
+    public void addPiecesofProduct(long adding_value){
         piecesofProduct.add(adding_value);
     }
 
@@ -91,6 +115,11 @@ public class Invoice {
 
     public void addRegisterNumsofProduct(int adding_value){
         registerNumsofProduct.add(adding_value);
+    }
+
+    public void addPricesOfProduct(double adding_value)
+    {
+        pricesOfProduct.add(adding_value);
     }
 
     public void setLogo_path(String logo_path) {
@@ -205,7 +234,7 @@ public class Invoice {
         return customer_phone;
     }
 
-    public String getDiscount() {
+    public long getDiscount() {
         return discount;
     }
 
@@ -217,7 +246,7 @@ public class Invoice {
         this.result_price = result_price;
     }
 
-    public void setDiscount(String discount) {
+    public void setDiscount(long discount) {
         this.discount = discount;
     }
 
@@ -399,8 +428,17 @@ public class Invoice {
         Table table_text = new Table(column_width2);
 
         /*--Table3--*/
-        float column_width3[] = {60,180,20,70,70,50,40,70};
+        float column_width3[] = {55,175,15,70,70,65,40,70};
         Table table_product = new Table(column_width3);
+
+        /*--Table4--*/
+        float column_width4[] = {380,75,105};
+        Table table_price = new Table(column_width4);
+
+        /*--Table4--*/
+        float column_width5[] = {280,280};
+        Table table_bottom = new Table(column_width5);
+
 
         /*--Row1*/
         Drawable shopLogo = ContextCompat.getDrawable(context, R.drawable.shop_logo);
@@ -517,23 +555,71 @@ public class Invoice {
             table_product.addCell(new Cell().add(new Paragraph("Kód").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Popis").setFont(font).setBold().setFontSize(9).setCharacterSpacing(1).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Cena Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("bez DPH").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("DPH").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
-            table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Cena Ks").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("bez DPH").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("DPH").setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
             for(int i = 0; i < piecesofProduct.size(); i++)
             {
                 table_product.addCell(new Cell().add(new Paragraph(String.valueOf(registerNumsofProduct.get(i))).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(namesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(piecesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph("68 522,00").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph("54 132,38").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph("417,13").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph("21%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph("68522,00").setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(piecesofProduct.get(i).toString()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(pricesOfProduct.get(i).toString())).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                double DPH =  calculateDPH(pricesOfProduct.get(i));
+                double priceWithoutDPH = calculatePriceWithoutDPH(pricesOfProduct.get(i), DPH);
+               // Log.i("priceDPH", DPH + " " + priceWithoutDPH + " " + pricesOfProduct.get(i));
+
+                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(priceWithoutDPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(DPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(DPH_percent + "%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+
+                double sumPrice = calculateSumPrice(pricesOfProduct.get(i),piecesofProduct.get(i));
+                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(sumPrice))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             }
+
+            if(getDiscount() != 0) {
+                    long discount = getDiscount();
+                    table_product.addCell(new Cell().add(new Paragraph("SLEVA"+discount).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph("Zákaznická sleva " + discount + "%").setFont(font).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph("1").setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(getDiscountAmount(discount)))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(getDiscountAmount(discount)))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    double DPH_discount = calculateDPH(getDiscountAmount(discount));
+                    table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(DPH_discount))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph(DPH_percent + "%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                    table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(getDiscountAmount(discount)))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+            }
+            else {
+                table_product.addCell(new Cell().add(new Paragraph().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+                table_product.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
+
+            }
+
+
+            table_price.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell().add(new Paragraph("Celkem:").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell().add(new Paragraph(setPriceFormat(getResult_price()) + " Kč").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell(1,3).add(new Paragraph("Doporučujeme zboží překontrolovat ihned po převzetí, " +
+                                                                                "pozdější připomínky ke stavu předávaného zboží mohou být zamítnuty. " +
+                                                                                "Kupující nabude vlastnického práva ke zboží až po úplném zaplacení kupní ceny. " +
+                                                                                "V ceně zboží je zahrnut recyklační poplatek a autorské odměny v zákonné výši. " +
+                                                                                "Více informací o podmínkách záruky naleznete ve Všeobecných obchodních podmínkách a Reklamačním řádu na " + getWebsite() + ".")
+                                                                                .setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+
+            setDatetime();
+            table_bottom.setHeight(PageSize.A4.getHeight()-10);
+            table_bottom.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_bottom.addCell(new Cell().add(new Paragraph("Tisk: PDFGen " + getDatetime()).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -549,6 +635,8 @@ public class Invoice {
         document.add(table_text);
         document.add(new Paragraph("\n"));
         document.add(table_product);
+        document.add(table_price);
+        document.add(table_bottom);
         document.close();
 
         Toast toast = Toast.makeText(context,"PDF was created",Toast.LENGTH_LONG);
@@ -556,6 +644,32 @@ public class Invoice {
 
         Log.i("pdfko", "facha_after");
 
+    }
+
+    private float getDiscountAmount(long discount) {
+       float original_price = 100 * Float.valueOf(getResult_price()) / (100 - discount);
+       Log.i("original_price", original_price + " ");
+       return original_price * discount / 100 * (-1);
+    }
+
+    private double calculateSumPrice(double price, Long count) {
+        return price * count;
+    }
+
+    private double calculatePriceWithoutDPH(double price, double dph) {
+        return price - dph;
+    }
+
+    private double calculateDPH(double price) {
+        return price * DPH_percent / 100;
+    }
+
+    private String setPriceFormat(String price) {
+        Log.i("priceDPH", price );
+        double amount = Double.parseDouble(price);
+        DecimalFormat formater = new DecimalFormat("###,###.00");
+
+        return formater.format(amount);
     }
 
     private String getActualDate() {

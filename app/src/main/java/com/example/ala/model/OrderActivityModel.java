@@ -109,28 +109,31 @@ public class OrderActivityModel{
                         String reg_numbers = "";
                         long iteration = dataSnapshot.child("Product item").getChildrenCount();
 
+                        invoice.removeAllPieces();
+
                         for (int count = 0; count < iteration; count++) {
                             String name = dataSnapshot.child("Product item").child(String.valueOf(count)).child("name").getValue().toString();
-                            String pieces_of_product = dataSnapshot.child("Product item").child(String.valueOf(count)).child("piece").getValue().toString();
+                            long pieces_of_product = (long )dataSnapshot.child("Product item").child(String.valueOf(count)).child("piece").getValue();
                             String reg_number = dataSnapshot.child("Product item").child(String.valueOf(count)).child("registration_num").getValue().toString();
+                            String price = dataSnapshot.child("Product item").child(String.valueOf(count)).child("price").getValue().toString();
+                            double price_double = Double.parseDouble(price);
                             if (name_products.isEmpty()) {
                                 name_products = "(" + pieces_of_product + "ks) " + name;
-                                invoice.addNamesofProduct(name);
-                                invoice.addPiecesofProduct(pieces_of_product);
                             } else {
                                 name_products = name_products + "\n" + "(" + pieces_of_product + "ks) " + name;
-                                invoice.addNamesofProduct(name);
-                                invoice.addPiecesofProduct(pieces_of_product);
-                            }
 
+                            }
                             if (reg_numbers.isEmpty()) {
                                 reg_numbers = reg_number;
-                                invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
                             }
                             else {
                                 reg_numbers = reg_numbers + "\n" + reg_number;
-                                invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
                             }
+
+                            invoice.addNamesofProduct(name);
+                            invoice.addPiecesofProduct(pieces_of_product);
+                            invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
+                            invoice.addPricesOfProduct(price_double);
 
                         }
 
@@ -139,7 +142,7 @@ public class OrderActivityModel{
                         String type_pay = dataSnapshot.child("Payment").child("type").getValue().toString();
                         boolean paid = Boolean.parseBoolean(dataSnapshot.child("Payment").child("paid").getValue().toString());
                         String price = dataSnapshot.child("Payment").child("price").getValue().toString();
-                        String possibleDiscount = checkPossibleDiscount(dataSnapshot);
+                        long possibleDiscount = checkPossibleDiscount(dataSnapshot);
                         String possibleDatePay = checkPosssibleDatePay(dataSnapshot, paid);
 
 
@@ -155,8 +158,8 @@ public class OrderActivityModel{
                         invoice.setDate_order(dateAfterParse);
                         invoice.setType_pay(typePayAfterParse);
                         invoice.setDiscount(possibleDiscount);
-                        invoice.setResult_price(priceAfterParse);
-                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount, possibleDatePay);
+                        invoice.setResult_price(price);
+                        controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount + "%", possibleDatePay);
 
                         //semaphore = true;
                         getCustomerFirebaseResources(Integer.parseInt(id_customer));
@@ -198,17 +201,16 @@ public class OrderActivityModel{
 
     }
 
-    private String checkPossibleDiscount(DataSnapshot dataSnapshot) {
+    private long checkPossibleDiscount(DataSnapshot dataSnapshot) {
         try {
-            String discount = dataSnapshot.child("Payment").child("discount").getValue().toString();
+            long discount = (long) dataSnapshot.child("Payment").child("discount").getValue();
             try {
-                Integer.parseInt(discount);
-                return discount + "%";
+                return discount;
             } catch (NumberFormatException n) {
-                return "ERR format exception";
+                return -1;
             }
         } catch (NullPointerException e) {
-            return "-";
+            return 0;
         }
 
 
@@ -230,7 +232,7 @@ public class OrderActivityModel{
     public String setPriceFormat(String price) {
 
         double amount = Double.parseDouble(price);
-        DecimalFormat formater = new DecimalFormat("###,###.00");
+        DecimalFormat formater = new DecimalFormat("###,###.##");
 
         return formater.format(amount);
 
@@ -333,18 +335,18 @@ public class OrderActivityModel{
 
 
 
-    public float calculatePriceAfterSale(float sale_f, float price, float old_sale_f) {
+    public float calculatePriceAfterSale(long sale_f, float price, float old_sale_f) {
 
         float full_price;
 
-        if (old_sale_f != 0)
+        if (old_sale_f != 0 || sale_f != 0 )
             full_price = price * 100 / (100 - old_sale_f);
 
         else
             full_price = price;
 
         float sale = sale_f * full_price / 100;
-        invoice.setDiscount(sale_f+"");
+        invoice.setDiscount(sale_f);
         invoice.setResult_price(full_price-sale + "");
         return full_price - sale;
     }
@@ -387,7 +389,7 @@ public class OrderActivityModel{
 
     }
 
-    public void updatePaymentAfterPay(float result_price, int old_sale, int id, String paid) {
+    public void updateSaleAfterPay(float result_price, int old_sale, int id) {
         firebaseDatabase3 = FirebaseDatabase.getInstance();
         databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
 
@@ -395,21 +397,32 @@ public class OrderActivityModel{
         updatepay.put("discount", old_sale);
         updatepay.put("price", result_price);
 
-        invoice.setDiscount(old_sale+"");
+        invoice.setDiscount(old_sale);
         invoice.setResult_price(result_price+"");
-
-        if (paid.equals("NE")) {
-            updatepay.put("date_pay", getActualDate());
-            updatepay.put("time_pay", getActualTime());
-            updatepay.put("paid", true);
-
-            invoice.setDate_pay(getActualDate());
-        }
 
         databaseReference3.updateChildren(updatepay);
 
 
     }
+
+    public void updatePaymentAfterPay(int id)
+    {
+        firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
+
+        Map updatepay = new HashMap();
+
+            updatepay.put("date_pay", getActualDate());
+            updatepay.put("time_pay", getActualTime());
+            updatepay.put("paid", true);
+
+            invoice.setDate_pay(getActualDate());
+
+
+        databaseReference3.updateChildren(updatepay);
+    }
+
+
 
     public void updateStatusAfterPay(int id)
     {

@@ -18,7 +18,7 @@ public class OrderActivityController{
   int id;
   float result_price, result_price2;
     String old_sale;
-    float sale_F;
+    long sale_F;
 
 
    public OrderActivityController(OrderActivityView view){
@@ -180,17 +180,9 @@ public class OrderActivityController{
 
         String newStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
         float price = Float.valueOf(newStr);
-        sale_F = Float.valueOf(sale);
+        sale_F = Long.valueOf(sale);
         Log.i("vysledek", sale_F +" * "+ price);
         result_price = model.calculatePriceAfterSale(sale_F, price, old_sale_f);
-      //  model.saveDiscountInDB(sale_F, id);
-     /*   try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-     //   model.saveNewPriceInDB(result_price, id);
-    //    model.hash(sale_F, result_price, id);
         view.txt_price.setText(model.setPriceFormat(String.valueOf(result_price)) + " Kč s DPH");
 
     }
@@ -206,7 +198,9 @@ public class OrderActivityController{
            String priceStr = this.view.txt_price.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
            String saleStr = this.view.txt_discount.getText().toString().replace(",",".").replaceAll("[^0-9.]" ,"");
            if(!saleStr.equals(""))
-             model.updatePaymentAfterPay(Float.valueOf(priceStr),Integer.valueOf(saleStr),id,view.txt_paid.getText().toString());
+               model.updateSaleAfterPay(Float.valueOf(priceStr),Integer.valueOf(saleStr),id);
+           if(view.txt_paid.getText().toString().equals("NE"))
+               model.updatePaymentAfterPay(id);
 
            model.updateStatusAfterPay(id);
            Log.i("payment", "Price: " + priceStr + " Sale: " + saleStr + " Payment: " + view.txt_paid.getText().toString());

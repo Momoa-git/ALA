@@ -82,7 +82,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         context = this;
 
         recyclerView = findViewById(R.id.recycler_view2);
-       // recyclerView.setHasFixedSize(true); !!!!!!!!!!!!!!!
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         progressBar = findViewById(R.id.progress_bar);
@@ -111,12 +110,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
                     @Override
                     public Order parseSnapshot(@NonNull DataSnapshot snapshot) {
                         Order order = snapshot.getValue(Order.class);
-                        if (order.getOffice().contains(id)) {
-                            list.add(order);
-                            Log.i("testt", order.getOrder_number() + " pridano");
-
-                        }
-                        i++;
                         return order;
 
 
