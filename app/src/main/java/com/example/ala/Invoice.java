@@ -63,16 +63,14 @@ public class Invoice {
     String datetime;
     long discount;
     Bitmap logo;
-    List<Long> piecesofProduct = new ArrayList<>();
-    List<String> namesofProduct = new ArrayList<>();
-    List<Integer> registerNumsofProduct = new ArrayList<>();
-    List<Double> pricesOfProduct = new ArrayList<>();
     final int DPH_percent = 21;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    Order order;
 
 
-    public Invoice() {
+    public Invoice(Order order) {
+        this.order = order;
       //  fetchShopLogo();
     }
 
@@ -86,14 +84,14 @@ public class Invoice {
         this.customer_email = customer_email;
         this.customer_phone = customer_phone;
     }
-
+/*
     public void removeAllPieces()
     {
         piecesofProduct.clear();
         namesofProduct.clear();
         registerNumsofProduct.clear();
         pricesOfProduct.clear();
-    }
+    }*/
 
     public String getDatetime() {
         return datetime;
@@ -105,22 +103,6 @@ public class Invoice {
         this.datetime = formatter.format(date);
     }
 
-    public void addPiecesofProduct(long adding_value){
-        piecesofProduct.add(adding_value);
-    }
-
-    public void addNamesofProduct(String adding_value){
-        namesofProduct.add(adding_value);
-    }
-
-    public void addRegisterNumsofProduct(int adding_value){
-        registerNumsofProduct.add(adding_value);
-    }
-
-    public void addPricesOfProduct(double adding_value)
-    {
-        pricesOfProduct.add(adding_value);
-    }
 
     public void setLogo_path(String logo_path) {
         this.logo_path = logo_path;
@@ -166,10 +148,6 @@ public class Invoice {
         this.variable_symbol = variable_symbol;
     }
 
-    public String getOrder_number() {
-        return order_number;
-    }
-
     public String getName() {
         return name;
     }
@@ -206,81 +184,6 @@ public class Invoice {
         return variable_symbol;
     }
 
-    public String getAdress_office() {
-        return adress_office;
-    }
-
-    public String getDate_order() {
-        return date_order;
-    }
-
-    public String getDate_pay() {
-        return date_pay;
-    }
-
-    public String getType_pay() {
-        return type_pay;
-    }
-
-    public String getCustomer_name() {
-        return customer_name;
-    }
-
-    public String getCustomer_email() {
-        return customer_email;
-    }
-
-    public String getCustomer_phone() {
-        return customer_phone;
-    }
-
-    public long getDiscount() {
-        return discount;
-    }
-
-    public String getResult_price() {
-        return result_price;
-    }
-
-    public void setResult_price(String result_price) {
-        this.result_price = result_price;
-    }
-
-    public void setDiscount(long discount) {
-        this.discount = discount;
-    }
-
-    public void setOrder_number(String order_number) {
-        this.order_number = order_number;
-    }
-
-    public void setAdress_office(String adress_office) {
-        this.adress_office = adress_office;
-    }
-
-    public void setDate_order(String date_order) {
-        this.date_order = date_order;
-    }
-
-    public void setDate_pay(String date_pay) {
-        this.date_pay = date_pay;
-    }
-
-    public void setType_pay(String type_pay) {
-        this.type_pay = type_pay;
-    }
-
-    public void setCustomer_name(String customer_name) {
-        this.customer_name = customer_name;
-    }
-
-    public void setCustomer_email(String customer_email) {
-        this.customer_email = customer_email;
-    }
-
-    public void setCustomer_phone(String customer_phone) {
-        this.customer_phone = customer_phone;
-    }
 
 
     private void fetchShopLogo() {
@@ -369,45 +272,9 @@ public class Invoice {
         });
     }
 
-    private void readProductsInfo(FirebaseCallback firebaseCallback)
-    {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("Order").child("Orders");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-                setName(snapshot.child("name").getValue().toString());
-                setResidence(snapshot.child("residence").getValue().toString());
-                setIc(snapshot.child("ič").getValue().toString());
-                setDic(snapshot.child("dič").getValue().toString());
-                setWebsite(snapshot.child("website").getValue().toString());
-                setContact(snapshot.child("contact").getValue().toString());
-                setPhone(snapshot.child("phone").getValue().toString());
-                setBank_account(snapshot.child("bank account").getValue().toString());
-                setVariable_symbol(snapshot.child("variable symbol").getValue().toString());
-                setLogo_path(snapshot.child("logo").getValue().toString());
-
-                firebaseCallback.onCallBack();
-
-
-
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-
     public void createPDF(Context context) throws FileNotFoundException {
         String pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File file = new File(pdfPath, "faktura_"+ getOrder_number() +".pdf");
+        File file = new File(pdfPath, "faktura_"+ order.getOrder_number() +".pdf");
         FileOutputStream outputStream = new FileOutputStream(file);
 
         Log.i("pdfko", "facha " + pdfPath);
@@ -489,7 +356,7 @@ public class Invoice {
 
 
             /*--Row2-3*/
-            table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: "+ getAdress_office() +"," +" Sídlo společnosti: "+ getResidence()+"," +
+            table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: "+ order.getAdress_office() +"," +" Sídlo společnosti: "+ getResidence()+"," +
                                                                                 " IČ: "+ getIc()+"," +" DIČ: "+ getDic()+"," +" Internet: "+getWebsite()+"," +
                                                                                 " Kontakt: "+ getContact()+", Telefon: "+ getPhone()+".").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
@@ -502,20 +369,20 @@ public class Invoice {
             /*--Row5*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Datum vystavění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(getDate_order()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph(getCustomer_name()).setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(order.getDate_order()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(order.getCustomer_name()).setFont(font).setFontSize(9).setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
 
             /*--Row6*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Datum uskut. zdaň. plnění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(getDate_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Email: " + getCustomer_email()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(order.getDate_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Email: " + order.getCustomer_email()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
             /*--Row7*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Datum splatnosti: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
             table_text.addCell(new Cell().add(new Paragraph(getActualDate()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph("Tel: "+ getCustomer_phone()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph("Tel: "+ order.getCustomer_phone()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
             /*--Row8*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Datum převzetí: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
@@ -526,7 +393,7 @@ public class Invoice {
             /*--Row9*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Způsob úhrady: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(getType_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(order.getType_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
 
             /*--Row9*/
@@ -561,26 +428,26 @@ public class Invoice {
             table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
-            for(int i = 0; i < piecesofProduct.size(); i++)
+            for(int i = 0; i < order.piecesofProduct.size(); i++)
             {
-                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(registerNumsofProduct.get(i))).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(namesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(piecesofProduct.get(i).toString()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(pricesOfProduct.get(i).toString())).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-                double DPH =  calculateDPH(pricesOfProduct.get(i));
-                double priceWithoutDPH = calculatePriceWithoutDPH(pricesOfProduct.get(i), DPH);
+                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(order.registerNumsofProduct.get(i))).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(order.namesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(order.piecesofProduct.get(i).toString()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(order.pricesOfProduct.get(i).toString())).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                double DPH =  calculateDPH(order.pricesOfProduct.get(i));
+                double priceWithoutDPH = calculatePriceWithoutDPH(order.pricesOfProduct.get(i), DPH);
                // Log.i("priceDPH", DPH + " " + priceWithoutDPH + " " + pricesOfProduct.get(i));
 
                 table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(priceWithoutDPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(DPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(DPH_percent + "%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
 
-                double sumPrice = calculateSumPrice(pricesOfProduct.get(i),piecesofProduct.get(i));
+                double sumPrice = calculateSumPrice(order.pricesOfProduct.get(i),order.piecesofProduct.get(i));
                 table_product.addCell(new Cell().add(new Paragraph(setPriceFormat(String.valueOf(sumPrice))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             }
 
-            if(getDiscount() != 0) {
-                    long discount = getDiscount();
+            if(order.getDiscount() != 0) {
+                    long discount = order.getDiscount();
                     table_product.addCell(new Cell().add(new Paragraph("SLEVA"+discount).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
                     table_product.addCell(new Cell().add(new Paragraph("Zákaznická sleva " + discount + "%").setFont(font).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
                     table_product.addCell(new Cell().add(new Paragraph("1").setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
@@ -606,7 +473,7 @@ public class Invoice {
 
             table_price.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell().add(new Paragraph("Celkem:").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-            table_price.addCell(new Cell().add(new Paragraph(setPriceFormat(getResult_price()) + " Kč").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell().add(new Paragraph(setPriceFormat(order.getPrice()) + " Kč").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("Doporučujeme zboží překontrolovat ihned po převzetí, " +
@@ -647,7 +514,7 @@ public class Invoice {
     }
 
     private float getDiscountAmount(long discount) {
-       float original_price = 100 * Float.valueOf(getResult_price()) / (100 - discount);
+       float original_price = 100 * Float.valueOf(order.getPrice()) / (100 - discount);
        Log.i("original_price", original_price + " ");
        return original_price * discount / 100 * (-1);
     }
@@ -677,6 +544,11 @@ public class Invoice {
         Date date = new Date();
 
         return  output_format.format(date);
+    }
+
+    public void sendToEmail()
+    {
+
     }
 
     private interface FirebaseCallback{

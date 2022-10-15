@@ -32,15 +32,10 @@ public class OrderActivityModel{
     private FirebaseDatabase firebaseDatabase, firebaseDatabase2, firebaseDatabase3, firebaseDatabase4;
     private DatabaseReference databaseReference, databaseReference2, databaseReference3, databaseReference4;
     private FirebaseAuth mAuth;
-    Order order = new Order();
-   //boolean semaphore = true;
-    int count;
     int id_order_firebase;
     private OrderActivityController controller;
-    private Context context;
-    ArrayList<String> names_product = new ArrayList<String>(2);
-    Invoice invoice = new Invoice();
     ArrayList<Order> orders = new ArrayList<>();
+    Order order = new Order();
 
     public OrderActivityModel(OrderActivityController controller) {
         this.controller = controller;
@@ -52,8 +47,6 @@ public class OrderActivityModel{
         final FirebaseUser office = mAuth.getCurrentUser();
         String id = office.getUid();
 
-   /*     firebaseDatabase = FirebaseDatabase.getInstance();//
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");*/
 
         dao.get().addValueEventListener(new ValueEventListener() {
             @Override
@@ -109,7 +102,7 @@ public class OrderActivityModel{
                         String reg_numbers = "";
                         long iteration = dataSnapshot.child("Product item").getChildrenCount();
 
-                        invoice.removeAllPieces();
+                        order.removeAllPieces();
 
                         for (int count = 0; count < iteration; count++) {
                             String name = dataSnapshot.child("Product item").child(String.valueOf(count)).child("name").getValue().toString();
@@ -130,10 +123,16 @@ public class OrderActivityModel{
                                 reg_numbers = reg_numbers + "\n" + reg_number;
                             }
 
-                            invoice.addNamesofProduct(name);
+
+                            order.addNamesofProduct(name);
+                            order.addPiecesofProduct(pieces_of_product);
+                            order.addRegisterNumsofProduct(Integer.valueOf(reg_number));
+                            order.addPricesOfProduct(price_double);
+
+                            /*invoice.addNamesofProduct(name);
                             invoice.addPiecesofProduct(pieces_of_product);
                             invoice.addRegisterNumsofProduct(Integer.valueOf(reg_number));
-                            invoice.addPricesOfProduct(price_double);
+                            invoice.addPricesOfProduct(price_double);*/
 
                         }
 
@@ -154,17 +153,23 @@ public class OrderActivityModel{
                         String priceAfterParse = setPriceFormat(price);
                         String dateAfterParse = setDateFormat(date_order);
 
-                        invoice.setOrder_number(order_number);
+                        order.setOrder_number(Integer.valueOf(order_number));
+                        order.setDate_order(dateAfterParse);
+                        order.setType_pay(typePayAfterParse);
+                        order.setDiscount(possibleDiscount);
+                        order.setPrice(price);
+
+                        /*invoice.setOrder_number(order_number);
                         invoice.setDate_order(dateAfterParse);
                         invoice.setType_pay(typePayAfterParse);
                         invoice.setDiscount(possibleDiscount);
-                        invoice.setResult_price(price);
+                        invoice.setResult_price(price);*/
+
                         controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount + "%", possibleDatePay);
 
-                        //semaphore = true;
+
                         getCustomerFirebaseResources(Integer.parseInt(id_customer));
                         getOfficeFirebaseResources(office);
-                       // getProductListFirebaseResources(array_id_list_product);
 
 
                     }
@@ -187,7 +192,8 @@ public class OrderActivityModel{
                 String date_pay = dataSnapshot.child("Payment").child("date_pay").getValue().toString();
                 String time_pay = dataSnapshot.child("Payment").child("time_pay").getValue().toString();
 
-                invoice.setDate_pay(setDateFormat(date_pay));
+                //invoice.setDate_pay(setDateFormat(date_pay));
+                order.setDate_pay(setDateFormat(date_pay));
                 return setDateFormat(date_pay) + " " + time_pay;
             } else {
                 controller.setInvisibleDatePay();
@@ -273,9 +279,15 @@ public class OrderActivityModel{
                         String email = dataSnapshot.child("email").getValue().toString();
                         String phone = dataSnapshot.child("phone").getValue().toString();
 
-                        invoice.setCustomer_name(fname + " " + lname);
+
+
+                        order.setCustomer_name(fname + " " + lname);
+                        order.setCustomer_email(email);
+                        order.setCustomer_phone(phone);
+
+                      /*  invoice.setCustomer_name(fname + " " + lname);
                         invoice.setCustomer_email(email);
-                        invoice.setCustomer_phone(phone);
+                        invoice.setCustomer_phone(phone);*/
 
                         Log.i("getCustomerFirebaseRes", "L.name: " + lname + ", Email: " + email + ", Phone num.:" + phone);
 
@@ -313,7 +325,8 @@ public class OrderActivityModel{
                 String name = officeProfile.name;
                 String address = officeProfile.address;
 
-                invoice.setAdress_office(address + ", " + name);
+                order.setAdress_office(address + ", " + name);
+                //invoice.setAdress_office(address + ", " + name);
 
                 Log.i("getOfficeFirebaseRes", "office: " + officeS);
 
@@ -346,38 +359,14 @@ public class OrderActivityModel{
             full_price = price;
 
         float sale = sale_f * full_price / 100;
-        invoice.setDiscount(sale_f);
-        invoice.setResult_price(full_price-sale + "");
+        order.setDiscount(sale_f);
+        order.setPrice(full_price-sale + "");
+
+      /*  invoice.setDiscount(sale_f);
+        invoice.setResult_price(full_price-sale + "");*/
         return full_price - sale;
     }
 
-    //setPriceFormat(String.valueOf(
-    public void saveDiscountInDB(float sale_F, int id) {
-        firebaseDatabase3 = FirebaseDatabase.getInstance();
-        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders");
-        databaseReference3.child(String.valueOf(id - 1)).child("Payment").child("discount").setValue(sale_F);
-
-
-    }
-
-    public void saveNewPriceInDB(float result_price, int id) {
-        firebaseDatabase4 = FirebaseDatabase.getInstance();
-        databaseReference4 = firebaseDatabase3.getReference().child("Order").child("Orders");
-        databaseReference4.child(String.valueOf(id - 1)).child("Payment").child("price").setValue(result_price);
-    }
-
-    public void hash(float sale_F, float result_price, int id)
-    {
-        firebaseDatabase3 = FirebaseDatabase.getInstance();
-        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
-
-        Map update = new HashMap();
-        update.put("discount", sale_F);
-        update.put("price", result_price);
-
-
-        databaseReference3.updateChildren(update);
-    }
 
     public void saveStornoStatus(int id)
     {
@@ -397,8 +386,11 @@ public class OrderActivityModel{
         updatepay.put("discount", old_sale);
         updatepay.put("price", result_price);
 
-        invoice.setDiscount(old_sale);
-        invoice.setResult_price(result_price+"");
+        order.setDiscount(old_sale);
+        order.setPrice(result_price + "");
+
+       /* invoice.setDiscount(old_sale);
+        invoice.setResult_price(result_price+"");*/
 
         databaseReference3.updateChildren(updatepay);
 
@@ -416,7 +408,8 @@ public class OrderActivityModel{
             updatepay.put("time_pay", getActualTime());
             updatepay.put("paid", true);
 
-            invoice.setDate_pay(getActualDate());
+            order.setDate_pay(getActualDate());
+          //  invoice.setDate_pay(getActualDate());
 
 
         databaseReference3.updateChildren(updatepay);
@@ -453,19 +446,13 @@ public class OrderActivityModel{
 
     public void loadPDF(Context context)
     {
-      /*  ActivityCompat.requestPermissions(this,new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE},PackageManager.PERMISSION_GRANTED);
 
-*/
         Log.i("pdfko", "facha1");
-      //  try {
+            Invoice invoice = new Invoice(order);
             invoice.fetchCorporateInfo(context);
-           // invoice.createPDF(context);
 
-       /* } catch (FileNotFoundException e) {
-            Log.i("pdfko", "facha3");
-            e.printStackTrace();
-        }*/
+
+
     }
 
 

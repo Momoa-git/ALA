@@ -12,7 +12,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public Integer id_order;
     public TextView order_number, id_customer, date, status;
     public ImageView statusImg;
-     OnDetailListener onDetailListener;
+    private OnDetailListener onDetailListener;
 
     public OrderViewHolder(@NonNull View itemView, OnDetailListener onDetailListener) {
         super(itemView);

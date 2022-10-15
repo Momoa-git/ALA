@@ -1,13 +1,19 @@
 package com.example.ala;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Order {
 
     private String key;
-    int order_number, id_product, id_order, id_customer, discount, price;
-    String date, time, status, office, id_list_product, date_pay, time_pay, type_pay;
-    boolean paid;
+    private int  id_product, id_order, id_customer, discount, order_number;
+    private String date_order, price, date, time, status, office, id_list_product, date_pay, time_pay, type_pay, customer_name, customer_email, customer_phone,adress_office;
+    private boolean paid;
+    List<Long> piecesofProduct = new ArrayList<>();
+    List<String> namesofProduct = new ArrayList<>();
+    List<Integer> registerNumsofProduct = new ArrayList<>();
+    List<Double> pricesOfProduct = new ArrayList<>();
 
     public Order() {
 
@@ -24,18 +30,82 @@ public class Order {
         this.status = status;
         this.office = office;
     }
+    public void addPiecesofProduct(long adding_value){
+        piecesofProduct.add(adding_value);
+    }
+
+    public void addNamesofProduct(String adding_value){
+        namesofProduct.add(adding_value);
+    }
+
+    public void addRegisterNumsofProduct(int adding_value){
+        registerNumsofProduct.add(adding_value);
+    }
+
+    public void addPricesOfProduct(double adding_value)
+    {
+        pricesOfProduct.add(adding_value);
+    }
+
+    public void removeAllPieces()
+    {
+        piecesofProduct.clear();
+        namesofProduct.clear();
+        registerNumsofProduct.clear();
+        pricesOfProduct.clear();
+    }
 
     public void setKey(String key)
     {
         this.key = key;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCustomer_name(String customer_name) {
+        this.customer_name = customer_name;
     }
 
-    public void setPrice(int price) {
+    public void setCustomer_email(String customer_email) {
+        this.customer_email = customer_email;
+    }
+
+    public void setCustomer_phone(String customer_phone) {
+        this.customer_phone = customer_phone;
+    }
+
+    public void setAdress_office(String adress_office) {
+        this.adress_office = adress_office;
+    }
+
+    public String getDate_order() {
+        return date_order;
+    }
+
+    public String getCustomer_name() {
+        return customer_name;
+    }
+
+    public String getCustomer_email() {
+        return customer_email;
+    }
+
+    public String getCustomer_phone() {
+        return customer_phone;
+    }
+
+    public String getAdress_office() {
+        return adress_office;
+    }
+
+    public void setDiscount(long discount) {
+        this.discount = (int) discount;
+    }
+
+    public void setPrice(String price) {
         this.price = price;
+    }
+
+    public void setDate_order(String date_order) {
+        this.date_order = date_order;
     }
 
     public void setDate_pay(String date_pay) {
@@ -58,7 +128,7 @@ public class Order {
         return discount;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 

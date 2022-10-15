@@ -240,6 +240,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         controller.setAfterPayment();
         adapter.notifyDataSetChanged();
         controller.setPDF(context);
+       // controller.sendToEmail();
         bottomSheetDialog.cancel();
 
     }
