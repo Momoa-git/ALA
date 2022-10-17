@@ -212,7 +212,7 @@ public class OrderActivityController{
         model.loadPDF(context);
     }
 
-    /*public void sendToEmail() {
+  /*  public void sendToEmail() {
        model.sen
     }*/
 }

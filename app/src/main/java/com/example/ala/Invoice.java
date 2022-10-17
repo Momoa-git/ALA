@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.ala.DAO.InvoiceDAO;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,17 +58,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 
 public class Invoice {
     String order_number, adress_office, date_order, date_pay, type_pay, customer_name, customer_email, customer_phone, result_price;
     String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
     String datetime;
+    int serial_number;
     long discount;
     Bitmap logo;
     final int DPH_percent = 21;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     Order order;
+    File file;
 
 
     public Invoice(Order order) {
@@ -103,6 +122,13 @@ public class Invoice {
         this.datetime = formatter.format(date);
     }
 
+    public int getSerial_number() {
+        return serial_number;
+    }
+
+    public void setSerial_number(int serial_number) {
+        this.serial_number = serial_number;
+    }
 
     public void setLogo_path(String logo_path) {
         this.logo_path = logo_path;
@@ -217,18 +243,20 @@ public class Invoice {
             @Override
             public void onCallBack() {
 
-              /*  readProductsInfo(new FirebaseCallback(){
+                readRegisterNumberData(new FirebaseCallback2(){
                     @Override
-                    public void onCallBack() {*/
+                    public void onCallBack2(int serial_num, InvoiceDAO invoiceDAO) {
 
                         try {
+                            setSerial_number(serial_num);
                             createPDF(context);
+                            invoiceDAO.setSerial_number(serial_num + 1);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
-                   /* }
+                    }
 
-                });*/
+                });
 
 
             }
@@ -272,9 +300,29 @@ public class Invoice {
         });
     }
 
+    private void readRegisterNumberData(FirebaseCallback2 firebaseCallback){
+        Log.i("outline", "Before read");
+        InvoiceDAO invoiceDAO = new InvoiceDAO();
+        invoiceDAO.get().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int serial_number = Integer.valueOf(String.valueOf(snapshot.getValue()));
+                Log.i("outline", "Before call");
+                firebaseCallback.onCallBack2(serial_number, invoiceDAO);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+    }
+
     public void createPDF(Context context) throws FileNotFoundException {
         String pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File file = new File(pdfPath, "faktura_"+ order.getOrder_number() +".pdf");
+        file = new File(pdfPath, "faktura_"+ order.getOrder_number() +".pdf");
         FileOutputStream outputStream = new FileOutputStream(file);
 
         Log.i("pdfko", "facha " + pdfPath);
@@ -327,7 +375,7 @@ public class Invoice {
             String path = "/res/font/arialce.ttf";
             //String name = getResource(path).toString();
             font = PdfFontFactory.createFont(path, BaseFont.IDENTITY_H, true);
-            Paragraph p = new Paragraph("Faktura - Daňový doklad - 0000000000").setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
+            Paragraph p = new Paragraph("Faktura - Daňový doklad - " + getSerial_number()).setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
             table1.addCell(new Cell(1,2).add(p).setBorder(Border.NO_BORDER));
 
             /*--Row2*/
@@ -339,7 +387,7 @@ public class Invoice {
             barcodeEAN.setCodeType(BarcodeEAN.CODE128);*/
 
 
-            com.itextpdf.barcodes.BarcodeQRCode qrCode = new BarcodeQRCode("1010101010");
+            com.itextpdf.barcodes.BarcodeQRCode qrCode = new BarcodeQRCode(getSerial_number()+"");
 
             PdfFormXObject object = qrCode.createFormXObject(ColorConstants.BLACK,pdfDocument);
 
@@ -509,6 +557,8 @@ public class Invoice {
         Toast toast = Toast.makeText(context,"PDF was created",Toast.LENGTH_LONG);
         toast.show();
 
+        sendToEmail();
+
         Log.i("pdfko", "facha_after");
 
     }
@@ -549,9 +599,89 @@ public class Invoice {
     public void sendToEmail()
     {
 
+        String sEmail = "ala.invoice.noreply@gmail.com";
+        String sPassword = "nyqccdebmmylzxod";
+        String rEmail = order.getCustomer_email();
+
+        String stringHost = "smtp.gmail.com";
+
+         Properties properties = System.getProperties();
+        properties.put("mail.smtp.host", stringHost);
+        properties.put("mail.smtp.port","465");
+        properties.put("mail.smtp.ssl.enable","true");
+      //  properties.put("mail.smtp.starttls.enable","true");
+        properties.put("mail.smtp.auth", "true");
+
+
+
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(sEmail,sPassword);
+            }
+        });
+
+        MimeMessage mimeMessage = new MimeMessage(session);
+        try {
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(rEmail));
+            mimeMessage.setSubject("Informace o vyřízení objednávky " + order.getOrder_number());
+
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart body = new MimeBodyPart();
+            body.setText("Dobrý den, \n" +
+                    "děkujeme,že jste využili pro Váš nákup služeb " + getName() + ". Vaše objednávka č. " + order.getOrder_number() + " objednaná ze dne " + order.getDate_order() + " byla vyzvednuta. \n" +
+                    "V příloze naleznete elektronickou fakturu vystavenou na Vaše jméno. \n\n" +
+                    "Toto je automaticky generovaný e-mail. Na tuto zprávu prosím neodpovídejte.\n\n" +
+                    "S podzravem\n" +
+                    ""+ getName()+"");
+
+            MimeBodyPart attach = new MimeBodyPart();
+            attach.attachFile(file);
+            multipart.addBodyPart(body);
+            multipart.addBodyPart(attach);
+
+            mimeMessage.setContent(multipart);
+
+           /* mimeMessage.setText("Dobrý den, \n" +
+                                "děkujeme,že jste využili pro Váš nákup služeb " + getName() + ". Vaše objednávka č. " + order.getOrder_number() + " objednaná ze dne " + order.getDate_order() + " byla vyzvednuta. \n" +
+                                "V příloze naleznete elektronickou fakturu vystavenou na Vaše jméno. \n\n" +
+                                "Toto je automaticky generovaný e-mail. Na tuto zprávu prosím neodpovídejte.\n\n" +
+                                "S podzravem\n" +
+                                ""+ getName()+"");*/
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport.send(mimeMessage);
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+
+
+
+
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private interface FirebaseCallback{
         void onCallBack();
     }
+    private interface FirebaseCallback2{
+        void onCallBack2(int serial_num, InvoiceDAO invoiceDAO);
+    }
+
 }
