@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
+import com.example.ala.MainActivity;
 import com.example.ala.Order;
 import com.example.ala.DAO.OrderDAO;
 import com.example.ala.R;
@@ -210,6 +211,11 @@ public class OrderActivityController{
     public void setPDF(Context context)
     {
         model.loadPDF(context);
+    }
+
+    public void removeProduct()
+    {
+
     }
 
   /*  public void sendToEmail() {

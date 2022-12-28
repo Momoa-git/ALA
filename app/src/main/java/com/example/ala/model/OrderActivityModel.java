@@ -5,10 +5,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.ala.Customer;
+import com.example.ala.DAO.OfficeDAO;
 import com.example.ala.Invoice;
 import com.example.ala.Office;
 import com.example.ala.Order;
 import com.example.ala.DAO.OrderDAO;
+import com.example.ala.Product;
 import com.example.ala.controller.OrderActivityController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -449,9 +452,36 @@ public class OrderActivityModel{
 
         Log.i("pdfko", "facha1");
             Invoice invoice = new Invoice(order);
-            invoice.fetchCorporateInfo(context);
+            //invoice.fetchCorporateInfo(context);
 
 
+
+    }
+
+    public void removeProductFromOffice() {
+        OfficeDAO officeDAO = new OfficeDAO();
+        for (int i = 0; i < order.getSizeRegisterNums(); i++) {
+            int register = order.getRegisterNumber(i);
+            officeDAO.get().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Product product = dataSnapshot.getValue(Product.class);
+                        if (product.getRegister_number() == register)
+                        {
+
+                           //  officeDAO.get(product).removeValue
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
 
     }
 

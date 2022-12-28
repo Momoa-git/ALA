@@ -76,7 +76,6 @@ import javax.mail.internet.MimeMultipart;
 
 public class Invoice {
     String order_number, adress_office, date_order, date_pay, type_pay, customer_name, customer_email, customer_phone, result_price;
-    String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
     String datetime;
     int serial_number;
     long discount;
@@ -86,31 +85,38 @@ public class Invoice {
     DatabaseReference databaseReference;
     Order order;
     File file;
+    InvoiceCorpoInfo corpoInfo;
+
 
 
     public Invoice(Order order) {
         this.order = order;
-      //  fetchShopLogo();
+        initHeaderData();
+
     }
 
-    public Invoice(String order_number, String adress_office, String date_order, String date_pay, String type_pay, String customer_name, String customer_email, String customer_phone) {
-        this.order_number = order_number;
-        this.adress_office = adress_office;
-        this.date_order = date_order;
-        this.date_pay = date_pay;
-        this.type_pay = type_pay;
-        this.customer_name = customer_name;
-        this.customer_email = customer_email;
-        this.customer_phone = customer_phone;
+    private void initHeaderData() {
+        corpoInfo = InvoiceCorpoInfo.getInstance();
+        corpoInfo.initDao();
+        corpoInfo.fetchCorpoData(new Invoice.FirebaseCallback3(){
+            @Override
+            public void onCallBack3() {
+
+                corpoInfo.fetchLogoImg(new Invoice.FirebaseCallback(){
+                    @Override
+                    public void onCallBack() {
+
+                        checkAndSetSerialNumber();
+                    }
+
+                });
+            }
+
+        });
     }
-/*
-    public void removeAllPieces()
-    {
-        piecesofProduct.clear();
-        namesofProduct.clear();
-        registerNumsofProduct.clear();
-        pricesOfProduct.clear();
-    }*/
+
+
+
 
     public String getDatetime() {
         return datetime;
@@ -130,118 +136,9 @@ public class Invoice {
         this.serial_number = serial_number;
     }
 
-    public void setLogo_path(String logo_path) {
-        this.logo_path = logo_path;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLogo_path() {
-        return logo_path;
-    }
-
-    public void setResidence(String residence) {
-        this.residence = residence;
-    }
-
-    public void setIc(String ic) {
-        this.ic = ic;
-    }
-
-    public void setDic(String dic) {
-        this.dic = dic;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setBank_account(String bank_account) {
-        this.bank_account = bank_account;
-    }
-
-    public void setVariable_symbol(String variable_symbol) {
-        this.variable_symbol = variable_symbol;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getResidence() {
-        return residence;
-    }
-
-    public String getIc() {
-        return ic;
-    }
-
-    public String getDic() {
-        return dic;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getBank_account() {
-        return bank_account;
-    }
-
-    public String getVariable_symbol() {
-        return variable_symbol;
-    }
+    public void checkAndSetSerialNumber() {
 
 
-
-    private void fetchShopLogo() {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://ala-bk.appspot.com").child("shop-logo.jpg");
-
-        try {
-            final File file = File.createTempFile("logo","jpg");
-            storageReference.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    logo = BitmapFactory.decodeFile(file.getAbsolutePath());
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                }
-            });
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void fetchCorporateInfo(Context context) {
-
-        readCorpoInfo(new FirebaseCallback() {
-            @Override
-            public void onCallBack() {
 
                 readRegisterNumberData(new FirebaseCallback2(){
                     @Override
@@ -249,7 +146,8 @@ public class Invoice {
 
                         try {
                             setSerial_number(serial_num);
-                            createPDF(context);
+                            //createPDF(context);
+                            createPDF();
                             invoiceDAO.setSerial_number(serial_num + 1);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -258,46 +156,6 @@ public class Invoice {
 
                 });
 
-
-            }
-        });
-
-
-
-    }
-    private void readCorpoInfo(FirebaseCallback firebaseCallback)
-    {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("Corporate info");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-                setName(snapshot.child("name").getValue().toString());
-                setResidence(snapshot.child("residence").getValue().toString());
-                setIc(snapshot.child("ič").getValue().toString());
-                setDic(snapshot.child("dič").getValue().toString());
-                setWebsite(snapshot.child("website").getValue().toString());
-                setContact(snapshot.child("contact").getValue().toString());
-                setPhone(snapshot.child("phone").getValue().toString());
-                setBank_account(snapshot.child("bank account").getValue().toString());
-                setVariable_symbol(snapshot.child("variable symbol").getValue().toString());
-                setLogo_path(snapshot.child("logo").getValue().toString());
-
-                firebaseCallback.onCallBack();
-
-
-
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void readRegisterNumberData(FirebaseCallback2 firebaseCallback){
@@ -320,7 +178,7 @@ public class Invoice {
         });
     }
 
-    public void createPDF(Context context) throws FileNotFoundException {
+    public void createPDF() throws FileNotFoundException {
         String pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         file = new File(pdfPath, "faktura_"+ order.getOrder_number() +".pdf");
         FileOutputStream outputStream = new FileOutputStream(file);
@@ -330,9 +188,6 @@ public class Invoice {
         PdfWriter writer = new PdfWriter(file);
         PdfDocument pdfDocument = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new Document(pdfDocument);
-
-        DeviceRgb white = new DeviceRgb(255,255,255);
-        DeviceRgb black = new DeviceRgb(0,0,0);
 
         /*--Table1--*/
         float column_width[] = {140,100,180,140};
@@ -356,10 +211,12 @@ public class Invoice {
 
 
         /*--Row1*/
-        Drawable shopLogo = ContextCompat.getDrawable(context, R.drawable.shop_logo);
-        Bitmap bitmap = ((BitmapDrawable)shopLogo).getBitmap();
+       /* Drawable shopLogo = ContextCompat.getDrawable(context, R.drawable.shop_logo);
+        Bitmap bitmap = ((BitmapDrawable)shopLogo).getBitmap();*/
+        Bitmap bitmap = corpoInfo.getLogo_bitmap();
+        //Log.i("bitmaps", bitmap.toString());
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bitmapData2 = stream.toByteArray();
 
         ImageData imageData = ImageDataFactory.create(bitmapData2);
@@ -367,7 +224,7 @@ public class Invoice {
         logo.setHeight(100);
 
         PdfFont font;
-
+       // table1.addCell(new Cell(3,1).setBorder(Border.NO_BORDER));
         table1.addCell(new Cell(3,1).add(logo).setBorder(Border.NO_BORDER));
         table1.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         try {
@@ -397,16 +254,16 @@ public class Invoice {
 
             /*--Row1*/
             table_text.addCell(new Cell().add(new Paragraph("Prodávající: ").setFont(font).setFontSize(9).setUnderline().setBold().setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-            table_text.addCell(new Cell().add(new Paragraph(getName()).setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(corpoInfo.getName()).setFont(font).setBold().setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
 
 
 
             /*--Row2-3*/
-            table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: "+ order.getAdress_office() +"," +" Sídlo společnosti: "+ getResidence()+"," +
-                                                                                " IČ: "+ getIc()+"," +" DIČ: "+ getDic()+"," +" Internet: "+getWebsite()+"," +
-                                                                                " Kontakt: "+ getContact()+", Telefon: "+ getPhone()+".").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell(1,4).add(new Paragraph("Sídlo pobočky: "+ order.getAdress_office() +"," +" Sídlo společnosti: "+ corpoInfo.getResidence()+"," +
+                                                                                " IČ: "+ corpoInfo.getIc()+"," +" DIČ: "+ corpoInfo.getDic()+"," +" Internet: "+ corpoInfo.getWebsite()+"," +
+                                                                                " Kontakt: "+ corpoInfo.getContact()+", Telefon: "+ corpoInfo.getPhone()+".").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
             /*--Row4*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Daňový doklad: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
@@ -453,13 +310,13 @@ public class Invoice {
             /*--Row10*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("ČSOB, a.s. (CZK): ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(getBank_account()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(corpoInfo.getBank_account()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
 
             /*--Row11*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Variabilní symbol: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(getVariable_symbol()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(corpoInfo.getVariable_symbol()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
 
 
@@ -528,7 +385,7 @@ public class Invoice {
                                                                                 "pozdější připomínky ke stavu předávaného zboží mohou být zamítnuty. " +
                                                                                 "Kupující nabude vlastnického práva ke zboží až po úplném zaplacení kupní ceny. " +
                                                                                 "V ceně zboží je zahrnut recyklační poplatek a autorské odměny v zákonné výši. " +
-                                                                                "Více informací o podmínkách záruky naleznete ve Všeobecných obchodních podmínkách a Reklamačním řádu na " + getWebsite() + ".")
+                                                                                "Více informací o podmínkách záruky naleznete ve Všeobecných obchodních podmínkách a Reklamačním řádu na " + corpoInfo.getWebsite() + ".")
                                                                                 .setFont(font).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
 
             setDatetime();
@@ -554,10 +411,10 @@ public class Invoice {
         document.add(table_bottom);
         document.close();
 
-        Toast toast = Toast.makeText(context,"PDF was created",Toast.LENGTH_LONG);
-        toast.show();
+        //Toast toast = Toast.makeText(context,"PDF was created",Toast.LENGTH_LONG);
+        //toast.show();
 
-        sendToEmail();
+      //  sendToEmail();
 
         Log.i("pdfko", "facha_after");
 
@@ -625,16 +482,16 @@ public class Invoice {
         MimeMessage mimeMessage = new MimeMessage(session);
         try {
             mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(rEmail));
-            mimeMessage.setSubject("Informace o vyřízení objednávky " + order.getOrder_number());
+            mimeMessage.setSubject("Informace o vyřízení objednávky č. " + order.getOrder_number());
 
             Multipart multipart = new MimeMultipart();
             MimeBodyPart body = new MimeBodyPart();
             body.setText("Dobrý den, \n" +
-                    "děkujeme,že jste využili pro Váš nákup služeb " + getName() + ". Vaše objednávka č. " + order.getOrder_number() + " objednaná ze dne " + order.getDate_order() + " byla vyzvednuta. \n" +
+                    "děkujeme, že jste využili pro Váš nákup služeb " + corpoInfo.getName() + ". Vaše objednávka č. " + order.getOrder_number() + " objednaná ze dne " + order.getDate_order() + " byla vyzvednuta. \n" +
                     "V příloze naleznete elektronickou fakturu vystavenou na Vaše jméno. \n\n" +
                     "Toto je automaticky generovaný e-mail. Na tuto zprávu prosím neodpovídejte.\n\n" +
                     "S podzravem\n" +
-                    ""+ getName()+"");
+                    ""+ corpoInfo.getName()+"");
 
             MimeBodyPart attach = new MimeBodyPart();
             attach.attachFile(file);
@@ -643,12 +500,6 @@ public class Invoice {
 
             mimeMessage.setContent(multipart);
 
-           /* mimeMessage.setText("Dobrý den, \n" +
-                                "děkujeme,že jste využili pro Váš nákup služeb " + getName() + ". Vaše objednávka č. " + order.getOrder_number() + " objednaná ze dne " + order.getDate_order() + " byla vyzvednuta. \n" +
-                                "V příloze naleznete elektronickou fakturu vystavenou na Vaše jméno. \n\n" +
-                                "Toto je automaticky generovaný e-mail. Na tuto zprávu prosím neodpovídejte.\n\n" +
-                                "S podzravem\n" +
-                                ""+ getName()+"");*/
 
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -677,9 +528,14 @@ public class Invoice {
 
     }
 
-    private interface FirebaseCallback{
+    public interface FirebaseCallback{
         void onCallBack();
     }
+
+    public interface FirebaseCallback3{
+        void onCallBack3();
+    }
+
     private interface FirebaseCallback2{
         void onCallBack2(int serial_num, InvoiceDAO invoiceDAO);
     }

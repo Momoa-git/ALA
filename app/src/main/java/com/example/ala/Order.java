@@ -47,6 +47,16 @@ public class Order {
         pricesOfProduct.add(adding_value);
     }
 
+    public int getRegisterNumber(int position)
+    {
+        return registerNumsofProduct.get(position);
+    }
+
+    public int getSizeRegisterNums()
+    {
+        return registerNumsofProduct.size();
+    }
+
     public void removeAllPieces()
     {
         piecesofProduct.clear();

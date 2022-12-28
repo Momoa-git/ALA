@@ -8,7 +8,7 @@ import com.example.ala.NewProductActivity;
 import com.example.ala.view.ScannerAddActivity;
 import com.example.ala.model.ScannerAddActivityModel;
 
-public class ScannerAddActivityController {
+public class  ScannerAddActivityController {
     private ScannerAddActivityModel model;
     private ScannerAddActivity view;
 
