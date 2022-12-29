@@ -451,7 +451,7 @@ public class OrderActivityModel{
     {
 
         Log.i("pdfko", "facha1");
-            Invoice invoice = new Invoice(order);
+            Invoice invoice = new Invoice(order, context);
             //invoice.fetchCorporateInfo(context);
 
 
