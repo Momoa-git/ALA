@@ -189,6 +189,9 @@ public class OrderActivityModel{
         });
     }
 
+
+
+
     private String checkPosssibleDatePay(DataSnapshot dataSnapshot, boolean paid) {
         try {
             if (paid) {
@@ -460,6 +463,7 @@ public class OrderActivityModel{
 
     public void removeProductFromOffice() {
         OfficeDAO officeDAO = new OfficeDAO();
+
         for (int i = 0; i < order.getSizeRegisterNums(); i++) {
             int register = order.getRegisterNumber(i);
             officeDAO.get().addValueEventListener(new ValueEventListener() {
@@ -470,7 +474,7 @@ public class OrderActivityModel{
                         if (product.getRegister_number() == register)
                         {
 
-                           //  officeDAO.get(product).removeValue
+                             officeDAO.removeItem(dataSnapshot.getKey());
                         }
                     }
                 }

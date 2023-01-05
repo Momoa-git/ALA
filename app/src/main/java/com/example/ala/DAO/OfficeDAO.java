@@ -22,6 +22,11 @@ public class OfficeDAO {
         return databaseReference.child(key).updateChildren(hashMap);
     }
 
+    public Task<Void> removeItem(String key)
+    {
+        return databaseReference.child(key).removeValue();
+    }
+
     public Query get(String key)
     {
      //   if(key == null)

@@ -239,6 +239,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     public void applyTexts3() {
         controller.setAfterPayment();
         adapter.notifyDataSetChanged();
+        controller.removeProducts();
         controller.setPDF(context);
        // controller.sendToEmail();
         bottomSheetDialog.cancel();

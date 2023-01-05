@@ -210,12 +210,13 @@ public class OrderActivityController{
 
     public void setPDF(Context context)
     {
+
         model.loadPDF(context);
     }
 
-    public void removeProduct()
+    public void removeProducts()
     {
-
+        model.removeProductFromOffice();
     }
 
   /*  public void sendToEmail() {
