@@ -58,12 +58,12 @@ private ProgressBar progress_bar;
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Office officeProfile = snapshot.getValue(Office.class);
 
-              //  if (officeProfile != null){
+                if (officeProfile != null){
                     String name = officeProfile.name;
 
                     txt_name.setText(name);
                 progress_bar.setVisibility(View.GONE);
-               // }
+                }
             }
 
             @Override

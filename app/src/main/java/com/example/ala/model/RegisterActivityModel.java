@@ -3,12 +3,15 @@ package com.example.ala.model;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ala.DAO.OfficeDAO;
+import com.example.ala.DAO.OfficeDAOInterface;
 import com.example.ala.model.object.Office;
 import com.example.ala.controller.RegisterActivityController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivityModel extends AppCompatActivity {
@@ -30,9 +33,8 @@ public class RegisterActivityModel extends AppCompatActivity {
                         if (task.isSuccessful()){   //if office is register
                             Office office = new Office(name_office, address, email);
 
-                            FirebaseDatabase.getInstance().getReference("Office")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(office).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            OfficeDAOInterface officeDAO = new OfficeDAO();
+                            officeDAO.addOffice(office).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){   //if data is in real database

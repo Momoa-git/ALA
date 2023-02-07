@@ -1,5 +1,6 @@
 package com.example.ala.DAO;
 
+import com.example.ala.model.object.Office;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -8,42 +9,48 @@ import com.google.firebase.database.Query;
 
 import java.util.HashMap;
 
-public class OfficeDAO {
+public class OfficeDAO implements OfficeDAOInterface{
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
+    public Office office;
     public OfficeDAO()
     {
         mAuth = FirebaseAuth.getInstance();
        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("Office").child(mAuth.getUid()).child("Product");
+        databaseReference = firebaseDatabase.getReference().child("Office").child(mAuth.getUid());
     }
     public Task<Void> update(String key, HashMap<String ,Object> hashMap)
     {
-        return databaseReference.child(key).updateChildren(hashMap);
+        return databaseReference.child("Product").child(key).updateChildren(hashMap);
+    }
+
+    public Task<Void> addOffice(Office office){
+        return databaseReference.setValue(office);
     }
 
     public Task<Void> removeItem(String key)
     {
-        return databaseReference.child(key).removeValue();
+        return databaseReference.child("Product").child(key).removeValue();
     }
+
 
     public Query get(String key)
     {
      //   if(key == null)
        // {
-            return databaseReference.orderByKey();
+            return databaseReference.child("Product").orderByKey();
       //  }
        // return databaseReference.orderByKey().startAfter(key).limitToFirst(8);
     }
 
     public void setSerial_number(int serial_number)
     {
-        databaseReference.setValue(serial_number);
+        databaseReference.child("Product").setValue(serial_number);
     }
 
     public Query get()
     {
-        return databaseReference;
+        return databaseReference.child("Product");
     }
 
 }
