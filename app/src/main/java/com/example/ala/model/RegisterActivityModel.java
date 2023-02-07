@@ -3,7 +3,7 @@ package com.example.ala.model;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.Office;
+import com.example.ala.model.object.Office;
 import com.example.ala.controller.RegisterActivityController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

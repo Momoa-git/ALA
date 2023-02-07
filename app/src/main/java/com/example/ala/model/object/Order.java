@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.model.object;
 
 import java.util.ArrayList;
 import java.util.Date;

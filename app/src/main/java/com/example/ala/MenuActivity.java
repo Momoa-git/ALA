@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ala.model.object.Office;
 import com.example.ala.view.OrderActivityView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -97,7 +98,7 @@ private ProgressBar progress_bar;
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(MenuActivity.this, MainActivity.class));
-                Toast.makeText(MenuActivity.this, "Log out soccessful!", Toast.LENGTH_LONG).show();
+                Toast.makeText(MenuActivity.this, "Log out successful!", Toast.LENGTH_LONG).show();
             }
         });
 

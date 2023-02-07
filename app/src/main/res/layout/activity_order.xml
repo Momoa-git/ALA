@@ -68,7 +68,7 @@
 
 
             <EditText
-                android:id="@+id/edT_search_order"
+                android:id="@+id/edT_search"
                 android:layout_width="200dp"
                 android:layout_height="40dp"
                 android:hint="@string/hint_search_order"
@@ -77,13 +77,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView"
                 android:drawableLeft="@drawable/ic_search"
-                android:drawablePadding="12dp"/>
+                android:drawablePadding="12dp"
+
+                />
 
                 <Spinner
                     android:id="@+id/spinner_filter"
                     android:layout_width="200dp"
                     android:layout_height="40dp"
-                    android:layout_below="@id/edT_search_order" />
+                    android:layout_below="@id/edT_search" />
 
                 <Button
                     android:id="@+id/btn_search"

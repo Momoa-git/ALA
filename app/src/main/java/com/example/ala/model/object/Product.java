@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.model.object;
 
 public class Product {
     private int register_number;

@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-//asdasdasdasdasd
+
 public class DetailProductActivity extends AppCompatActivity {
 
     TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place, txt_desc;

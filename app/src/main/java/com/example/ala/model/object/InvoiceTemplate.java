@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.model.object;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -29,7 +29,6 @@ import com.itextpdf.text.pdf.BaseFont;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InvoiceTemplate{

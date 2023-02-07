@@ -1,43 +1,41 @@
 package com.example.ala;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ala.DAO.CustomerDAO;
+import com.example.ala.model.object.Customer;
+import com.example.ala.model.object.Order;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OrderAdapter extends FirebaseRecyclerAdapter<Order,OrderViewHolder> {
     private OrderViewHolder.OnDetailListener onDetailListener;
+    private List<Order> orderFull;
+    private FirebaseRecyclerOptions<Order> list;
 
 
-    public OrderAdapter(@NonNull FirebaseRecyclerOptions<Order> options, OrderViewHolder.OnDetailListener onDetailListener ) {
+    public OrderAdapter(@NonNull FirebaseRecyclerOptions<Order> options, ArrayList<Order> list, OrderViewHolder.OnDetailListener onDetailListener) {
         super(options);
         this.onDetailListener = onDetailListener;
+        this.list = options;
     }
 
-   /* public void setItems(ArrayList<Order> order)
-    {
-        list.addAll(order);
-    }*/
+
+
   @Override
   protected void onBindViewHolder(@NonNull OrderViewHolder orderViewHolder, int i, Order order) {
     //   Order order1= list.get(i);
@@ -97,7 +95,10 @@ public class OrderAdapter extends FirebaseRecyclerAdapter<Order,OrderViewHolder>
         return new OrderViewHolder(v, onDetailListener);
     }
 
-
+    public void filterList(FirebaseRecyclerOptions<Order> filteredList){
+        list = filteredList;
+        notifyDataSetChanged();
+    }
 
     private void parseDateFromDatabase(Order order, OrderViewHolder holder) {
         SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");
@@ -111,6 +112,4 @@ public class OrderAdapter extends FirebaseRecyclerAdapter<Order,OrderViewHolder>
         }
 
     }
-
-
 }

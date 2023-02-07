@@ -7,21 +7,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.ala.Customer;
 import com.example.ala.Inventory.StatusData;
-import com.example.ala.Order;
+import com.example.ala.model.object.Order;
 import com.example.ala.OrderAdapter;
 import com.example.ala.DAO.OrderDAO;
 import com.example.ala.OrderViewHolder;
@@ -31,18 +31,14 @@ import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.StatusAdapter;
 import com.example.ala.controller.OrderActivityController;
 import com.example.ala.view.dialog.StornoDialog;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -61,11 +57,12 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     public TextView numberOrder, register_num, txt_date_order, txt_status, txt_type_payment, txt_paid, txt_price, txt_name_customer,txt_email_customer,
             txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay, title_locate,
             txt_locate, txt_date_locate, title_registr_num, txt_register_num, txt_description;
+    public EditText edT_search;
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
     public BottomSheetDialog bottomSheetDialog;
     Context context;
-    FirebaseRecyclerAdapter firebaseRecyclerAdapter;
+    FirebaseRecyclerOptions<Order> options;
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
     int i = 0;
@@ -84,6 +81,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         recyclerView = findViewById(R.id.recycler_view2);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        edT_search = findViewById(R.id.edT_search);
         progressBar = findViewById(R.id.progress_bar);
         spinner_status = findViewById(R.id.spinner_filter);
         statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
@@ -104,12 +102,14 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         Query query = dao.get().orderByChild("office").equalTo(id+"");
 
 
-        FirebaseRecyclerOptions<Order> options = new FirebaseRecyclerOptions.Builder<Order>()
+         options = new FirebaseRecyclerOptions.Builder<Order>()
                 .setQuery(query, new SnapshotParser<Order>() {
                     @NonNull
                     @Override
                     public Order parseSnapshot(@NonNull DataSnapshot snapshot) {
                         Order order = snapshot.getValue(Order.class);
+                        list.add(order);
+                        Log.i("firb", list.toString());
                         return order;
 
 
@@ -120,10 +120,93 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
                 .setQuery(FirebaseDatabase.getInstance().getReference().child("Order").child("Orders"),Order.class)
                 .build();*/
 
-        adapter = new OrderAdapter(options, this);
+
+
+
+        adapter = new OrderAdapter(options, list, this);
 
         recyclerView.setAdapter(adapter);
+
+        edT_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //filter(s.toString());
+                Log.i("firb", s.toString());
+                controller.setRecViewFilterContent(dao, s.toString());
+            }
+        });
+
     }
+
+    private void filter(String text){
+
+        /* ArrayList<Order> filteredList = null;
+
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).getStatus().equals(text))
+            {
+                Log.i("sucfireb", String.valueOf(list.get(i).getOrder_number()));
+                filteredList.add(list.get(i));
+            }
+        }
+*/
+
+
+        Query query = dao.get().orderByChild("status").equalTo(text);
+
+        FirebaseRecyclerOptions<Order> filteredList = new FirebaseRecyclerOptions.Builder<Order>()
+                .setQuery(query, Order.class)
+                .build();
+
+        OrderAdapter adapter2;
+
+        adapter2 = new OrderAdapter(filteredList, list, this);
+        recyclerView.setAdapter(adapter2);
+
+   /*     for(Order order : list){
+            if(order.getCustomer_name().toLowerCase().contains(text.toLowerCase())){
+                filteredList.add(order);
+            }
+        }*/
+
+
+
+
+
+    }
+
+/*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem seatchItem = menu.findItem(R.id.edT_search_order);
+        SearchView searchView = (SearchView) seatchItem.getActionView();
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        return true;
+    }*/
 
     @Override
     protected void onStart()

@@ -5,13 +5,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.ala.Customer;
 import com.example.ala.DAO.OfficeDAO;
-import com.example.ala.Invoice;
-import com.example.ala.Office;
-import com.example.ala.Order;
+import com.example.ala.model.object.Invoice;
+import com.example.ala.model.object.Office;
+import com.example.ala.model.object.Order;
 import com.example.ala.DAO.OrderDAO;
-import com.example.ala.Product;
+import com.example.ala.model.object.Product;
 import com.example.ala.controller.OrderActivityController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -76,6 +75,42 @@ public class OrderActivityModel{
         });
 
     }
+
+
+    public void filterOrder(OrderDAO dao, String key) {
+        mAuth = FirebaseAuth.getInstance();
+
+        final FirebaseUser office = mAuth.getCurrentUser();
+        String id = office.getUid();
+
+
+        dao.get().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Order order = dataSnapshot.getValue(Order.class);
+
+
+                    if (order.getOffice().contains(id) && order.getStatus().equals(key)) {
+                        // controller.onAddOrderToList(order);
+                        Log.i("firb", String.valueOf(order.getOrder_number()));
+                        orders.add(order);
+                    }
+
+                }
+                controller.onSetItems(orders);
+                controller.onNotifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
 
     public int getOrderID(int position) {
        // return controller.onOrderID(position);
@@ -471,6 +506,7 @@ public class OrderActivityModel{
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Product product = dataSnapshot.getValue(Product.class);
+                        assert product != null;
                         if (product.getRegister_number() == register)
                         {
 

@@ -1,13 +1,11 @@
-package com.example.ala;
+package com.example.ala.model.object;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.ala.DAO.CorpoInfoDAO;
-import com.example.ala.DAO.InvoiceDAO;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +14,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class InvoiceCorpoInfo {
