@@ -11,8 +11,8 @@ public class OrderDAO {
     private DatabaseReference databaseReference;
     public OrderDAO()
     {
-       FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child("Orders");
+       FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("Order").child("Orders");
     }
     public Task<Void> update(String key, HashMap<String ,Object> hashMap)
     {

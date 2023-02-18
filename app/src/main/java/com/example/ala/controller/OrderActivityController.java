@@ -26,9 +26,9 @@ public class OrderActivityController{
        model = new OrderActivityModel(this);
    }
 
-    public void setRecViewContent(OrderDAO dao)
+    public void setRecViewContent()
     {
-       model.setRecViewContent(dao);
+       model.setRecViewContent();
     }
 
     public void setRecViewFilterContent(OrderDAO dao, String key)

@@ -43,13 +43,13 @@ public class OrderActivityModel{
         this.controller = controller;
     }
 
-    public void setRecViewContent(OrderDAO dao) {
+    public void setRecViewContent() {
         mAuth = FirebaseAuth.getInstance();
 
         final FirebaseUser office = mAuth.getCurrentUser();
         String id = office.getUid();
 
-
+        OrderDAO dao = new OrderDAO();
         dao.get().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -59,7 +59,6 @@ public class OrderActivityModel{
 
 
                     if (order.getOffice().contains(id)) {
-                       // controller.onAddOrderToList(order);
                         orders.add(order);
                     }
 

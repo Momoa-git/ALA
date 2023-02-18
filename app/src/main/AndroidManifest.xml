@@ -29,6 +29,7 @@
         <activity android:name=".view.RegisterActivity" />
         <activity android:name=".MenuActivity" />
         <activity android:name=".NewProductActivity" />
+        <activity android:name=".InfoActivity" />
         <activity android:name=".view.ScannerAddActivity" />
         <activity android:name=".view.OrderActivityView" />
     </application>

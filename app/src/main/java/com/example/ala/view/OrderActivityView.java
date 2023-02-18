@@ -89,7 +89,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         list = new ArrayList<>();
         dao = new OrderDAO();
         progressBar.setVisibility(View.VISIBLE);
-        controller.setRecViewContent(dao); //load data
+        controller.setRecViewContent(); //load data
         progressBar.setVisibility(View.INVISIBLE);
 
 

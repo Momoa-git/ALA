@@ -30,6 +30,7 @@ private CardView crd_new_product, crd_product, crd_order, crd_info, crd_log_out;
 private ProgressBar progress_bar;
 
     TextView txt_name;
+    String name, address, email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,9 @@ private ProgressBar progress_bar;
                 Office officeProfile = snapshot.getValue(Office.class);
 
                 if (officeProfile != null){
-                    String name = officeProfile.name;
+                     name = officeProfile.name;
+                     address = officeProfile.address;
+                     email = officeProfile.email;
 
                     txt_name.setText(name);
                 progress_bar.setVisibility(View.GONE);
@@ -90,6 +93,17 @@ private ProgressBar progress_bar;
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MenuActivity.this, OrderActivityView.class));
+            }
+        });
+
+        crd_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this,InfoActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("email", email);
+                intent.putExtra("address", address);
+                startActivity(intent);
             }
         });
 

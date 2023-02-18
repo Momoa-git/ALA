@@ -31,6 +31,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public void onClick(View v) {
         onDetailListener.onDetailClick(getAdapterPosition());
     }
+
     public interface OnDetailListener{
         void onDetailClick(int position);
     }

@@ -54,23 +54,23 @@ public class InvoiceTemplate{
         com.itextpdf.layout.Document document = new Document(pdfDocument);
 
         /*--Table1--*/
-        float column_width[] = {140,100,180,140};
+        float[] column_width = {140,100,180,140};
         Table table1 = new Table(column_width);
 
         /*--Table2--*/
-        float column_width2[] = {70,110,100,280};
+        float[] column_width2 = {70,110,100,280};
         Table table_text = new Table(column_width2);
 
         /*--Table3--*/
-        float column_width3[] = {55,175,15,70,70,65,40,70};
+        float[] column_width3 = {55,175,15,70,70,65,40,70};
         Table table_product = new Table(column_width3);
 
         /*--Table4--*/
-        float column_width4[] = {380,75,105};
+        float[] column_width4 = {380,75,105};
         Table table_price = new Table(column_width4);
 
         /*--Table4--*/
-        float column_width5[] = {280,280};
+        float[] column_width5 = {280,280};
         Table table_bottom = new Table(column_width5);
 
 
