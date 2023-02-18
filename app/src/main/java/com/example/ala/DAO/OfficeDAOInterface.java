@@ -7,4 +7,7 @@ import com.google.firebase.database.Query;
 
 public interface OfficeDAOInterface {
     Task<Void> addOffice(Office office);
+    Task<Void> updateEmail(String key);
+    Task<Void> updateName(String key);
+    Task<Void> updateAddress(String key);
 }

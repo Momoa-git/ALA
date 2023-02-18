@@ -19,9 +19,19 @@ public class OfficeDAO implements OfficeDAOInterface{
        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("Office").child(mAuth.getUid());
     }
-    public Task<Void> update(String key, HashMap<String ,Object> hashMap)
+    public Task<Void> updateEmail(String key)
     {
-        return databaseReference.child("Product").child(key).updateChildren(hashMap);
+        return databaseReference.child("email").setValue(key);
+    }
+
+    public Task<Void> updateName(String key)
+    {
+        return databaseReference.child("name").setValue(key);
+    }
+
+    public Task<Void> updateAddress(String key)
+    {
+        return databaseReference.child("address").setValue(key);
     }
 
     public Task<Void> addOffice(Office office){
