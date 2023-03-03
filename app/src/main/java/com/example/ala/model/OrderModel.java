@@ -139,7 +139,7 @@ public class OrderModel {
                         String reg_numbers = "";
                         long iteration = dataSnapshot.child("Product item").getChildrenCount();
 
-                        order.items.removeItems();
+                        order.inventory.removeItems();
                       //  order.removeAllPieces();
 
                         for (int count = 0; count < iteration; count++) {
@@ -162,7 +162,7 @@ public class OrderModel {
                             }
 
 
-                            order.items.addItem(new Product(Integer.valueOf(reg_number),pieces_of_product,name, price_double));
+                            order.inventory.addItem(new Product(Integer.valueOf(reg_number),pieces_of_product,name, price_double));
                           /*  order.addNamesofProduct(name);
                             order.addPiecesofProduct(pieces_of_product);
                             order.addRegisterNumsofProduct(Integer.valueOf(reg_number));

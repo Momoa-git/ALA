@@ -40,6 +40,14 @@ public class Product {
         this.date_time_arrivals = date_time_arrivals;
     }
 
+    public long getPiece() {
+        return piece;
+    }
+
+    public double getPrice_double() {
+        return price_double;
+    }
+
     public String getDate_time_arrivals() {
         return date_time_arrivals;
     }

@@ -188,20 +188,20 @@ public class InvoiceTemplate{
             table_product.addCell(new Cell().add(new Paragraph("DPH%").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
             table_product.addCell(new Cell().add(new Paragraph("Cena").setFont(font).setFontSize(9).setBold().setBold().setCharacterSpacing(1)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
 
-            for(int i = 0; i < invoice.order.piecesofProduct.size(); i++)
+            for(int i = 0; i < invoice.inventory.getSize(); i++)
             {
-                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.order.registerNumsofProduct.get(i))).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(invoice.order.namesofProduct.get(i)).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(invoice.order.piecesofProduct.get(i).toString()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(invoice.order.pricesOfProduct.get(i).toString())).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-                double DPH =  invoice.calculateDPH(invoice.order.pricesOfProduct.get(i));
-                double priceWithoutDPH = invoice.calculatePriceWithoutDPH(invoice.order.pricesOfProduct.get(i), DPH);
+                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.inventory.getItem(i).getRegister_number())).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(invoice.inventory.getItem(i).getName()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.inventory.getItem(i).getPiece())).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(invoice.inventory.getItem(i).getPrice_double()))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                double DPH =  invoice.calculateDPH(invoice.inventory.getItem(i).getPrice_double());
+                double priceWithoutDPH = invoice.calculatePriceWithoutDPH(invoice.inventory.getItem(i).getPrice_double(), DPH);
 
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(priceWithoutDPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(DPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(invoice.DPH_percent + "%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
 
-                double sumPrice = invoice.calculateSumPrice(invoice.order.pricesOfProduct.get(i), invoice.order.piecesofProduct.get(i));
+                double sumPrice = invoice.calculateSumPrice(invoice.inventory.getItem(i).getPrice_double(), invoice.inventory.getItem(i).getPiece());
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(sumPrice))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             }
 

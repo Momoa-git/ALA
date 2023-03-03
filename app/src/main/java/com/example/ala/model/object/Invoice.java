@@ -23,17 +23,17 @@ public class Invoice {
     Order order;
     Context context;
     InvoiceCorpoInfo corpoInfo;
-    public Items items = Items.getInstance();
+    public Inventory inventory = Inventory.getInstance();
 
 
 
     public Invoice(Order order, Context context) {
         this.order = order;
         this.context = context;
-        for(int i = 0; i < items.getSize();i++){
-            Log.i("items test", items.getItem(i).getName());
+        for(int i = 0; i < inventory.getSize(); i++){
+            Log.i("items", inventory.getItem(i).getRegister_number() + " "+ inventory.getItem(i).getPiece() + " " + inventory.getItem(i).getName() + " " + inventory.getItem(i).getPrice_double() );
         }
-        //initHeaderData();
+        initHeaderData();
 
     }
 

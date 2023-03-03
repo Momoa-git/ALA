@@ -1,20 +1,12 @@
 package com.example.ala.model.object;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 public class Order {
 
     private String key;
     private int  id_product, id_order, id_customer, discount, order_number;
     private String date_order, price, date, time, status, office, id_list_product, date_pay, time_pay, type_pay, customer_name, customer_email, customer_phone,adress_office;
     private boolean paid;
-    public Items items = Items.getInstance();
-    List<Long> piecesofProduct = new ArrayList<>();
-    List<String> namesofProduct = new ArrayList<>();
-    List<Integer> registerNumsofProduct = new ArrayList<>();
-    List<Double> pricesOfProduct = new ArrayList<>();
+    public Inventory inventory = Inventory.getInstance();
 
     public Order() {
 
@@ -30,45 +22,6 @@ public class Order {
         this.time = time;
         this.status = status;
         this.office = office;
-    }
-    public void addPiecesofProduct(long adding_value){
-        piecesofProduct.add(adding_value);
-    }
-
-    public void addNamesofProduct(String adding_value){
-        namesofProduct.add(adding_value);
-    }
-
-    public void addRegisterNumsofProduct(int adding_value){
-        registerNumsofProduct.add(adding_value);
-    }
-
-    public void addPricesOfProduct(double adding_value)
-    {
-        pricesOfProduct.add(adding_value);
-    }
-
-    public int getRegisterNumber(int position)
-    {
-        return registerNumsofProduct.get(position);
-    }
-
-    public int getSizeRegisterNums()
-    {
-        return registerNumsofProduct.size();
-    }
-
-    public void removeAllPieces()
-    {
-        piecesofProduct.clear();
-        namesofProduct.clear();
-        registerNumsofProduct.clear();
-        pricesOfProduct.clear();
-    }
-
-    public void setKey(String key)
-    {
-        this.key = key;
     }
 
     public void setCustomer_name(String customer_name) {
