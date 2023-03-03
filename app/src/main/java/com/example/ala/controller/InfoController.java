@@ -2,7 +2,7 @@ package com.example.ala.controller;
 
 import android.util.Patterns;
 
-import com.example.ala.InfoActivity;
+import com.example.ala.view.InfoActivity;
 import com.example.ala.model.InfoModel;
 
 public class InfoController {

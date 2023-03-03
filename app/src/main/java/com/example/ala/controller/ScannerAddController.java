@@ -6,18 +6,18 @@ import android.view.View;
 
 import com.example.ala.NewProductActivity;
 import com.example.ala.view.ScannerAddActivity;
-import com.example.ala.model.ScannerAddActivityModel;
+import com.example.ala.model.ScannerAddModel;
 
-public class  ScannerAddActivityController {
-    private ScannerAddActivityModel model;
+public class ScannerAddController {
+    private ScannerAddModel model;
     private ScannerAddActivity view;
 
     private Context context;
    public SharedPreferences preferences;
 
-    public ScannerAddActivityController(ScannerAddActivity view, Context contextAct){
+    public ScannerAddController(ScannerAddActivity view, Context contextAct){
         this.view = view;
-        model = new ScannerAddActivityModel(this);
+        model = new ScannerAddModel(this);
         context = contextAct;
         preferences = context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
     }

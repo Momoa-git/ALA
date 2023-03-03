@@ -1,25 +1,22 @@
 package com.example.ala.model;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ala.DAO.OfficeDAO;
 import com.example.ala.DAO.OfficeDAOInterface;
 import com.example.ala.model.object.Office;
-import com.example.ala.controller.RegisterActivityController;
+import com.example.ala.controller.RegisterController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-public class RegisterActivityModel  {
+public class RegisterModel {
 
     private FirebaseAuth mAuth;
-    private  RegisterActivityController controller;
+    private RegisterController controller;
 
-    public RegisterActivityModel(RegisterActivityController controller) {
+    public RegisterModel(RegisterController controller) {
         this.controller = controller;
     }
 

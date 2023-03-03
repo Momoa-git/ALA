@@ -23,13 +23,17 @@ public class Invoice {
     Order order;
     Context context;
     InvoiceCorpoInfo corpoInfo;
+    public Items items = Items.getInstance();
 
 
 
     public Invoice(Order order, Context context) {
         this.order = order;
         this.context = context;
-        initHeaderData();
+        for(int i = 0; i < items.getSize();i++){
+            Log.i("items test", items.getItem(i).getName());
+        }
+        //initHeaderData();
 
     }
 

@@ -1,13 +1,9 @@
 package com.example.ala.model;
 
-import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.ala.DAO.OfficeDAO;
 import com.example.ala.DAO.OfficeDAOInterface;
-import com.example.ala.InfoActivity;
-import com.example.ala.MainActivity;
 import com.example.ala.controller.InfoController;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

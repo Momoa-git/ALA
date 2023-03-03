@@ -5,15 +5,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.ala.view.RegisterActivity;
-import com.example.ala.model.RegisterActivityModel;
+import com.example.ala.model.RegisterModel;
 
-public class RegisterActivityController {
-    private RegisterActivityModel model;
+public class RegisterController {
+    private RegisterModel model;
     private  RegisterActivity view;
 
-    public RegisterActivityController(RegisterActivity view){
+    public RegisterController(RegisterActivity view){
         this.view = view;
-        model = new RegisterActivityModel(this);
+        model = new RegisterModel(this);
     }
 
     public void registerOffice(){

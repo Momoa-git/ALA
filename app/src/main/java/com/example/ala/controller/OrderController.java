@@ -7,13 +7,13 @@ import android.view.View;
 import com.example.ala.model.object.Order;
 import com.example.ala.DAO.OrderDAO;
 import com.example.ala.R;
-import com.example.ala.model.OrderActivityModel;
+import com.example.ala.model.OrderModel;
 import com.example.ala.view.OrderActivityView;
 
 import java.util.ArrayList;
 
-public class OrderActivityController{
-  private OrderActivityModel model;
+public class OrderController {
+  private OrderModel model;
   private OrderActivityView view;
   int id;
   float result_price, result_price2;
@@ -21,9 +21,9 @@ public class OrderActivityController{
     long sale_F;
 
 
-   public OrderActivityController(OrderActivityView view){
+   public OrderController(OrderActivityView view){
        this.view = view;
-       model = new OrderActivityModel(this);
+       model = new OrderModel(this);
    }
 
     public void setRecViewContent()

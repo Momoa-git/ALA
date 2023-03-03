@@ -1,25 +1,21 @@
-package com.example.ala;
+package com.example.ala.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.DAO.OfficeDAO;
-import com.example.ala.DAO.OfficeDAOInterface;
+import com.example.ala.LoginActivity;
+import com.example.ala.R;
 import com.example.ala.controller.InfoController;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class InfoActivity extends AppCompatActivity {
 
-    InfoController controller;
+    private InfoController controller;
 
     public EditText edT_name_office, edT_email, edT_password, edT_address;
     Button btn_change;
@@ -62,6 +58,6 @@ public class InfoActivity extends AppCompatActivity {
 
     public void signOut() {
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(InfoActivity.this, MainActivity.class));
+        startActivity(new Intent(InfoActivity.this, LoginActivity.class));
     }
 }

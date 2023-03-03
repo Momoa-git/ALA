@@ -4,20 +4,15 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ala.NewProductActivity;
-import com.example.ala.controller.ScannerAddActivityController;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.example.ala.controller.ScannerAddController;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 
 import java.util.ArrayList;
@@ -28,7 +23,7 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
 
     int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     ZXingScannerView scannerView;
-    ScannerAddActivityController controller;
+    ScannerAddController controller;
 
     ArrayList<String> arrayList = new ArrayList<>();
     FirebaseDatabase firebaseDatabase;
@@ -40,7 +35,7 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
         super.onCreate(savedInstanceState);
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
-        controller = new ScannerAddActivityController(this, this);
+        controller = new ScannerAddController(this, this);
 
     }
 

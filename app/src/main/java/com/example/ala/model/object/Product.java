@@ -5,11 +5,13 @@ public class Product {
     private int id_list_product;
     private String name;
     private String price;
+    private double price_double;
     private String bar_code;
     private String line;
     private String place;
     private String date_time_arrivals;
     private boolean order_assigned;
+    private long piece;
 
     public Product() {
 
@@ -27,6 +29,12 @@ public class Product {
         this.order_assigned = order_assigned;
     }
 
+    public Product(int register_number, long piece, String name, double price_double){
+        this.register_number = register_number;
+        this.name = name;
+        this.price_double = price_double;
+        this.piece = piece;
+    }
 
     public void setDate_time_arrivals(String date_time_arrivals) {
         this.date_time_arrivals = date_time_arrivals;

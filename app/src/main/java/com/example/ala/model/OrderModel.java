@@ -11,7 +11,7 @@ import com.example.ala.model.object.Office;
 import com.example.ala.model.object.Order;
 import com.example.ala.DAO.OrderDAO;
 import com.example.ala.model.object.Product;
-import com.example.ala.controller.OrderActivityController;
+import com.example.ala.controller.OrderController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +29,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class OrderActivityModel{
+public class OrderModel {
 
     private FirebaseDatabase firebaseDatabase, firebaseDatabase2, firebaseDatabase3, firebaseDatabase4;
     private DatabaseReference databaseReference, databaseReference2, databaseReference3, databaseReference4;
     private FirebaseAuth mAuth;
     int id_order_firebase;
-    private OrderActivityController controller;
+    private OrderController controller;
     ArrayList<Order> orders = new ArrayList<>();
     Order order = new Order();
 
-    public OrderActivityModel(OrderActivityController controller) {
+    public OrderModel(OrderController controller) {
         this.controller = controller;
     }
 
@@ -139,7 +139,8 @@ public class OrderActivityModel{
                         String reg_numbers = "";
                         long iteration = dataSnapshot.child("Product item").getChildrenCount();
 
-                        order.removeAllPieces();
+                        order.items.removeItems();
+                      //  order.removeAllPieces();
 
                         for (int count = 0; count < iteration; count++) {
                             String name = dataSnapshot.child("Product item").child(String.valueOf(count)).child("name").getValue().toString();
@@ -161,10 +162,11 @@ public class OrderActivityModel{
                             }
 
 
-                            order.addNamesofProduct(name);
+                            order.items.addItem(new Product(Integer.valueOf(reg_number),pieces_of_product,name, price_double));
+                          /*  order.addNamesofProduct(name);
                             order.addPiecesofProduct(pieces_of_product);
                             order.addRegisterNumsofProduct(Integer.valueOf(reg_number));
-                            order.addPricesOfProduct(price_double);
+                            order.addPricesOfProduct(price_double);*/
 
                             /*invoice.addNamesofProduct(name);
                             invoice.addPiecesofProduct(pieces_of_product);

@@ -2,15 +2,11 @@ package com.example.ala.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.NewProductActivity;
-import com.example.ala.Preferences;
-import com.example.ala.controller.ScannerAddActivityController;
+import com.example.ala.controller.ScannerAddController;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,7 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ScannerAddActivityModel extends AppCompatActivity {
+public class ScannerAddModel {
 
     ArrayList<String> arrayList = new ArrayList<>();
     FirebaseDatabase firebaseDatabase;
@@ -29,10 +25,10 @@ public class ScannerAddActivityModel extends AppCompatActivity {
     public static final String PREFERENCE_NAME = "MyPref";
    // SharedPreferences sharedPreferences;
 
-    private ScannerAddActivityController controller;
+    private ScannerAddController controller;
 
 
-    public ScannerAddActivityModel(ScannerAddActivityController controller) {
+    public ScannerAddModel(ScannerAddController controller) {
         this.controller = controller;
     }
 

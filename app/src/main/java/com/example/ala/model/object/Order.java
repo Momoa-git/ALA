@@ -10,6 +10,7 @@ public class Order {
     private int  id_product, id_order, id_customer, discount, order_number;
     private String date_order, price, date, time, status, office, id_list_product, date_pay, time_pay, type_pay, customer_name, customer_email, customer_phone,adress_office;
     private boolean paid;
+    public Items items = Items.getInstance();
     List<Long> piecesofProduct = new ArrayList<>();
     List<String> namesofProduct = new ArrayList<>();
     List<Integer> registerNumsofProduct = new ArrayList<>();

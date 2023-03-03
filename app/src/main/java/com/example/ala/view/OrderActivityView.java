@@ -29,7 +29,7 @@ import com.example.ala.R;
 import com.example.ala.view.dialog.PaymentDialog;
 import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.StatusAdapter;
-import com.example.ala.controller.OrderActivityController;
+import com.example.ala.controller.OrderController;
 import com.example.ala.view.dialog.StornoDialog;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 public class OrderActivityView extends AppCompatActivity implements OrderViewHolder.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener {
 
-    OrderActivityController controller;
+    OrderController controller;
     OrderDAO dao;
 
     private Spinner spinner_status;
@@ -74,7 +74,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
-        controller = new OrderActivityController(this);
+        controller = new OrderController(this);
 
         context = this;
 

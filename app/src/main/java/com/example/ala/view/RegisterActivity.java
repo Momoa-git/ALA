@@ -2,29 +2,22 @@ package com.example.ala.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.MainActivity;
+import com.example.ala.LoginActivity;
 import com.example.ala.R;
-import com.example.ala.controller.RegisterActivityController;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.ala.controller.RegisterController;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private RegisterActivityController controller;
+    private RegisterController controller;
 
     private FirebaseAuth mAuth;
     public EditText edT_name_office, edT_place, edT_email, edT_password;
@@ -39,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_register);
 
-        controller = new RegisterActivityController(this);
+        controller = new RegisterController(this);
 
        // mAuth = FirebaseAuth.getInstance();
 
@@ -71,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void openLoginActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
 
     }

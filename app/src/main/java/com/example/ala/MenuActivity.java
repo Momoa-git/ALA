@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ala.model.object.Office;
+import com.example.ala.view.InfoActivity;
 import com.example.ala.view.OrderActivityView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -99,7 +100,7 @@ private ProgressBar progress_bar;
         crd_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this,InfoActivity.class);
+                Intent intent = new Intent(MenuActivity.this, InfoActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("email", email);
                 intent.putExtra("address", address);
@@ -111,7 +112,7 @@ private ProgressBar progress_bar;
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MenuActivity.this, MainActivity.class));
+                startActivity(new Intent(MenuActivity.this, LoginActivity.class));
                 Toast.makeText(MenuActivity.this, "Log out successful!", Toast.LENGTH_LONG).show();
             }
         });
