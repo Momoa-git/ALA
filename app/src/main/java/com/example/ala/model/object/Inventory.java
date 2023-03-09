@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Inventory {
     private static Inventory singleton_inventory = null;
-    List<Product> items = new ArrayList<>();
+    List<ProductInOrder> items = new ArrayList<>();
 
     private Inventory()
     {
@@ -13,7 +13,7 @@ public class Inventory {
     }
 
 
-    public void addItem(Product product)
+    public void addItem(ProductInOrder product)
     {
         items.add(product);
     }
@@ -23,7 +23,7 @@ public class Inventory {
         items.clear();
     }
 
-    public Product getItem(int index)
+    public ProductInOrder getItem(int index)
     {
         return items.get(index);
     }

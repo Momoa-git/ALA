@@ -5,13 +5,12 @@ public class Product {
     private int id_list_product;
     private String name;
     private String price;
-    private double price_double;
     private String bar_code;
     private String line;
     private String place;
     private String date_time_arrivals;
     private boolean order_assigned;
-    private long piece;
+
 
     public Product() {
 
@@ -29,24 +28,17 @@ public class Product {
         this.order_assigned = order_assigned;
     }
 
-    public Product(int register_number, long piece, String name, double price_double){
-        this.register_number = register_number;
-        this.name = name;
-        this.price_double = price_double;
+  /*  public Product(String name,  long piece, double price_double, int register_number){
+        this.registration_number = register_number;
+        this.nameI = name;
+        this.prieceI = price_double;
         this.piece = piece;
-    }
+    }*/
 
     public void setDate_time_arrivals(String date_time_arrivals) {
         this.date_time_arrivals = date_time_arrivals;
     }
 
-    public long getPiece() {
-        return piece;
-    }
-
-    public double getPrice_double() {
-        return price_double;
-    }
 
     public String getDate_time_arrivals() {
         return date_time_arrivals;
@@ -55,6 +47,7 @@ public class Product {
     public boolean isOrder_assigned() {
         return order_assigned;
     }
+
 
     public void setOrder_assigned(boolean order_assigned) {
         this.order_assigned = order_assigned;
@@ -68,6 +61,10 @@ public class Product {
         this.id_list_product = id_list_product;
     }
 
+  /*  public int getRegistration_num() {
+        return registration_num;
+    }
+*/
     public void setName(String name) {
         this.name = name;
     }

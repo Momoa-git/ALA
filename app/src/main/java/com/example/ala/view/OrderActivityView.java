@@ -48,7 +48,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     OrderDAO dao;
 
     private Spinner spinner_status;
-    private StatusAdapter statAdapter;
     private ProgressBar progressBar;
 
     private RecyclerView recyclerView;
@@ -57,7 +56,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     public TextView numberOrder, register_num, txt_date_order, txt_status, txt_type_payment, txt_paid, txt_price, txt_name_customer,txt_email_customer,
             txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay, title_locate,
             txt_locate, txt_date_locate, title_registr_num, txt_register_num, txt_description;
-    public EditText edT_search;
+   // public EditText edT_search;
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
     public BottomSheetDialog bottomSheetDialog;
@@ -81,11 +80,11 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         recyclerView = findViewById(R.id.recycler_view2);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        edT_search = findViewById(R.id.edT_search);
+       // edT_search = findViewById(R.id.edT_search);
         progressBar = findViewById(R.id.progress_bar);
-        spinner_status = findViewById(R.id.spinner_filter);
-        statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
-        spinner_status.setAdapter(statAdapter);
+       // spinner_status = findViewById(R.id.spinner_filter);
+       // statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
+//        spinner_status.setAdapter(statAdapter);
         list = new ArrayList<>();
         dao = new OrderDAO();
         progressBar.setVisibility(View.VISIBLE);
@@ -127,7 +126,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
 
         recyclerView.setAdapter(adapter);
 
-        edT_search.addTextChangedListener(new TextWatcher() {
+     /*   edT_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -144,7 +143,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
                 Log.i("firb", s.toString());
                 controller.setRecViewFilterContent(dao, s.toString());
             }
-        });
+        });*/
 
     }
 

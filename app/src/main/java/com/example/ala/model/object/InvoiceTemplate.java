@@ -190,18 +190,18 @@ public class InvoiceTemplate{
 
             for(int i = 0; i < invoice.inventory.getSize(); i++)
             {
-                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.inventory.getItem(i).getRegister_number())).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
+                table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.inventory.getItem(i).getRegistration_num())).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(invoice.inventory.getItem(i).getName()).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(String.valueOf(invoice.inventory.getItem(i).getPiece())).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER));
-                table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(invoice.inventory.getItem(i).getPrice_double()))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-                double DPH =  invoice.calculateDPH(invoice.inventory.getItem(i).getPrice_double());
-                double priceWithoutDPH = invoice.calculatePriceWithoutDPH(invoice.inventory.getItem(i).getPrice_double(), DPH);
+                table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(invoice.inventory.getItem(i).getPrice()))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+                double DPH =  invoice.calculateDPH(invoice.inventory.getItem(i).getPrice());
+                double priceWithoutDPH = invoice.calculatePriceWithoutDPH(invoice.inventory.getItem(i).getPrice(), DPH);
 
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(priceWithoutDPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(DPH))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
                 table_product.addCell(new Cell().add(new Paragraph(invoice.DPH_percent + "%").setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
 
-                double sumPrice = invoice.calculateSumPrice(invoice.inventory.getItem(i).getPrice_double(), invoice.inventory.getItem(i).getPiece());
+                double sumPrice = invoice.calculateSumPrice(invoice.inventory.getItem(i).getPrice(), invoice.inventory.getItem(i).getPiece());
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(sumPrice))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             }
 

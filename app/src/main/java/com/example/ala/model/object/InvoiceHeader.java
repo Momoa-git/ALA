@@ -16,21 +16,21 @@ import com.google.firebase.storage.FileDownloadTask;
 import java.io.File;
 import java.io.IOException;
 
-public class InvoiceCorpoInfo {
+public class InvoiceHeader {
 
-    private static InvoiceCorpoInfo instance;
+    private static InvoiceHeader instance;
     String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
     Bitmap logo_bitmap;
     CorpoInfoDAO corpoInfoDAO;
 
-    private InvoiceCorpoInfo()
+    private InvoiceHeader()
     {
 
     }
 
-    public static InvoiceCorpoInfo getInstance(){
+    public static InvoiceHeader getInstance(){
         if(instance == null){
-            instance = new InvoiceCorpoInfo();
+            instance = new InvoiceHeader();
         }
         return instance;
     }

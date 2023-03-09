@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.LoginActivity;
 import com.example.ala.R;
 import com.example.ala.controller.RegisterController;
 import com.google.firebase.auth.FirebaseAuth;

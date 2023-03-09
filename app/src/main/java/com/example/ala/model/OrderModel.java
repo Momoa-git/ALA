@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.ala.DAO.OfficeDAO;
+import com.example.ala.model.object.ProductInOrder;
 import com.example.ala.model.object.Invoice;
 import com.example.ala.model.object.Office;
 import com.example.ala.model.object.Order;
@@ -162,7 +163,8 @@ public class OrderModel {
                             }
 
 
-                            order.inventory.addItem(new Product(Integer.valueOf(reg_number),pieces_of_product,name, price_double));
+                            order.inventory.addItem(new ProductInOrder(name, pieces_of_product, price_double, Integer.valueOf(reg_number)));
+                          //  order.inventory.addItem(new Product(name, pieces_of_product, price_double, Integer.valueOf(reg_number)));
                           /*  order.addNamesofProduct(name);
                             order.addPiecesofProduct(pieces_of_product);
                             order.addRegisterNumsofProduct(Integer.valueOf(reg_number));
@@ -500,8 +502,8 @@ public class OrderModel {
     public void removeProductFromOffice() {
         OfficeDAO officeDAO = new OfficeDAO();
 
-        for (int i = 0; i < order.getSizeRegisterNums(); i++) {
-            int register = order.getRegisterNumber(i);
+        for (int i = 0; i < order.inventory.getSize(); i++) {
+            int register = order.inventory.getItem(i).getRegistration_num();
             officeDAO.get().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {

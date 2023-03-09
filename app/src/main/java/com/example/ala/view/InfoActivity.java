@@ -8,7 +8,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ala.LoginActivity;
 import com.example.ala.R;
 import com.example.ala.controller.InfoController;
 import com.google.firebase.auth.FirebaseAuth;

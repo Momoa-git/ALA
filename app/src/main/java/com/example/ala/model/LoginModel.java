@@ -1,13 +1,7 @@
 package com.example.ala.model;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
-import com.example.ala.LoginActivity;
-import com.example.ala.MenuActivity;
 import com.example.ala.controller.LoginController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

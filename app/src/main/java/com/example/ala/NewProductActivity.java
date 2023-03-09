@@ -293,10 +293,14 @@ public class NewProductActivity extends AppCompatActivity{
                   int i = 0;
                 long count_product = Long.valueOf(snapshot.getChildrenCount());
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    ProductInOrder product =  dataSnapshot.getValue(ProductInOrder.class);
+            //        ProductInOrder product =  dataSnapshot.getValue(ProductInOrder.class);
+           //           Product product =  dataSnapshot.getValue(Product.class);
 
                     i++;
-                    if(product.getRegistration_num() == 0)
+                    String register = dataSnapshot.child("registration_num").getValue().toString();
+
+
+                    if(Integer.valueOf(register) == 0)
                         break;
 
                     Log.i("outline", "Fill reg. num: " + snapshot.child("registration_num").getValue() + " " + count_product);

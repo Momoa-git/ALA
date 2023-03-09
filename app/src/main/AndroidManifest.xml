@@ -19,7 +19,7 @@
         android:requestLegacyExternalStorage="true">
         <activity android:name=".DetailProductActivity" />
         <activity android:name=".WarehouseActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

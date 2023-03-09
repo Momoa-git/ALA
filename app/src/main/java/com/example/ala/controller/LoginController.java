@@ -4,7 +4,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.ala.LoginActivity;
+import com.example.ala.view.LoginActivity;
 import com.example.ala.model.LoginModel;
 
 public class LoginController {
@@ -43,7 +43,7 @@ public class LoginController {
         }
 
         if (password.isEmpty()){
-            view.edT_password.setError("CPrázdné pole");
+            view.edT_password.setError("Prázdné pole");
             view.edT_password.requestFocus();
             return true;
         }

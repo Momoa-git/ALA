@@ -22,7 +22,7 @@ public class Invoice {
     final int DPH_percent = 21;
     Order order;
     Context context;
-    InvoiceCorpoInfo corpoInfo;
+    InvoiceHeader corpoInfo;
     public Inventory inventory = Inventory.getInstance();
 
 
@@ -31,7 +31,7 @@ public class Invoice {
         this.order = order;
         this.context = context;
         for(int i = 0; i < inventory.getSize(); i++){
-            Log.i("items", inventory.getItem(i).getRegister_number() + " "+ inventory.getItem(i).getPiece() + " " + inventory.getItem(i).getName() + " " + inventory.getItem(i).getPrice_double() );
+            //Log.i("items", inventory.getItem(i).getRegister_number() + " "+ inventory.getItem(i).getPi + " " + inventory.getItem(i).getName() + " " + inventory.getItem(i).getPrice());
         }
         initHeaderData();
 
@@ -40,7 +40,7 @@ public class Invoice {
 
 
     private void initHeaderData() {
-        corpoInfo = InvoiceCorpoInfo.getInstance();
+        corpoInfo = InvoiceHeader.getInstance();
         corpoInfo.initDao();
         corpoInfo.fetchCorpoData(new Invoice.FirebaseCallback3(){
             @Override

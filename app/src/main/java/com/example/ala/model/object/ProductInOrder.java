@@ -1,10 +1,10 @@
-package com.example.ala;
+package com.example.ala.model.object;
 
 public class ProductInOrder {
     private int id_product;
     private String name;
-    private int piece;
-    private int price;
+    private long piece;
+    private double price;
     private int registration_num;
 
 
@@ -12,8 +12,7 @@ public class ProductInOrder {
 
     }
 
-    public ProductInOrder(int id_product, String name, int piece, int price, int registration_num) {
-        this.id_product = id_product;
+    public ProductInOrder(String name, long piece, double price, int registration_num) {
         this.name = name;
         this.piece = piece;
         this.price = price;
@@ -28,11 +27,11 @@ public class ProductInOrder {
         return name;
     }
 
-    public int getPiece() {
+    public long getPiece() {
         return piece;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
