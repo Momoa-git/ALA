@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
 import com.example.ala.DAO.CustomerDAO;
+import com.example.ala.R;
 import com.example.ala.model.object.Customer;
 import com.example.ala.model.object.Order;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OrderAdapter extends FirebaseRecyclerAdapter<Order,OrderViewHolder> {
+public class OrderAdapter extends FirebaseRecyclerAdapter<Order, OrderViewHolder> {
     private OrderViewHolder.OnDetailListener onDetailListener;
     private List<Order> orderFull;
     private FirebaseRecyclerOptions<Order> list;

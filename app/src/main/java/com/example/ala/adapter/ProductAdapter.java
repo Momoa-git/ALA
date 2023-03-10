@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ala.R;
 import com.example.ala.model.object.Product;
 
 import java.util.ArrayList;

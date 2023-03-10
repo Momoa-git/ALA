@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.ala.MenuActivity;
 import com.example.ala.R;
 import com.example.ala.controller.LoginController;
 

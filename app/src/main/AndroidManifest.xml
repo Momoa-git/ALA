@@ -18,7 +18,7 @@
         android:theme="@style/Theme.ALA"
         android:requestLegacyExternalStorage="true">
         <activity android:name=".DetailProductActivity" />
-        <activity android:name=".WarehouseActivity" />
+        <activity android:name=".view.WarehouseActivity" />
         <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.RegisterActivity" />
-        <activity android:name=".MenuActivity" />
+        <activity android:name=".view.MenuActivity" />
         <activity android:name=".NewProductActivity" />
         <activity android:name=".view.InfoActivity" />
         <activity android:name=".view.ScannerAddActivity" />

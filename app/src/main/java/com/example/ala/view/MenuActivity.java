@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,10 +11,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ala.NewProductActivity;
+import com.example.ala.R;
 import com.example.ala.model.object.Office;
-import com.example.ala.view.InfoActivity;
-import com.example.ala.view.LoginActivity;
-import com.example.ala.view.OrderActivityView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
