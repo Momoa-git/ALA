@@ -67,12 +67,6 @@ public class WarehouseActivity extends AppCompatActivity implements ProductAdapt
 
         controller.setRecViewContent(list, list2);
 
-        Log.i("getFirebaseT", productAdapter.getItemCount() + " ");
-
-        if (productAdapter.getItemCount() == 0)
-            txt_emptylist.setVisibility(View.VISIBLE);
-        else
-            txt_emptylist.setVisibility(View.INVISIBLE);
 
     }
 

@@ -31,15 +31,6 @@ public class OrderController {
        model.setRecViewContent();
     }
 
-    public void setRecViewFilterContent(OrderDAO dao, String key)
-    {
-        model.filterOrder(dao, key);
-    }
-
-    public void onAddOrderToList(Order order){
-       this.view.list.add(order);
-    }
-
     public void onNotifyDataSetChanged() {
        this.view.adapter.notifyDataSetChanged();
     }
@@ -52,10 +43,6 @@ public class OrderController {
     public int getOrderID(int position)
     {
         return model.getOrderID(position);
-    }
-
-    public int onOrderID(int position) {
-       return this.view.list.get(position).getId_order();
     }
 
     public void getOrderFirebaseResources(int id_order)
@@ -110,6 +97,7 @@ public class OrderController {
                 this.view.btn_payment.setVisibility(View.GONE);
                 this.view.btn_storno.setVisibility(View.GONE);
                 this.view.txt_description.setVisibility(View.VISIBLE);
+                this.view.txt_description.setText("ČEKÁNÍ NA NASKLADNĚNÍ");
                 break;
             case "IP":
                 this.view.txt_status.setText("Vyřizuje se");
@@ -123,7 +111,8 @@ public class OrderController {
             case "CO":
                 this.view. txt_status.setText("Vyřízena");
                 this.view. img_status_bar.setImageResource(R.drawable.status_bar_co);
-                this.view.txt_description.setVisibility(View.GONE);
+                this.view.txt_description.setVisibility(View.VISIBLE);
+                this.view.txt_description.setText("OBJEDNÁVKA BYLA VYŘÍZENA");
                 //btn
                 this.view.btn_edit_sale.setVisibility(View.GONE);
                 this.view.btn_payment.setVisibility(View.GONE);
@@ -153,9 +142,6 @@ public class OrderController {
        this.view.txt_office_name.setText(name);
     }
 
-    public void setProductListResources(String nameStream) {
-       this.view.txt_name_product.setText(nameStream);
-    }
 
     public void setInvisibleDatePay() {
        this.view.txt_date_pay.setVisibility(View.GONE);
@@ -223,7 +209,5 @@ public class OrderController {
         model.removeProductFromOffice();
     }
 
-  /*  public void sendToEmail() {
-       model.sen
-    }*/
+
 }

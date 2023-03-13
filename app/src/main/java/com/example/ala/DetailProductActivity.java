@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ public class DetailProductActivity extends AppCompatActivity {
 
     TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place, txt_desc;
     ImageView image;
+    ProgressBar progress_bar;
 
     //TODO pridani progress baru
 
@@ -33,7 +36,9 @@ public class DetailProductActivity extends AppCompatActivity {
         txt_place = findViewById(R.id.txt_place);
         image = findViewById(R.id.image);
         txt_desc = findViewById(R.id.txt_desc);
+        progress_bar = findViewById(R.id.progress_bar);
 
+        progress_bar.setVisibility(View.VISIBLE);
 
        Intent intent = getIntent();
        Bundle b = intent.getExtras();
@@ -62,6 +67,8 @@ public class DetailProductActivity extends AppCompatActivity {
        txt_line.setText(line);
        txt_place.setText(place);
        txt_desc.setText(desc);
+
+       progress_bar.setVisibility(View.GONE);
 
     }
 }

@@ -10,7 +10,7 @@ import com.google.firebase.database.Query;
 import java.util.HashMap;
 
 public class OfficeDAO implements OfficeDAOInterface{
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference, databaseReference2;
     private FirebaseAuth mAuth;
     public Office office;
     public OfficeDAO()
@@ -18,6 +18,7 @@ public class OfficeDAO implements OfficeDAOInterface{
         mAuth = FirebaseAuth.getInstance();
        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("Office").child(mAuth.getUid());
+        databaseReference2 = firebaseDatabase.getReference().child("Office");
     }
     public Task<Void> updateEmail(String key)
     {
@@ -58,9 +59,14 @@ public class OfficeDAO implements OfficeDAOInterface{
         databaseReference.child("Product").setValue(serial_number);
     }
 
-    public Query get()
+    public Query getRef(String key)
+    {
+        return databaseReference2.child(key);
+    }
+
+   /* public Query get()
     {
         return databaseReference.child("Product");
-    }
+    }*/
 
 }

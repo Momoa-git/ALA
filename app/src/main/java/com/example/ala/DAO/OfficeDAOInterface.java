@@ -10,4 +10,6 @@ public interface OfficeDAOInterface {
     Task<Void> updateEmail(String key);
     Task<Void> updateName(String key);
     Task<Void> updateAddress(String key);
+    Query getRef(String key);
+  //  Query get();
 }

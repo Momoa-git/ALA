@@ -5,7 +5,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.ala.DAO.CustomerDAO;
 import com.example.ala.DAO.OfficeDAO;
+import com.example.ala.DAO.OfficeDAOInterface;
+import com.example.ala.DAO.ProductDAO;
 import com.example.ala.model.object.ProductInOrder;
 import com.example.ala.model.object.Invoice;
 import com.example.ala.model.object.Office;
@@ -39,6 +42,7 @@ public class OrderModel {
     private OrderController controller;
     ArrayList<Order> orders = new ArrayList<>();
     Order order = new Order();
+    //OrderDAO orderDAO = new OrderDAO();
 
     public OrderModel(OrderController controller) {
         this.controller = controller;
@@ -50,8 +54,8 @@ public class OrderModel {
         final FirebaseUser office = mAuth.getCurrentUser();
         String id = office.getUid();
 
-        OrderDAO dao = new OrderDAO();
-        dao.get().addValueEventListener(new ValueEventListener() {
+        OrderDAO orderDAO = new OrderDAO();
+        orderDAO.get().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -76,40 +80,6 @@ public class OrderModel {
 
     }
 
-
-    public void filterOrder(OrderDAO dao, String key) {
-        mAuth = FirebaseAuth.getInstance();
-
-        final FirebaseUser office = mAuth.getCurrentUser();
-        String id = office.getUid();
-
-
-        dao.get().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Order order = dataSnapshot.getValue(Order.class);
-
-
-                    if (order.getOffice().contains(id) && order.getStatus().equals(key)) {
-                        // controller.onAddOrderToList(order);
-                        Log.i("firb", String.valueOf(order.getOrder_number()));
-                        orders.add(order);
-                    }
-
-                }
-                controller.onSetItems(orders);
-                controller.onNotifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
 
 
     public int getOrderID(int position) {
@@ -307,10 +277,11 @@ public class OrderModel {
 
     public void getCustomerFirebaseResources(int id_customer) {
 
-        firebaseDatabase2 = FirebaseDatabase.getInstance();
-        databaseReference2 = firebaseDatabase2.getReference().child("Customer").child("Customers");
+        CustomerDAO customerDAO = new CustomerDAO();
+      /*  firebaseDatabase2 = FirebaseDatabase.getInstance();
+        databaseReference2 = firebaseDatabase2.getReference().child("Customer").child("Customers");*/
 
-        databaseReference2.addValueEventListener(new ValueEventListener() {
+        customerDAO.get().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -357,10 +328,12 @@ public class OrderModel {
     public void getOfficeFirebaseResources(String officeS) {
 
         //officeF = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference2 = FirebaseDatabase.getInstance().getReference("Office");
+        //databaseReference2 = FirebaseDatabase.getInstance().getReference("Office");
         // String officeID = officeF.getUid();
+       OfficeDAOInterface officeDAO = new OfficeDAO();
 
-        databaseReference2.child(officeS).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        officeDAO.getRef(officeS).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Office officeProfile = snapshot.getValue(Office.class);
@@ -370,14 +343,11 @@ public class OrderModel {
                 String address = officeProfile.address;
 
                 order.setAdress_office(address + ", " + name);
-                //invoice.setAdress_office(address + ", " + name);
 
                 Log.i("getOfficeFirebaseRes", "office: " + officeS);
 
                 controller.setOfficeResources(name, address);
 
-                // getProductListFirebaseResources(arr);
-                // createBottomSheet();
             }
 
             @Override
@@ -415,61 +385,78 @@ public class OrderModel {
     public void saveStornoStatus(int id)
     {
         Log.i("stornoo", "MODEL");
-        firebaseDatabase3 = FirebaseDatabase.getInstance();
-        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders");
+       /* firebaseDatabase3 = FirebaseDatabase.getInstance();
+        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders");*/
 
-        databaseReference3.child(String.valueOf(id - 1)).child("status").setValue("CA");
+
+     //   databaseReference3.child(String.valueOf(id - 1)).child("status").setValue("CA");
+
+        OrderDAO orderDAO = new OrderDAO();
+
+        orderDAO.setStatus(id, "CA");
 
     }
 
     public void updateSaleAfterPay(float result_price, int old_sale, int id) {
-        firebaseDatabase3 = FirebaseDatabase.getInstance();
-        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
+       // firebaseDatabase3 = FirebaseDatabase.getInstance();
+       // databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
 
-        Map updatepay = new HashMap();
+        /*Map updatepay = new HashMap();
         updatepay.put("discount", old_sale);
-        updatepay.put("price", result_price);
+        updatepay.put("price", result_price);*/
+
 
         order.setDiscount(old_sale);
         order.setPrice(result_price + "");
 
+        OrderDAO orderDAO = new OrderDAO();
+        orderDAO.setPayDetails(id, old_sale, result_price);
        /* invoice.setDiscount(old_sale);
         invoice.setResult_price(result_price+"");*/
 
-        databaseReference3.updateChildren(updatepay);
+        //databaseReference3.updateChildren(updatepay);
 
 
     }
 
     public void updatePaymentAfterPay(int id)
     {
-        firebaseDatabase3 = FirebaseDatabase.getInstance();
-        databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
+     //   firebaseDatabase3 = FirebaseDatabase.getInstance();
+      //  databaseReference3 = firebaseDatabase3.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
 
-        Map updatepay = new HashMap();
+
+        String date = getActualDate();
+        String time = getActualTime();
+
+        OrderDAO orderDAO = new OrderDAO();
+        orderDAO.setPayAfterPay(id, date, time);
+
+       /* Map updatepay = new HashMap();
 
             updatepay.put("date_pay", getActualDate());
             updatepay.put("time_pay", getActualTime());
-            updatepay.put("paid", true);
+            updatepay.put("paid", true);*/
 
             order.setDate_pay(getActualDate());
           //  invoice.setDate_pay(getActualDate());
 
 
-        databaseReference3.updateChildren(updatepay);
+        //databaseReference3.updateChildren(updatepay);
     }
 
 
 
     public void updateStatusAfterPay(int id)
     {
-        firebaseDatabase4 = FirebaseDatabase.getInstance();
+       /* firebaseDatabase4 = FirebaseDatabase.getInstance();
         databaseReference4 = firebaseDatabase4.getReference().child("Order").child("Orders").child(String.valueOf(id - 1));
 
         Map update = new HashMap();
         update.put("status", "CO");
 
-        databaseReference4.updateChildren(update);
+        databaseReference4.updateChildren(update);*/
+        OrderDAO orderDAO = new OrderDAO();
+        orderDAO.setStatus(id, "CO");
     }
 
     private String getActualDate() {
@@ -500,11 +487,12 @@ public class OrderModel {
     }
 
     public void removeProductFromOffice() {
-        OfficeDAO officeDAO = new OfficeDAO();
+       // OfficeDAO officeDAO = new OfficeDAO();
+        ProductDAO productDAO = new ProductDAO();
 
         for (int i = 0; i < order.inventory.getSize(); i++) {
             int register = order.inventory.getItem(i).getRegistration_num();
-            officeDAO.get().addValueEventListener(new ValueEventListener() {
+            productDAO.get().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -513,7 +501,7 @@ public class OrderModel {
                         if (product.getRegister_number() == register)
                         {
 
-                             officeDAO.removeItem(dataSnapshot.getKey());
+                            productDAO.removeItem(dataSnapshot.getKey());
                         }
                     }
                 }
