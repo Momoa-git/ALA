@@ -8,7 +8,7 @@ import com.google.firebase.database.Query;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OrderDAO {
+public class OrderDAO implements OrderDAOInterface{
     private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
     public OrderDAO()

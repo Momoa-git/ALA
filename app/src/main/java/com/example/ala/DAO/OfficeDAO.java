@@ -3,6 +3,7 @@ package com.example.ala.DAO;
 import com.example.ala.model.object.Office;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -64,9 +65,13 @@ public class OfficeDAO implements OfficeDAOInterface{
         return databaseReference2.child(key);
     }
 
-   /* public Query get()
-    {
-        return databaseReference.child("Product");
-    }*/
+   public FirebaseUser getFirebUser(){
+       FirebaseAuth mAuth;
+       mAuth = FirebaseAuth.getInstance();
+
+       final FirebaseUser office = mAuth.getCurrentUser();
+
+       return office;
+   }
 
 }

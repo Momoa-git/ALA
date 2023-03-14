@@ -7,7 +7,7 @@ import com.google.firebase.database.Query;
 
 import java.util.HashMap;
 
-public class CustomerDAO {
+public class CustomerDAO implements CustomerDAOInterface{
     private DatabaseReference databaseReference;
     public CustomerDAO()
     {
