@@ -72,11 +72,11 @@ public class Invoice {
         this.datetime = formatter.format(date);
     }
 
-    public int getSerial_number() {
+    public int getSerialnumber() {
         return serial_number;
     }
 
-    public void setSerial_number(int serial_number) {
+    public void setSerialnumber(int serial_number) {
         this.serial_number = serial_number;
     }
 
@@ -89,7 +89,7 @@ public class Invoice {
                     public void onCallBack2(int serial_num, InvoiceDAO invoiceDAO, Context context) {
 
                         try {
-                            setSerial_number(serial_num);
+                            setSerialnumber(serial_num);
                             InvoiceTemplate template = new InvoiceTemplate(Invoice.this, context);
                             InvoiceSender sender = new InvoiceSender(Invoice.this, context);
                             sender.sendInvoiceToEmail(template.createPDF());

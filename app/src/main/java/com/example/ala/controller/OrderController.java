@@ -48,7 +48,7 @@ public class OrderController {
     public void getOrderFirebaseResources(int id_order)
     {
         id = id_order;
-        model.getOrderFirebaseResources(id_order);
+        model.getOrderFirebRes(id_order);
     }
 
     public void setOrderResources(String order_number, String date_order, String time_order, String status, String names, String reg_numbers, String type_pay, String paid, String price, String discount, String date_pay) {

@@ -91,7 +91,7 @@ public class InvoiceTemplate{
         try {
             String path = "/res/font/arialce.ttf";
             font = PdfFontFactory.createFont(path, BaseFont.IDENTITY_H, true);
-            Paragraph p = new Paragraph("Faktura - Daňový doklad - " + invoice.getSerial_number()).setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
+            Paragraph p = new Paragraph("Faktura - Daňový doklad - " + invoice.getSerialnumber()).setFont(font).setFontSize(14).setBold().setCharacterSpacing(1);
             table1.addCell(new Cell(1,2).add(p).setBorder(Border.NO_BORDER));
 
             /*--Row2*/
@@ -100,7 +100,7 @@ public class InvoiceTemplate{
             table1.addCell(new Cell().add(new Paragraph("Záruční a dodací list")).setFont(font).setBorder(Border.NO_BORDER));
 
 
-            com.itextpdf.barcodes.BarcodeQRCode qrCode = new BarcodeQRCode(invoice.getSerial_number()+"");
+            com.itextpdf.barcodes.BarcodeQRCode qrCode = new BarcodeQRCode(invoice.getSerialnumber()+"");
 
             PdfFormXObject object = qrCode.createFormXObject(ColorConstants.BLACK,pdfDocument);
 

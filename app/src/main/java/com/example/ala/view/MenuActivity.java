@@ -29,6 +29,7 @@ private DatabaseReference reference;
 private String officeID;
 private CardView crd_new_product, crd_product, crd_order, crd_info, crd_log_out;
 private ProgressBar progress_bar;
+//TODO change to DAO
 
     TextView txt_name;
     String name, address, email;

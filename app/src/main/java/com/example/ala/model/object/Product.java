@@ -28,12 +28,7 @@ public class Product {
         this.order_assigned = order_assigned;
     }
 
-  /*  public Product(String name,  long piece, double price_double, int register_number){
-        this.registration_number = register_number;
-        this.nameI = name;
-        this.prieceI = price_double;
-        this.piece = piece;
-    }*/
+
 
     public void setDate_time_arrivals(String date_time_arrivals) {
         this.date_time_arrivals = date_time_arrivals;

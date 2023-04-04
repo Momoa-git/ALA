@@ -19,8 +19,8 @@ import java.io.IOException;
 public class InvoiceHeader {
 
     private static InvoiceHeader instance;
-    String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
-    Bitmap logo_bitmap;
+    private String name, residence, ic, dic, website, contact, phone, bank_account, variable_symbol, logo_path;
+    private  Bitmap logo_bitmap;
     CorpoInfoDAO corpoInfoDAO;
 
     private InvoiceHeader()

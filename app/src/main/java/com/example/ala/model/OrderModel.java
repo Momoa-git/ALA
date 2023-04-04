@@ -37,7 +37,6 @@ import java.util.Map;
 
 
 public class OrderModel {
-    int id_order_firebase;
     private OrderController controller;
     ArrayList<Order> orders = new ArrayList<>();
     Order order = new Order();
@@ -82,7 +81,7 @@ public class OrderModel {
         return orders.get(position).getId_order();
     }
 
-    public void getOrderFirebaseResources(int id_order) {
+    public void getOrderFirebRes(int id_order) {
         OrderDAOInterface orderDAO = new OrderDAO();
 
         orderDAO.get().addValueEventListener(new ValueEventListener() {
@@ -90,7 +89,7 @@ public class OrderModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String id_order_firebase_STR = dataSnapshot.child("id_order").getValue().toString();
-                    id_order_firebase = Integer.valueOf(id_order_firebase_STR);
+                    int id_order_firebase = Integer.valueOf(id_order_firebase_STR);
 
                     if (id_order_firebase == id_order) {
                         String order_number = dataSnapshot.child("order_number").getValue().toString();
@@ -152,8 +151,8 @@ public class OrderModel {
 
                         controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount + "%", possibleDatePay);
 
-                        getCustomerFirebaseResources(Integer.parseInt(id_customer));
-                        getOfficeFirebaseResources(office);
+                        getCustomerFirebRes(Integer.parseInt(id_customer));
+                        getOfficeFirebRes(office);
 
                     }
                 }
@@ -239,7 +238,7 @@ public class OrderModel {
 
     }
 
-    public void getCustomerFirebaseResources(int id_customer) {
+    public void getCustomerFirebRes(int id_customer) {
 
         CustomerDAOInterface customerDAO = new CustomerDAO();
 
@@ -274,7 +273,7 @@ public class OrderModel {
 
     }
 
-    public void getOfficeFirebaseResources(String officeS) {
+    public void getOfficeFirebRes(String officeS) {
        OfficeDAOInterface officeDAO = new OfficeDAO();
 
         officeDAO.getRef(officeS).addListenerForSingleValueEvent(new ValueEventListener() {

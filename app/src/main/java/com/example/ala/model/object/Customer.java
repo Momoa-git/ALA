@@ -2,8 +2,8 @@ package com.example.ala.model.object;
 
 public class Customer {
 
-    String email, fname, lname, phone;
-    int id;
+   private String email, fname, lname, phone;
+   private int id;
 
     public void setEmail(String email) {
         this.email = email;
