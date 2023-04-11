@@ -1,16 +1,24 @@
 package com.example.ala.model.object;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.ala.DAO.InvoiceDAO;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -91,8 +99,11 @@ public class Invoice {
                         try {
                             setSerialnumber(serial_num);
                             InvoiceTemplate template = new InvoiceTemplate(Invoice.this, context);
+                            //TODO send invoice to server, update UC scenario
                             InvoiceSender sender = new InvoiceSender(Invoice.this, context);
-                            sender.sendInvoiceToEmail(template.createPDF());
+                            File file = template.createPDF();
+                            saveFileToServer(file, serial_num);
+                            sender.sendInvoiceToEmail(file);
                             invoiceDAO.setSerial_number(serial_num + 1);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -101,6 +112,26 @@ public class Invoice {
 
                 });
 
+    }
+
+    private void saveFileToServer(File file, int serial_num) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        Uri uri_file = Uri.fromFile(file);
+
+        UploadTask uploadTask = storage.getReference("invoices/"+serial_num + ".pdf").putFile(uri_file);;
+        Log.i("upload pdf", "INFO");
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                         Log.i("upload pdf", "SUCESS");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                         Log.i("upload pdf", "FAIL");
+                    }
+                });
     }
 
     private void readRegisterNumberData(FirebaseCallback2 firebaseCallback){
