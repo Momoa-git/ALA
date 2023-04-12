@@ -8,16 +8,18 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ala.service.InternetService;
 import com.example.ala.R;
 import com.example.ala.controller.InfoController;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class InfoActivity extends AppCompatActivity {
+public class InfoActivity extends AppCompatActivity{
 
     private InfoController controller;
 
     public EditText edT_name_office, edT_email, edT_password, edT_address;
     Button btn_change;
+    private InternetService service;
 
 
     @Override
@@ -26,7 +28,7 @@ public class InfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info);
 
         controller = new InfoController(this);
-
+        service = new InternetService(this);
 
         edT_name_office = findViewById(R.id.edT_name_office);
         edT_address = findViewById(R.id.edT_address);
@@ -48,7 +50,6 @@ public class InfoActivity extends AppCompatActivity {
                 controller.updateInformation(name, address, email);
 
 
-
             }
         });
 
@@ -59,4 +60,5 @@ public class InfoActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(InfoActivity.this, LoginActivity.class));
     }
+
 }

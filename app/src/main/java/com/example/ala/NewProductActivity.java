@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ala.model.object.Order;
 import com.example.ala.model.object.Product;
+import com.example.ala.service.InternetService;
 import com.example.ala.view.ScannerAddActivity;
+import com.example.ala.view.dialog.InternetWarningDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NewProductActivity extends AppCompatActivity{
+public class NewProductActivity extends AppCompatActivity implements InternetWarningDialog.InternetWarningDialogListener {
 
     public static EditText edT_name_product, edT_price, edT_bar, edT_ks, edT_line, edT_place;
     private Button btn_scan;
@@ -41,6 +43,7 @@ public class NewProductActivity extends AppCompatActivity{
     boolean semaphore = true;
     Integer counter;
     boolean order_assigned = false;
+    private InternetService service;
 
 
     //TODO ošetřit, když dostanu nevalidní ean kod
@@ -64,7 +67,7 @@ public class NewProductActivity extends AppCompatActivity{
        // txt_id = findViewById(R.id.id);
 
         mAuth = FirebaseAuth.getInstance();
-
+        service = new InternetService(this);
 
 
 
@@ -87,7 +90,10 @@ public class NewProductActivity extends AppCompatActivity{
              //   searchOrder();
                 addNewProduct();
                 fillEmptyAll();
-
+                if(!service.checkConnection()){
+                    InternetWarningDialog dialog = new InternetWarningDialog();
+                    dialog.show(getSupportFragmentManager(),"internet warning dialog");
+                }
 
             }
 
@@ -354,7 +360,10 @@ public class NewProductActivity extends AppCompatActivity{
         });
     }
 
+    @Override
+    public void applyAfterCheckConnection(){
 
+    }
 
 
     private interface FirebaseCallback{

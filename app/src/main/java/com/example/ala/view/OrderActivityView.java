@@ -17,11 +17,13 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.ala.service.InternetService;
 import com.example.ala.model.object.Order;
 import com.example.ala.adapter.OrderAdapter;
 import com.example.ala.DAO.OrderDAO;
 import com.example.ala.adapter.OrderViewHolder;
 import com.example.ala.R;
+import com.example.ala.view.dialog.InternetWarningDialog;
 import com.example.ala.view.dialog.PaymentDialog;
 import com.example.ala.view.dialog.SaleDialog;
 import com.example.ala.controller.OrderController;
@@ -37,7 +39,7 @@ import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 
-public class OrderActivityView extends AppCompatActivity implements OrderViewHolder.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener {
+public class OrderActivityView extends AppCompatActivity implements OrderViewHolder.OnDetailListener, SaleDialog.SaleDialogListener, StornoDialog.StornoDialogListener, PaymentDialog.PaymentDialogListener, InternetWarningDialog.InternetWarningDialogListener {
 
     OrderController controller;
     OrderDAO dao;
@@ -60,6 +62,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
     int i = 0;
+    private InternetService service;
     //TODO fce filter orders by word search or status
     //TODO adding count  product
 
@@ -75,6 +78,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         recyclerView = findViewById(R.id.recycler_view2);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        service = new InternetService(this);
        // edT_search = findViewById(R.id.edT_search);
         progressBar = findViewById(R.id.progress_bar);
        // spinner_status = findViewById(R.id.spinner_filter);
@@ -303,13 +307,16 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     @Override
     public void applyTexts2() {
         controller.setAfterStorno();
+       if(!service.checkConnection()){
+                InternetWarningDialog dialog = new InternetWarningDialog();
+                dialog.show(getSupportFragmentManager(),"internet warning dialog");
+        }
 
     }
 
     @Override
     public void applyTexts(String sale) {
         controller.setAfterSale(sale);
-
     }
 
     @Override
@@ -319,7 +326,16 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         controller.removeProducts();
         controller.setPDF(context);
        // controller.sendToEmail();
+        if(!service.checkConnection()){
+            InternetWarningDialog dialog = new InternetWarningDialog();
+            dialog.show(getSupportFragmentManager(),"internet warning dialog");
+        }
         bottomSheetDialog.cancel();
+
+    }
+
+    @Override
+    public void applyAfterCheckConnection(){
 
     }
 

@@ -13,4 +13,5 @@
     <color name="transparent">#00000000</color>
     <color name="background_day">#FFFFFFFF</color>
     <color name="background_night">#000000</color>
+    <color name="warning_colour">#EEE3AB</color>
 </resources>
