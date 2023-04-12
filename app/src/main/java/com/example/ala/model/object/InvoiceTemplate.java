@@ -136,7 +136,7 @@ public class InvoiceTemplate{
             /*--Row6*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Datum uskut. zdaň. plnění: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(invoice.order.getDate_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(invoice.order.payment.getDate_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("Email: " + invoice.order.getCustomer_email()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
 
             /*--Row7*/
@@ -154,7 +154,7 @@ public class InvoiceTemplate{
             /*--Row9*/
             table_text.addCell(new Cell(1,2).add(new Paragraph("Způsob úhrady: ").setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             // table_text.addCell(new Cell().add(new Paragraph("Smile Shop s.r.o.").setBold().setFontSize(10).setCharacterSpacing(1)));
-            table_text.addCell(new Cell().add(new Paragraph(invoice.order.getType_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
+            table_text.addCell(new Cell().add(new Paragraph(invoice.order.payment.getType_pay()).setFont(font).setFontSize(9)).setBorder(Border.NO_BORDER));
             table_text.addCell(new Cell().add(new Paragraph("").setFont(font).setFontSize(9).setBold()).setBorder(Border.NO_BORDER));
 
             /*--Row9*/
@@ -205,8 +205,8 @@ public class InvoiceTemplate{
                 table_product.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(String.valueOf(sumPrice))).setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             }
 
-            if(invoice.order.getDiscount() != 0) {
-                long discount = invoice.order.getDiscount();
+            if(invoice.order.payment.getDiscount() != 0) {
+                long discount = invoice.order.payment.getDiscount();
                 table_product.addCell(new Cell().add(new Paragraph("SLEVA"+discount).setFontSize(9).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
                 table_product.addCell(new Cell().add(new Paragraph("Zákaznická sleva " + discount + "%").setFont(font).setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
                 table_product.addCell(new Cell().add(new Paragraph("1").setFontSize(9).setCharacterSpacing(1).setCharacterSpacing(1)).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1f)));
@@ -232,7 +232,7 @@ public class InvoiceTemplate{
 
             table_price.addCell(new Cell().add(new Paragraph().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell().add(new Paragraph("Celkem:").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-            table_price.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(invoice.order.getPrice()) + " Kč").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+            table_price.addCell(new Cell().add(new Paragraph(invoice.setPriceFormat(invoice.order.payment.getPrice()) + " Kč").setBold().setFont(font).setFontSize(9).setCharacterSpacing(1)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("\n")).setBorder(Border.NO_BORDER));
             table_price.addCell(new Cell(1,3).add(new Paragraph("Doporučujeme zboží překontrolovat ihned po převzetí, " +

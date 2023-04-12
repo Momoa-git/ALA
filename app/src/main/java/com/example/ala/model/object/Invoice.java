@@ -99,7 +99,6 @@ public class Invoice {
                         try {
                             setSerialnumber(serial_num);
                             InvoiceTemplate template = new InvoiceTemplate(Invoice.this, context);
-                            //TODO send invoice to server, update UC scenario
                             InvoiceSender sender = new InvoiceSender(Invoice.this, context);
                             File file = template.createPDF();
                             saveFileToServer(file, serial_num);
@@ -156,7 +155,7 @@ public class Invoice {
 
 
     public float getDiscountAmount(long discount) {
-       float original_price = 100 * Float.valueOf(order.getPrice()) / (100 - discount);
+       float original_price = 100 * Float.valueOf(order.payment.getPrice()) / (100 - discount);
        Log.i("original_price", original_price + " ");
        return original_price * discount / 100 * (-1);
     }

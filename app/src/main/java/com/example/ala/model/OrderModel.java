@@ -145,9 +145,9 @@ public class OrderModel {
 
                         order.setOrder_number(Integer.valueOf(order_number));
                         order.setDate_order(dateAfterParse);
-                        order.setType_pay(typePayAfterParse);
-                        order.setDiscount(possibleDiscount);
-                        order.setPrice(price);
+                        order.payment.setType_pay(typePayAfterParse);
+                        order.payment.setDiscount(possibleDiscount);
+                        order.payment.setPrice(price);
 
                         controller.setOrderResources(order_number, dateAfterParse, time_order, status, name_products, reg_numbers, typePayAfterParse, paidAfterParse, priceAfterParse, possibleDiscount + "%", possibleDatePay);
 
@@ -170,7 +170,7 @@ public class OrderModel {
                 String date_pay = dataSnapshot.child("Payment").child("date_pay").getValue().toString();
                 String time_pay = dataSnapshot.child("Payment").child("time_pay").getValue().toString();
 
-                order.setDate_pay(setDateFormat(date_pay));
+                order.payment.setDate_pay(setDateFormat(date_pay));
                 return setDateFormat(date_pay) + " " + time_pay;
             } else {
                 controller.setInvisibleDatePay();
@@ -310,8 +310,8 @@ public class OrderModel {
             full_price = price;
 
         float sale = sale_f * full_price / 100;
-        order.setDiscount(sale_f);
-        order.setPrice(full_price-sale + "");
+        order.payment.setDiscount(sale_f);
+        order.payment.setPrice(full_price-sale + "");
 
         return full_price - sale;
     }
@@ -325,8 +325,8 @@ public class OrderModel {
     }
 
     public void updateSaleAfterPay(float result_price, int old_sale, int id) {
-        order.setDiscount(old_sale);
-        order.setPrice(result_price + "");
+        order.payment.setDiscount(old_sale);
+        order.payment.setPrice(result_price + "");
 
         OrderDAOInterface orderDAO = new OrderDAO();
         orderDAO.setPayDetails(id, old_sale, result_price);
@@ -340,7 +340,7 @@ public class OrderModel {
         OrderDAOInterface orderDAO = new OrderDAO();
         orderDAO.setPayAfterPay(id, date, time);
 
-            order.setDate_pay(getActualDate());
+            order.payment.setDate_pay(getActualDate());
     }
 
     public void updateStatusAfterPay(int id)

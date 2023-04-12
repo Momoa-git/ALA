@@ -1,4 +1,4 @@
-package com.example.ala.model.object;
+ package com.example.ala.model.object;
 
 import android.content.Context;
 import android.widget.Toast;
