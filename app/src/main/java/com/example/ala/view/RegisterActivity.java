@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ala.R;
 import com.example.ala.controller.RegisterController;
+import com.example.ala.service.InternetService;
+import com.example.ala.view.dialog.InternetErrorDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -23,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
     public ProgressBar progressBar;
     private Button btn_register;
     private TextView btn_login_acitivity;
-
+    private InternetService service;
     //TODO dopsat Toast msg
 
     @Override
@@ -32,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         controller = new RegisterController(this);
-
+        service = new InternetService(this);
        // mAuth = FirebaseAuth.getInstance();
 
         edT_name_office = findViewById(R.id.edT_name_office);
@@ -48,6 +50,12 @@ public class RegisterActivity extends AppCompatActivity {
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(!service.checkConnection()){
+                    InternetErrorDialog dialog = new InternetErrorDialog();
+                    dialog.show(getSupportFragmentManager(),"internet error dialog");
+                }
+                else
                 controller.registerOffice();
             }
         });

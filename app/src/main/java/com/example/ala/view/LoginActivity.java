@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.example.ala.R;
 import com.example.ala.controller.LoginController;
+import com.example.ala.service.InternetService;
+import com.example.ala.view.dialog.InternetErrorDialog;
+import com.example.ala.view.dialog.InternetWarningDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -22,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView btn_register_activity;
 
     public ProgressBar progressBar;
-
+    private InternetService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         controller = new LoginController(this);
+        service = new InternetService(this);
 
         btn_register_activity = findViewById(R.id.btn_register_activity);
         btn_login = findViewById(R.id.btn_login);
@@ -50,7 +54,12 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               controller.loginOffice();
+                if(!service.checkConnection()){
+                    InternetErrorDialog dialog = new InternetErrorDialog();
+                    dialog.show(getSupportFragmentManager(),"internet error dialog");
+                }
+                else
+                 controller.loginOffice();
             }
         });
 
