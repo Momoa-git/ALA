@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
-import com.example.ala.NewProductActivity;
+import com.example.ala.view.NewProductActivity;
 import com.example.ala.view.ScannerAddActivity;
 import com.example.ala.model.ScannerAddModel;
 

@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ala.NewProductActivity;
 import com.example.ala.R;
 import com.example.ala.model.object.Office;
 import com.google.firebase.auth.FirebaseAuth;

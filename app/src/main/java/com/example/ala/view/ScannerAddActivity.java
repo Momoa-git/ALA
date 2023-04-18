@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ala.NewProductActivity;
 import com.example.ala.controller.ScannerAddController;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,6 +28,8 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     public SharedPreferences sharedPreferences;
+
+    //TODO ošetřit, když dostanu nevalidní ean kod
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

@@ -321,7 +321,7 @@ public class OrderModel {
     {
         Log.i("stornoo", "MODEL");
         OrderDAOInterface orderDAO = new OrderDAO();
-        orderDAO.setStatus(id, "CA");
+        orderDAO.setStatus(id-1, "CA");
     }
 
     public void updateSaleAfterPay(float result_price, int old_sale, int id) {
@@ -346,7 +346,7 @@ public class OrderModel {
     public void updateStatusAfterPay(int id)
     {
         OrderDAOInterface orderDAO = new OrderDAO();
-        orderDAO.setStatus(id, "CO");
+        orderDAO.setStatus(id-1, "CO");
     }
 
     private String getActualDate() {
