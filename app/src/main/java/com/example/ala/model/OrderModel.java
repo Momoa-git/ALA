@@ -347,6 +347,8 @@ public class OrderModel {
     {
         OrderDAOInterface orderDAO = new OrderDAO();
         orderDAO.setStatus(id-1, "CO");
+
+       // order.payment.setPaid(true);
     }
 
     private String getActualDate() {

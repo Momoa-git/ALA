@@ -20,7 +20,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class InvoiceSender {
+public class InvoiceSender extends Sender{
 
     Invoice invoice;
     Context context;
@@ -34,7 +34,23 @@ public class InvoiceSender {
     public void sendInvoiceToEmail(File file)
     {
 
-        String sEmail = "ala.invoice.noreply@gmail.com";
+        setProperties();
+        setSession();
+        setRecieverEmail(invoice.order.getCustomer_email());
+        setSubjectEmail("Informace o vyřízení objednávky č. " + invoice.order.getOrder_number());
+        setBodyEmail("Dobrý den, \n" +
+                "děkujeme, že jste využili pro Váš nákup služeb " + invoice.corpoInfo.getName() + ". Vaše objednávka č. " + invoice.order.getOrder_number() + " objednaná ze dne " + invoice.order.getDate_order() + " byla vyzvednuta. \n" +
+                "V příloze naleznete elektronickou fakturu vystavenou na Vaše jméno. \n\n" +
+                "Toto je automaticky generovaný e-mail. Na tuto zprávu prosím neodpovídejte.\n\n" +
+                "S podzravem\n" +
+                ""+ invoice.corpoInfo.getName()+"");
+        addAttachFile(file);
+        sendEmail();
+
+        Toast toast = Toast.makeText(context,"Email has been sent",Toast.LENGTH_LONG);
+        toast.show();
+
+     /*   String sEmail = "ala.invoice.noreply@gmail.com";
         String sPassword = "nyqccdebmmylzxod";
         String rEmail = invoice.order.getCustomer_email();
 
@@ -104,7 +120,7 @@ public class InvoiceSender {
         }
 
         Toast toast = Toast.makeText(context,"Email has been sent",Toast.LENGTH_LONG);
-        toast.show();
+        toast.show();*/
     }
 
 
