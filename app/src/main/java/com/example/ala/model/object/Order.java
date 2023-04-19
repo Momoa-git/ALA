@@ -10,7 +10,8 @@ public class Order {
     public Payment payment;
 
     public Order() {
-        payment = new Payment();
+        payment = new Payment(this);
+
     }
 
     public Order(int order_number, int id_product, int id_order, String id_list_product, int id_customer, String date, String time, String status, String office) {

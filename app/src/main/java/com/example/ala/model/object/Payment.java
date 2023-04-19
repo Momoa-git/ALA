@@ -1,12 +1,19 @@
 package com.example.ala.model.object;
 
-public class Payment {
-    private String price, date_pay, time_pay, type_pay;
+import com.google.android.gms.common.data.DataBufferObserver;
+
+import java.util.Observable;
+
+public class Payment extends Observable {
+    private String price, date_pay, type_pay;
     private int discount;
     private boolean paid;
+    public Order order;
 
-    Payment(){
-
+    Payment(Order order){
+      this.order = order;
+        PaymentDetailSender sender = new PaymentDetailSender(this);
+        this.addObserver(sender);
     }
 
     public String getPrice() {
@@ -17,10 +24,6 @@ public class Payment {
         return date_pay;
     }
 
-    public String getTime_pay() {
-        return time_pay;
-    }
-
     public String getType_pay() {
         return type_pay;
     }
@@ -29,20 +32,12 @@ public class Payment {
         return discount;
     }
 
-    public boolean isPaid() {
-        return paid;
-    }
-
     public void setPrice(String price) {
         this.price = price;
     }
 
     public void setDate_pay(String date_pay) {
         this.date_pay = date_pay;
-    }
-
-    public void setTime_pay(String time_pay) {
-        this.time_pay = time_pay;
     }
 
     public void setType_pay(String type_pay) {
@@ -55,5 +50,9 @@ public class Payment {
 
     public void setPaid(boolean paid) {
         this.paid = paid;
+        setChanged();
+        notifyObservers();
     }
+
+
 }

@@ -340,14 +340,14 @@ public class OrderModel {
         OrderDAOInterface orderDAO = new OrderDAO();
         orderDAO.setPayAfterPay(id, date, time);
 
-            order.payment.setDate_pay(getActualDate());
+        order.payment.setDate_pay(getActualDate());
+        order.payment.setPaid(true);
     }
 
     public void updateStatusAfterPay(int id)
     {
         OrderDAOInterface orderDAO = new OrderDAO();
         orderDAO.setStatus(id-1, "CO");
-
        // order.payment.setPaid(true);
     }
 

@@ -20,13 +20,10 @@ import javax.mail.internet.MimeMultipart;
 public class Sender {
     public String sEmail = "ala.invoice.noreply@gmail.com";
     public String sPassword = "nyqccdebmmylzxod";
-
     public String stringHost = "smtp.gmail.com";
-    public Session session;
+
     MimeMessage mimeMessage;
-
     Properties properties;
-
     Multipart multipart = new MimeMultipart();
     MimeBodyPart body = new MimeBodyPart();
 
@@ -35,7 +32,6 @@ public class Sender {
         properties.put("mail.smtp.host", stringHost);
         properties.put("mail.smtp.port","465");
         properties.put("mail.smtp.ssl.enable","true");
-        //  properties.put("mail.smtp.starttls.enable","true");
         properties.put("mail.smtp.auth", "true");
 
     }
