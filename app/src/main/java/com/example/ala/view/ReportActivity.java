@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.ala.R;
 import com.example.ala.controller.ReportController;
+import com.github.mikephil.charting.charts.BarChart;
 
 import java.util.Calendar;
 
@@ -24,7 +25,7 @@ public class ReportActivity extends AppCompatActivity {
     public TextView txt_count_product, txt_most_product, txt_sum_price, txt_date_from, txt_date_to, txt_count_order, txt_price_with_DPH, txt_price_without_DPH;
     private Button btn_warehouse, btn_do, btn_od, btn_search_order;
     private ProgressBar progress_bar;
-    DatePickerDialog.OnDateSetListener setListener;
+   public BarChart barChart;
 
 
     @Override
@@ -48,6 +49,7 @@ public class ReportActivity extends AppCompatActivity {
         txt_count_order = findViewById(R.id.txt_count_order);
         txt_price_with_DPH = findViewById(R.id.txt_price_with_DPH);
         txt_price_without_DPH = findViewById(R.id.txt_price_without_DPH);
+        barChart = findViewById(R.id.chart);
 
 
         progress_bar.setVisibility(View.INVISIBLE);

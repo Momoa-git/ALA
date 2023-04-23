@@ -12,6 +12,10 @@ import com.example.ala.controller.ReportController;
 import com.example.ala.model.object.Order;
 import com.example.ala.model.object.Product;
 import com.example.ala.model.object.ProductInOrder;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +28,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
@@ -34,6 +39,9 @@ public class ReportModel {
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
+    ArrayList<String> dates;
+    ArrayList<BarEntry> barEntries;
+
 
 
     public ReportModel(ReportController controller) {
@@ -127,9 +135,13 @@ public class ReportModel {
                 int count_order = 0;
                 float sum_price_with_DPH = 0;
                 float sum_price_without_DPH = 0;
+                String date_pay = null;
+                ArrayList<String> theDates = new ArrayList<>();
+                theDates.clear();
+                ArrayList<Float> sum_price = new ArrayList<>();
                 SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
                 SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM-dd-yyyy");
-                 Date date_from_d, date_to_d,search_date;
+                Date date_from_d = null, date_to_d = null, search_date;
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Order order = dataSnapshot.getValue(Order.class);
@@ -137,9 +149,22 @@ public class ReportModel {
                         date_from_d = simpleDateFormat1.parse(date_from);
                         date_to_d = simpleDateFormat1.parse(date_to);
 
+                        Calendar calendar1 = Calendar.getInstance();
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar1.clear();
+                        calendar2.clear();
+
+                        calendar1.setTime(date_from_d);
+                        calendar2.setTime(date_to_d);
+
+                        dates = new ArrayList<>();
+                        dates = getList(calendar1, calendar2);
+
+                        barEntries = new ArrayList<>();
+
                         boolean paid = Boolean.parseBoolean(dataSnapshot.child("Payment").child("paid").getValue().toString());
                         if(paid) {
-                            String date_pay = dataSnapshot.child("Payment").child("date_pay").getValue().toString();
+                            date_pay = dataSnapshot.child("Payment").child("date_pay").getValue().toString();
                             search_date = simpleDateFormat2.parse(date_pay);
                         }else
                             search_date = null;
@@ -162,12 +187,24 @@ public class ReportModel {
                             sum_price_with_DPH = sum_price_with_DPH + Float.parseFloat(dataSnapshot.child("Payment").child("price").getValue().toString());
                             sum_price_without_DPH = sum_price_without_DPH + calculatePriceWithoutDPH(Float.parseFloat(dataSnapshot.child("Payment").child("price").getValue().toString()));
                         }
+
+
+                        theDates.add(date_pay);
+                        sum_price.add(Float.parseFloat(dataSnapshot.child("Payment").child("price").getValue().toString()));
                         count_order++;
                     }
 
                 }
                 controller.setValueAfterOrderReport(count_order, setPriceFormat(sum_price_with_DPH), setPriceFormat(sum_price_without_DPH));
 
+
+                for(int i = 0; i < theDates.size(); i++)
+                    barEntries.add(new BarEntry(i,sum_price.get(i)));
+
+                BarDataSet barDataSet = new BarDataSet(barEntries, "Objednávky");
+                BarData barData = new BarData(barDataSet);
+
+                controller.setGraphData(barData, theDates);
             }
 
             @Override
@@ -176,24 +213,21 @@ public class ReportModel {
             }
         });
 
+    }
 
 
-     /*   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        try {
-            Date date_from_d = simpleDateFormat.parse(date_from);
-            Date date_to_d = simpleDateFormat.parse(date_to);
-            Date search_date = simpleDateFormat.parse("22.4.2023");
+    private ArrayList<String> getList(Calendar calendar1, Calendar calendar2) {
+        ArrayList<String> list = new ArrayList<>();
+        while(calendar1.compareTo(calendar2) <= 0){
+            list.add(getDate(calendar1));
+            calendar1.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return list;
+    }
 
-            if((search_date.after(date_from_d) || search_date.equals(date_from_d)) && (search_date.before(date_to_d) || search_date.equals(date_to_d)))
-                Log.i("dateexpression","YES");
-            else{
-                Log.i("dateexpression","NO");
-            }
-
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
+    private String getDate(Calendar calendar1) {
+        String curlDate = calendar1.get(Calendar.DAY_OF_MONTH) + "." + (calendar1.get(Calendar.MONTH) + 1)+ "." +calendar1.get(Calendar.YEAR);
+        return curlDate;
     }
 
     private float calculatePriceWithoutDPH(float sum_price_with_dph) {

@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Inventura"
+                android:text="Prodejní aktivita"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="30sp"
@@ -426,6 +426,34 @@
                             android:layout_marginLeft="180dp"
                             android:text="-"
                             android:textColor="@color/primary" />
+
+                    <View
+                        android:id="@+id/line2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/txt_price_without_DPH"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="#D3D3D3" />
+
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_below="@+id/line2"
+                        />
+
+
+
 
 
                     </RelativeLayout>
