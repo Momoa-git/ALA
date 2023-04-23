@@ -26,7 +26,7 @@ public class MenuActivity extends AppCompatActivity {
 private FirebaseUser office;
 private DatabaseReference reference;
 private String officeID;
-private CardView crd_new_product, crd_product, crd_order, crd_info, crd_log_out;
+private CardView crd_new_product, crd_product, crd_order,crd_report,  crd_info, crd_log_out;
 private ProgressBar progress_bar;
 //TODO change to DAO
 
@@ -42,6 +42,7 @@ private ProgressBar progress_bar;
         crd_new_product = findViewById(R.id.crd_new_product);
         crd_product = findViewById(R.id.crd_products);
         crd_order = findViewById(R.id.crd_order);
+        crd_report = findViewById(R.id.crd_report);
         crd_info = findViewById(R.id.crd_info);
         crd_log_out = findViewById(R.id.crd_log_out);
         progress_bar = findViewById(R.id.progress_bar);
@@ -94,6 +95,13 @@ private ProgressBar progress_bar;
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MenuActivity.this, OrderActivityView.class));
+            }
+        });
+
+        crd_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MenuActivity.this, ReportActivity.class));
             }
         });
 

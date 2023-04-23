@@ -29,7 +29,7 @@ public class ScannerAddController {
 
     public void onNewProductDetail(String name, String price, String code) {
         NewProductActivity.edT_name_product.setText(name);
-        NewProductActivity.edT_price.setText(price + ".00 Kč");
+        NewProductActivity.edT_price.setText(price ); //+ ".00 Kč"
         NewProductActivity.edT_bar.setText(code);
     }
 

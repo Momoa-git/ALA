@@ -46,24 +46,6 @@
 
             </TextView>
 
-<!-->
-            <ImageView
-                android:id="@+id/info"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/txt_name"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/ic_info"
-
-
-                >
-
-            </ImageView>
-<!-->
-
-
-
         </RelativeLayout>
 
      <GridLayout
@@ -206,6 +188,48 @@
 
          </androidx.cardview.widget.CardView>
 
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/crd_report"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_columnWeight="1"
+             android:layout_rowWeight="1"
+             app:cardElevation="6dp"
+             app:cardCornerRadius="13dp"
+             android:layout_marginBottom="6dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginRight="16dp"
+             android:layout_marginTop="16dp"
+             >
+
+             <LinearLayout
+                 android:orientation="vertical"
+                 android:padding="16dp"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:gravity="center"
+                 >
+
+                 <ImageView
+                     android:layout_width="50dp"
+                     android:layout_height="50dp"
+                     android:src="@drawable/ic_report"/>
+
+
+
+                 <TextView
+                     android:textSize="18dp"
+                     android:text="Inventura"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:textColor="@color/primary"/>
+
+
+             </LinearLayout>
+
+
+         </androidx.cardview.widget.CardView>
 
          <androidx.cardview.widget.CardView
              android:id="@+id/crd_info"
