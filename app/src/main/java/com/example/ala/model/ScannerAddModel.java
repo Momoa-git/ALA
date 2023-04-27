@@ -20,10 +20,8 @@ public class ScannerAddModel {
     ArrayList<String> arrayList = new ArrayList<>();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    Context context;
 
     public static final String PREFERENCE_NAME = "MyPref";
-   // SharedPreferences sharedPreferences;
 
     private ScannerAddController controller;
 
@@ -44,8 +42,6 @@ public class ScannerAddModel {
 
                 arrayList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    //  String value = dataSnapshot.child("value").getValue(String.class);
-                    //  Product product = snapshot.getValue(Product.class);
 
                     String code = dataSnapshot.child("bar-code").getValue().toString();
                     if (bar_code.equals(code)){
@@ -59,14 +55,11 @@ public class ScannerAddModel {
 
                         controller.onNewProductDetail(name, price, code);
 
-                      //  final SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+
                         SharedPreferences.Editor myEdit = controller.preferences.edit();
 
                         myEdit.putInt("sp_id", id);
                         myEdit.commit();
-
-                    //    Preferences preferences = new Preferences(context);
-                     //   preferences.setID(id);
 
                         controller.setVisibility();
 

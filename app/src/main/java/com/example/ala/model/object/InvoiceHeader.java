@@ -130,7 +130,6 @@ public class InvoiceHeader {
     }
 
     public void fetchCorpoData(Invoice.FirebaseCallback3 firebaseCallback3){
-       // CorpoInfoDAO corpoInfoDAO = new CorpoInfoDAO();
         corpoInfoDAO.get().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -160,9 +159,6 @@ public class InvoiceHeader {
 
 
     public void fetchLogoImg(Invoice.FirebaseCallback firebaseCallback) {
-      //  CorpoInfoDAO corpoInfoDAO = new CorpoInfoDAO();
-       // readCorpoData(corpoInfoDAO);
-
 
         try {
             File localfile = File.createTempFile("tempfile",".jpg");
@@ -192,37 +188,7 @@ public class InvoiceHeader {
     }
 
 
-    private void readCorpoData(CorpoInfoDAO corpoInfoDAO) {
 
 
-        corpoInfoDAO.get().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                setName(snapshot.child("name").getValue().toString());
-                setResidence(snapshot.child("residence").getValue().toString());
-                setIc(snapshot.child("ič").getValue().toString());
-                setDic(snapshot.child("dič").getValue().toString());
-                setWebsite(snapshot.child("website").getValue().toString());
-                setContact(snapshot.child("contact").getValue().toString());
-                setPhone(snapshot.child("phone").getValue().toString());
-                setBank_account(snapshot.child("bank account").getValue().toString());
-                setVariable_symbol(snapshot.child("variable symbol").getValue().toString());
-                setLogo_path(snapshot.child("logo").getValue().toString());
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-
-        });
-
-    }
-
-    /*private interface FirebaseCallback{
-        void onCallBack(Bitmap bitmap);
-    }*/
 
 }

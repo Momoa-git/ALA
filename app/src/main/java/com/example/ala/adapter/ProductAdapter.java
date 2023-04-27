@@ -47,7 +47,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Product product = list.get(position);
-        //Product product2 = list2.get(position);
         holder.name.setText(product.getName());
         holder.price.setText(product.getPrice());
         holder.bar_code.setText(product.getBar_code());
@@ -64,9 +63,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         holder.piece.setText(count + " ks");
 
         count = 0;
-
-
-
 
     }
 

@@ -14,18 +14,9 @@ public class InvoiceDAO {
        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Invoice").child("serial_number");
     }
-    public Task<Void> update(String key, HashMap<String ,Object> hashMap)
-    {
-        return databaseReference.child(key).updateChildren(hashMap);
-    }
-
     public Query get(String key)
     {
-     //   if(key == null)
-       // {
             return databaseReference.orderByKey();
-      //  }
-       // return databaseReference.orderByKey().startAfter(key).limitToFirst(8);
     }
 
     public void setSerial_number(int serial_number)

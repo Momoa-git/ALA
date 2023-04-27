@@ -17,18 +17,10 @@ public class OrderDAO implements OrderDAOInterface{
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("Order").child("Orders");
     }
-    public Task<Void> update(String key, HashMap<String ,Object> hashMap)
-    {
-        return databaseReference.child(key).updateChildren(hashMap);
-    }
 
     public Query get(String key)
     {
-     //   if(key == null)
-       // {
             return databaseReference.orderByKey();
-      //  }
-       // return databaseReference.orderByKey().startAfter(key).limitToFirst(8);
     }
 
     public Task<Void> setStatus(int id, String status)
@@ -47,10 +39,6 @@ public class OrderDAO implements OrderDAOInterface{
         updatepay.put("discount", old_sale);
         updatepay.put("price", result_price);
 
-
-       /* invoice.setDiscount(old_sale);
-        invoice.setResult_price(result_price+"");*/
-        //firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("Order").child("Orders").child(String.valueOf(id - 1)).child("Payment");
 
         return databaseReference.updateChildren(updatepay);

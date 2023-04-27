@@ -38,9 +38,6 @@ public class Invoice {
     public Invoice(Order order, Context context) {
         this.order = order;
         this.context = context;
-        for(int i = 0; i < inventory.getSize(); i++){
-            //Log.i("items", inventory.getItem(i).getRegister_number() + " "+ inventory.getItem(i).getPi + " " + inventory.getItem(i).getName() + " " + inventory.getItem(i).getPrice());
-        }
         initHeaderData();
 
     }

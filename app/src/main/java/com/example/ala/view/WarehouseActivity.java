@@ -1,6 +1,5 @@
 package com.example.ala.view;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,23 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.ala.DetailProductActivity;
 import com.example.ala.R;
 import com.example.ala.adapter.ProductAdapter;
 import com.example.ala.controller.WarehouseController;
 import com.example.ala.model.object.Product;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -35,14 +25,8 @@ public class WarehouseActivity extends AppCompatActivity implements ProductAdapt
 
     private RecyclerView recyclerView;
     public ProgressBar progress_bar;
-    private TextView txt_emptylist;
     public ProductAdapter productAdapter;
     ArrayList<Product> list, list2;
-
-
-
-    //TODO opravit hlavičku layoutu - přizpůsobit background
-    //TODO při žádných vypsat "Prázdný sklad"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +37,6 @@ public class WarehouseActivity extends AppCompatActivity implements ProductAdapt
 
         recyclerView = findViewById(R.id.recycler_view);
         progress_bar = findViewById(R.id.progress_bar);
-        txt_emptylist = findViewById(R.id.txt_emptylist);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -25,21 +25,16 @@ import java.util.List;
 
 public class OrderAdapter extends FirebaseRecyclerAdapter<Order, OrderViewHolder> {
     private OrderViewHolder.OnDetailListener onDetailListener;
-    private List<Order> orderFull;
-    private FirebaseRecyclerOptions<Order> list;
 
-
-    public OrderAdapter(@NonNull FirebaseRecyclerOptions<Order> options, ArrayList<Order> list, OrderViewHolder.OnDetailListener onDetailListener) {
+    public OrderAdapter(@NonNull FirebaseRecyclerOptions<Order> options,  OrderViewHolder.OnDetailListener onDetailListener) {
         super(options);
         this.onDetailListener = onDetailListener;
-        this.list = options;
     }
 
 
 
   @Override
   protected void onBindViewHolder(@NonNull OrderViewHolder orderViewHolder, int i, Order order) {
-    //   Order order1= list.get(i);
       orderViewHolder.order_number.setText(String.valueOf(order.getOrder_number()));
       orderViewHolder.id_order = order.getId_order();
       Log.i("testt","HOLDER " + order.getOrder_number());
@@ -96,10 +91,6 @@ public class OrderAdapter extends FirebaseRecyclerAdapter<Order, OrderViewHolder
         return new OrderViewHolder(v, onDetailListener);
     }
 
-    public void filterList(FirebaseRecyclerOptions<Order> filteredList){
-        list = filteredList;
-        notifyDataSetChanged();
-    }
 
     private void parseDateFromDatabase(Order order, OrderViewHolder holder) {
         SimpleDateFormat database_format = new SimpleDateFormat("MM-dd-yyyy");

@@ -2,9 +2,8 @@ package com.example.ala.model.object;
 
 public class Order {
 
-    private String key;
-    private int  id_product, id_order, id_customer, discount, order_number;
-    private String date_order, price, date, time, status, office, id_list_product, date_pay, time_pay, type_pay, customer_name, customer_email, customer_phone,adress_office;
+    private int  id_product, id_order, id_customer, order_number;
+    private String date_order, date, time, status, office, customer_name, customer_email, customer_phone, adress_office;
     private boolean paid;
     public Inventory inventory = Inventory.getInstance();
     public Payment payment;
@@ -18,7 +17,6 @@ public class Order {
         this.order_number = order_number;
         this.id_product = id_product;
         this.id_order = id_order;
-      //  this.id_list_product = id_list_product;
         this.id_customer = id_customer;
         this.date = date;
         this.time = time;
@@ -45,22 +43,6 @@ public class Order {
     public String getAdress_office() {
         return adress_office;
     }
-
-    /*public int getDiscount() {
-        return discount;
-    }*/
-
-   /* public String getPrice() {
-        return price;
-    }*/
-
-  /*  public String getDate_pay() {
-        return date_pay;
-    }
-
-    public String getType_pay() {
-        return type_pay;
-    }*/
 
     public int getOrder_number() {
         return order_number;
@@ -103,25 +85,9 @@ public class Order {
         this.adress_office = adress_office;
     }
 
-   /* public void setDiscount(long discount) {
-        this.discount = (int) discount;
-    }*/
-
- /*   public void setPrice(String price) {
-        this.price = price;
-    }*/
-
     public void setDate_order(String date_order) {
         this.date_order = date_order;
     }
-
-  /*  public void setDate_pay(String date_pay) {
-        this.date_pay = date_pay;
-    }*/
-
- /*   public void setType_pay(String type_pay) {
-        this.type_pay = type_pay;
-    }*/
 
     public void setOrder_number(int order_number) {
         this.order_number = order_number;

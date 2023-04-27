@@ -43,8 +43,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
 
     OrderController controller;
     OrderDAO dao;
-
-    private Spinner spinner_status;
     private ProgressBar progressBar;
 
     private RecyclerView recyclerView;
@@ -53,18 +51,13 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
     public TextView numberOrder, register_num, txt_date_order, txt_status, txt_type_payment, txt_paid, txt_price, txt_name_customer,txt_email_customer,
             txt_phone_customer, txt_offic_address,txt_office_name,txt_name_product, txt_discount, txt_date_pay, title_date_pay, title_locate,
             txt_locate, txt_date_locate, title_registr_num, txt_register_num, txt_description;
-   // public EditText edT_search;
     public ImageView img_status_bar;
     public Button btn_payment, btn_storno, btn_edit_sale;
     public BottomSheetDialog bottomSheetDialog;
     Context context;
     FirebaseRecyclerOptions<Order> options;
-    private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
-    int i = 0;
     private InternetService service;
-    //TODO fce filter orders by word search or status
-    //TODO adding count  product
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +72,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         service = new InternetService(this);
-       // edT_search = findViewById(R.id.edT_search);
         progressBar = findViewById(R.id.progress_bar);
-       // spinner_status = findViewById(R.id.spinner_filter);
-       // statAdapter = new StatusAdapter(OrderActivityView.this, StatusData.getStatusList());
-//        spinner_status.setAdapter(statAdapter);
         list = new ArrayList<>();
         dao = new OrderDAO();
         progressBar.setVisibility(View.VISIBLE);
@@ -114,97 +103,14 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
                     }
                 }).build();
 
-        /*FirebaseRecyclerOptions<Order> options = new FirebaseRecyclerOptions.Builder<Order>()
-                .setQuery(FirebaseDatabase.getInstance().getReference().child("Order").child("Orders"),Order.class)
-                .build();*/
 
 
-
-
-        adapter = new OrderAdapter(options, list, this);
+        adapter = new OrderAdapter(options, this);
 
         recyclerView.setAdapter(adapter);
 
-     /*   edT_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                //filter(s.toString());
-                Log.i("firb", s.toString());
-                controller.setRecViewFilterContent(dao, s.toString());
-            }
-        });*/
-
     }
 
-    private void filter(String text){
-
-        /* ArrayList<Order> filteredList = null;
-
-        for(int i = 0; i < list.size(); i++){
-            if(list.get(i).getStatus().equals(text))
-            {
-                Log.i("sucfireb", String.valueOf(list.get(i).getOrder_number()));
-                filteredList.add(list.get(i));
-            }
-        }
-*/
-
-
-        Query query = dao.get().orderByChild("status").equalTo(text);
-
-        FirebaseRecyclerOptions<Order> filteredList = new FirebaseRecyclerOptions.Builder<Order>()
-                .setQuery(query, Order.class)
-                .build();
-
-        OrderAdapter adapter2;
-
-        adapter2 = new OrderAdapter(filteredList, list, this);
-        recyclerView.setAdapter(adapter2);
-
-   /*     for(Order order : list){
-            if(order.getCustomer_name().toLowerCase().contains(text.toLowerCase())){
-                filteredList.add(order);
-            }
-        }*/
-
-
-
-
-
-    }
-
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem seatchItem = menu.findItem(R.id.edT_search_order);
-        SearchView searchView = (SearchView) seatchItem.getActionView();
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
-                return false;
-            }
-        });
-
-        return true;
-    }*/
 
     @Override
     protected void onStart()
@@ -283,7 +189,7 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
             @Override
             public void onClick(View v) {
                 openPaymentDialog();
-              //  controller.setPDF(context);
+
 
             }
         });
@@ -325,7 +231,6 @@ public class OrderActivityView extends AppCompatActivity implements OrderViewHol
         adapter.notifyDataSetChanged();
         controller.removeProducts();
         controller.setPDF(context);
-       // controller.sendToEmail();
         if(!service.checkConnection()){
             InternetWarningDialog dialog = new InternetWarningDialog();
             dialog.show(getSupportFragmentManager(),"internet warning dialog");

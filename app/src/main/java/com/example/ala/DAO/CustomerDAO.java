@@ -14,18 +14,10 @@ public class CustomerDAO implements CustomerDAOInterface{
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Customer").child("Customers");
     }
-    public Task<Void> update(String key, HashMap<String ,Object> hashMap)
-    {
-        return databaseReference.child(key).updateChildren(hashMap);
-    }
 
     public Query get(String key)
     {
-        //   if(key == null)
-        // {
         return databaseReference.orderByKey();
-        //  }
-        // return databaseReference.orderByKey().startAfter(key).limitToFirst(8);
     }
 
     public Query get()

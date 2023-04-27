@@ -20,13 +20,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private RegisterController controller;
 
-    private FirebaseAuth mAuth;
     public EditText edT_name_office, edT_place, edT_email, edT_password;
     public ProgressBar progressBar;
     private Button btn_register;
     private TextView btn_login_acitivity;
     private InternetService service;
-    //TODO dopsat Toast msg
 
     @Override
     protected void onCreate(Bundle savedInstance){
@@ -35,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         controller = new RegisterController(this);
         service = new InternetService(this);
-       // mAuth = FirebaseAuth.getInstance();
 
         edT_name_office = findViewById(R.id.edT_name_office);
         edT_place = findViewById(R.id.edT_place);

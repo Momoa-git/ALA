@@ -57,7 +57,6 @@ public class ReportModel {
 
         databaseReference =  FirebaseDatabase.getInstance().getReference().child("Office").child(id).child("Product");
 
-        // productAdapter = new ProductAdapter(context, list, list2, this);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -176,7 +175,6 @@ public class ReportModel {
                         e.printStackTrace();
                     }
 
-          //          Log.i("dateexpression",date_from_d + "|" + date_to_d + "|" + search_date);
                     if (order.getOffice().contains(id) && search_date!= null &&((search_date.after(date_from_d) || search_date.equals(date_from_d)) && (search_date.before(date_to_d) || search_date.equals(date_to_d)))) {
 
                         if(count_order == 0) {

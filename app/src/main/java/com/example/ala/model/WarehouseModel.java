@@ -25,7 +25,6 @@ public class WarehouseModel {
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
-    ArrayList<Product> list, list2;
     ArrayList<String> list_barcode;
 
     public WarehouseModel(Context context, WarehouseController controller){
@@ -43,21 +42,12 @@ public class WarehouseModel {
 
         list_barcode = new ArrayList<>();
 
-       // productAdapter = new ProductAdapter(context, list, list2, this);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Product product = dataSnapshot.getValue(Product.class);
-
-
-
-
 
                     if (!list_barcode.contains(product.getBar_code())) {
                         list.add(product);
@@ -85,11 +75,6 @@ public class WarehouseModel {
 
     }
 
-    public void setDetailProductContent(String bar_code){
-        getFirebaseResources(bar_code);
-
-
-    }
 
     public void getFirebaseResources(String bar_codeP) {
         firebaseDatabase = FirebaseDatabase.getInstance();

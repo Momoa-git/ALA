@@ -1,4 +1,4 @@
-package com.example.ala;
+package com.example.ala.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ala.R;
 import com.squareup.picasso.Picasso;
 
 
@@ -20,8 +21,6 @@ public class DetailProductActivity extends AppCompatActivity {
     TextView txt_bar_code, txt_name, txt_price, txt_piece, txt_line, txt_place, txt_desc;
     ImageView image;
     ProgressBar progress_bar;
-
-    //TODO pridani progress baru
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

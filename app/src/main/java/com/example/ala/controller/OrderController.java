@@ -16,7 +16,7 @@ public class OrderController {
   private OrderModel model;
   private OrderActivityView view;
   int id;
-  float result_price, result_price2;
+  float result_price;
     String old_sale;
     long sale_F;
 
@@ -104,7 +104,6 @@ public class OrderController {
                 this.view.img_status_bar.setImageResource(R.drawable.status_bar_ip);
                 this.view.txt_description.setVisibility(View.GONE);
                 //btn
-                //this.view.btn_edit_sale.setVisibility(View.VISIBLE);
                 this.view.btn_payment.setVisibility(View.VISIBLE);
                 this.view.btn_storno.setVisibility(View.VISIBLE);
                 break;
@@ -150,12 +149,6 @@ public class OrderController {
 
 
     public void setAfterSale(String sale) {
-     /*   if(sale.equals("0"))
-            view.txt_discount.setText("-");*/
-
-        String name_product = this.view.txt_name_product.getText().toString();
-
-
         old_sale = view.txt_discount.getText().toString().replace("%", "");
         float old_sale_f;
         try {

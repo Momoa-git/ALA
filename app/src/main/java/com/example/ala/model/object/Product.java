@@ -56,10 +56,6 @@ public class Product {
         this.id_list_product = id_list_product;
     }
 
-  /*  public int getRegistration_num() {
-        return registration_num;
-    }
-*/
     public void setName(String name) {
         this.name = name;
     }

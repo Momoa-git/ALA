@@ -22,7 +22,6 @@ public class NewProductActivity extends AppCompatActivity implements InternetWar
     public static EditText edT_name_product, edT_price, edT_bar, edT_ks, edT_line, edT_place;
     private Button btn_scan;
     public static Button btn_add_item;
-    private FirebaseAuth mAuth;
     private InternetService service;
 
     @Override
@@ -42,19 +41,11 @@ public class NewProductActivity extends AppCompatActivity implements InternetWar
         edT_line = findViewById(R.id.edT_line);
         edT_place = findViewById(R.id.edT_place);
 
-        mAuth = FirebaseAuth.getInstance();
         service = new InternetService(this);
 
 
 
-        btn_scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(NewProductActivity.this, ScannerAddActivity.class));
-
-
-            }
-        });
+        btn_scan.setOnClickListener(v -> startActivity(new Intent(NewProductActivity.this, ScannerAddActivity.class)));
 
 
 

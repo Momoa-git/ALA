@@ -24,13 +24,6 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
     ZXingScannerView scannerView;
     ScannerAddController controller;
 
-    ArrayList<String> arrayList = new ArrayList<>();
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    public SharedPreferences sharedPreferences;
-
-    //TODO ošetřit, když dostanu nevalidní ean kod
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -45,10 +38,6 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
 
 
         NewProductActivity.edT_ks.setText("");
-       // NewProductActivity.edT_bar.setText(result.getText());
-
-
-        //getProductByCode(result.getText());
 
         controller.getProductByCode(result.getText());
 
@@ -56,63 +45,7 @@ public class ScannerAddActivity extends AppCompatActivity implements ZXingScanne
         onBackPressed();
 
     }
-/*
-    private void getProductByCode(String bar_code) {
 
-
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("Product").child("Products");
-
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                arrayList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    //  String value = dataSnapshot.child("value").getValue(String.class);
-                    //  Product product = snapshot.getValue(Product.class);
-
-                    String code = dataSnapshot.child("bar-code").getValue().toString();
-                    if (bar_code.equals(code)){
-
-
-                        String name = dataSnapshot.child("name").getValue().toString();
-                        String price = dataSnapshot.child("price").getValue().toString();
-                        int id = Integer.valueOf( dataSnapshot.child("id").getValue().toString());
-                        NewProductActivity.edT_name_product.setText(name);
-                        NewProductActivity.edT_price.setText(price + ".00 Kč");
-
-                        SharedPreferences sharedPreferences = getSharedPreferences("MyPref", MODE_PRIVATE);
-                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
-
-                        myEdit.putInt("sp_id", id);
-                        myEdit.commit();
-
-
-                        NewProductActivity.edT_ks.setVisibility(View.VISIBLE);
-                        NewProductActivity.edT_line.setVisibility(View.VISIBLE);
-                        NewProductActivity.edT_place.setVisibility(View.VISIBLE);
-                        NewProductActivity.btn_add_item.setVisibility(View.VISIBLE);
-
-                    }
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
-    }
-*/
     @Override
     protected void onPause() {
         super.onPause();

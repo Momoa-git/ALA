@@ -3,7 +3,7 @@ package com.example.ala.model.object;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory {
+public class  Inventory {
     private static Inventory singleton_inventory = null;
     List<ProductInOrder> items = new ArrayList<>();
 

@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ALA">
         <activity android:name=".view.ReportActivity"/>
-        <activity android:name=".DetailProductActivity" />
+        <activity android:name=".view.DetailProductActivity" />
         <activity android:name=".view.WarehouseActivity" />
         <activity android:name=".view.LoginActivity">
             <intent-filter>

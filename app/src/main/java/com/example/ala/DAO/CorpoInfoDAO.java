@@ -15,17 +15,11 @@ public class CorpoInfoDAO {
     {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Corporate info");
-
-
     }
 
     public Query get(String key)
     {
-        //   if(key == null)
-        // {
         return databaseReference.orderByKey();
-        //  }
-        // return databaseReference.orderByKey().startAfter(key).limitToFirst(8);
     }
 
     public Query get()
