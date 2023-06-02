@@ -9,7 +9,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.ala"
+        applicationId "com.vsb.ala"
         minSdkVersion 26
         targetSdkVersion 33
         versionCode 1
